@@ -667,6 +667,16 @@
   }
   .confirm-msg.show{display:block;}
 
+  .book-error{
+    color:var(--red);
+    font-weight:700;
+    font-size:0.88rem;
+    margin-top:14px;
+    text-align:center;
+    display:none;
+  }
+  .book-error.show{display:block;}
+
   .disclaimer-box{
     margin-top:26px;
     padding:14px 16px;
@@ -858,6 +868,10 @@
   };
 
   var GUIDE_URL = "https://drive.google.com/file/d/1gkmL6uCsRU9aR3VLuLyyb1meWoKSh-qM/view";
+
+  // Formspree endpoint for LocalTutors. Forwards each "Book a free call"
+  // submission by email to localtutors.upington@gmail.com. See https://formspree.io.
+  var FORMSPREE_ENDPOINT = "https://formspree.io/f/xkjnzkkp";
 
   /* =========================================================
      State
@@ -1339,6 +1353,7 @@
       '<div class="insight-card"><span class="insight-num" aria-hidden="true">3</span><span class="insight-text">' + insight3 + '</span></div>' +
       '<div class="result-actions">' + actionsHtml + '</div>' +
       '<div class="confirm-msg" id="confirmMsg" role="status">Thanks, we\'ve got your request. Someone from the LocalTutors team will be in touch soon.</div>' +
+      '<div class="book-error" id="bookError" role="alert">Something went wrong sending your request. Please try again, or call us directly at 069 734 6705.</div>' +
       '<div class="disclaimer-box">This is a screening questionnaire, not a diagnosis. It cannot tell you whether your child has dyslexia or a learning difficulty, and it will never claim to.</div>' +
       '<div class="contact-footer">' +
         '<a href="tel:+27697346705">' + ICONS.phone + '069 734 6705</a>' +
@@ -1352,11 +1367,17 @@
         if(submissionSent) return;
         bookBtn.disabled = true;
         bookBtn.textContent = "Sending...";
-        window.setTimeout(function(){
-          submitBooking(scoring);
+        wrap.querySelector("#bookError").classList.remove("show");
+        submitBooking(scoring).then(function(){
+          submissionSent = true;
           bookBtn.textContent = "Request sent";
           wrap.querySelector("#confirmMsg").classList.add("show");
-        }, 1100);
+        }).catch(function(err){
+          console.error("LocalTutors Reading Check: booking submission failed.", err);
+          bookBtn.disabled = false;
+          bookBtn.textContent = "Book a free call";
+          wrap.querySelector("#bookError").classList.add("show");
+        });
       });
     }
 
@@ -1368,7 +1389,6 @@
   }
 
   function submitBooking(scoring){
-    submissionSent = true;
     var payload = {
       submittedAt: new Date().toISOString(),
       parent: state.parent,
@@ -1383,9 +1403,18 @@
         return { id: q.id, question: q.text, answer: state.answers[q.id] || null, section: q.section };
       })
     };
-    // TODO: once a backend exists, POST this payload there so it can email
-    // localtutors.upington@gmail.com with the new lead and result details.
     console.log("LocalTutors Reading Check submission:", payload);
+    // POSTs the submission to Formspree, which forwards it by email to
+    // localtutors.upington@gmail.com. See https://formspree.io/forms.
+    return fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function(res){
+      if(!res.ok){
+        throw new Error("Formspree responded with status " + res.status);
+      }
+    });
   }
 
   /* =========================================================
