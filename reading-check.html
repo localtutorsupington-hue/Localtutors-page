@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading Check, free assessment, LocalTutors Upington</title>
+<meta name="description" content="A free 3 minute reading screening for Grade 3 to 6 learners. Answer 10 quick questions and get an instant, personalised result.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F0EB;
+    --card:#FFFFFF;
+    --blue:#2563A6;
+    --blue-dark:#1B4A7C;
+    --gold:#C98A2B;
+    --gold-dark:#9C6A1D;
+    --ink:#111111;
+    --body:#1F2933;
+    --muted:#4A5560;
+    --green:#1A5C38;
+    --orange:#BF4E0A;
+    --red:#8C2020;
+    --radius:18px;
+    --shadow-1: 0 1px 2px rgba(17,17,17,0.06), 0 8px 24px rgba(17,17,17,0.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+
+  html{
+    -webkit-text-size-adjust:100%;
+  }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:'Nunito Sans', system-ui, -apple-system, sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    overscroll-behavior-y: contain;
+    min-height:100dvh;
+    min-height:100vh;
+  }
+
+  h1,h2,h3,.font-head{
+    font-family:'Manrope', system-ui, -apple-system, sans-serif;
+    color:var(--ink);
+    margin:0;
+  }
+
+  p{margin:0;}
+
+  a{color:var(--blue);}
+
+  button{font-family:inherit;}
+
+  svg{display:block;}
+
+  /* ---------- focus states ---------- */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  .tap-btn:focus-visible,
+  label.checkbox-row:focus-within{
+    outline:3px solid var(--blue);
+    outline-offset:2px;
+  }
+
+  /* Headings are given tabindex="-1" purely so focus can move to them for
+     screen reader announcement on screen change. They are not part of the
+     tab order, so no visible ring is needed here. */
+  h1[tabindex="-1"]:focus,
+  h2[tabindex="-1"]:focus{
+    outline:none;
+  }
+
+  input:focus{
+    outline:none;
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px rgba(37,99,166,0.18);
+  }
+
+  /* ---------- layout scaffold ---------- */
+  .page-wrap{
+    min-height:100dvh;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 16px 40px;
+  }
+
+  header.site-header{
+    width:100%;
+    max-width:640px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  }
+
+  .wordmark{
+    font-family:'Manrope', sans-serif;
+    font-weight:800;
+    font-size:1.35rem;
+    letter-spacing:-0.01em;
+  }
+  .wordmark .t-local{color:var(--ink);}
+  .wordmark .t-tutors{color:var(--blue);}
+
+  .header-sub{
+    font-size:0.78rem;
+    color:var(--muted);
+    font-weight:600;
+  }
+
+  .book-stage{
+    position:relative;
+    width:100%;
+    max-width:640px;
+  }
+
+  /* stacked page effect behind the card */
+  .book-stage::before,
+  .book-stage::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    right:0;
+    top:8px;
+    bottom:-8px;
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-1);
+    transform-origin:top center;
+    pointer-events:none;
+  }
+  .book-stage::before{
+    transform:translateX(-50%) rotate(-1.6deg);
+    top:10px;
+    opacity:0.75;
+  }
+  .book-stage::after{
+    transform:translateX(-50%) rotate(1.3deg);
+    top:6px;
+    opacity:0.55;
+  }
+
+  .book-card{
+    position:relative;
+    z-index:1;
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-1);
+    overflow:hidden;
+  }
+
+  /* ribbon progress bar */
+  .ribbon-track{
+    height:8px;
+    width:100%;
+    background:#EFE6D3;
+    position:relative;
+    overflow:hidden;
+  }
+  .ribbon-fill{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg, var(--gold-dark), var(--gold));
+    transform-origin:left center;
+    transform:scaleX(0);
+    transition:transform 0.45s cubic-bezier(.4,0,.2,1);
+  }
+  .ribbon-fill.hide{visibility:hidden;}
+
+  .card-inner{
+    padding:28px 24px 30px;
+  }
+  @media (min-width:480px){
+    .card-inner{padding:38px 40px 40px;}
+  }
+
+  /* ---------- screen transition ---------- */
+  .screen{
+    animation: page-in 0.38s ease-out both;
+  }
+  @keyframes page-in{
+    from{opacity:0; transform:translateX(28px);}
+    to{opacity:1; transform:translateX(0);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .screen{animation:none;}
+    .ribbon-fill{transition:none;}
+    *{scroll-behavior:auto !important;}
+  }
+
+  /* ---------- typography helpers ---------- */
+  .eyebrow{
+    display:inline-block;
+    font-size:0.72rem;
+    font-weight:800;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#7A5216;
+    background:#FBF1DF;
+    padding:4px 10px;
+    border-radius:999px;
+    margin-bottom:14px;
+  }
+
+  h1.headline{
+    font-size:1.55rem;
+    line-height:1.28;
+    font-weight:800;
+    margin-bottom:12px;
+  }
+  @media (min-width:480px){
+    h1.headline{font-size:1.85rem;}
+  }
+
+  h2.headline{
+    font-size:1.35rem;
+    line-height:1.3;
+    font-weight:800;
+    margin-bottom:10px;
+  }
+
+  .subhead{
+    color:var(--muted);
+    font-size:1rem;
+    margin-bottom:22px;
+  }
+
+  /* ---------- value prop list ---------- */
+  .value-list{
+    list-style:none;
+    margin:0 0 26px;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .value-list li{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    background:var(--paper);
+    border-radius:12px;
+    padding:14px;
+    font-size:0.94rem;
+    color:var(--body);
+  }
+  .value-list .icon-wrap{
+    flex:none;
+    width:30px;height:30px;
+    border-radius:8px;
+    background:#E4EDF6;
+    color:var(--blue);
+    display:flex;align-items:center;justify-content:center;
+  }
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:15px 20px;
+    font-size:1rem;
+    font-weight:800;
+    font-family:'Manrope', sans-serif;
+    cursor:pointer;
+    transition:background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    text-decoration:none;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{
+    background:var(--blue);
+    color:#fff;
+  }
+  .btn-primary:hover{background:var(--blue-dark);}
+  .btn-primary:disabled{
+    background:#9AB4CC;
+    cursor:not-allowed;
+    transform:none;
+  }
+  .btn-secondary{
+    background:#fff;
+    color:var(--blue);
+    border:2px solid var(--blue);
+    padding:13px 20px;
+  }
+  .btn-secondary:hover{background:#EAF1F8;}
+
+  .btn-text{
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-weight:700;
+    font-size:0.92rem;
+    cursor:pointer;
+    padding:10px 4px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .btn-text:hover{color:var(--blue);}
+
+  /* meta pills */
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:16px;
+    justify-content:center;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--paper);
+    border-radius:999px;
+    padding:7px 12px;
+    font-size:0.78rem;
+    font-weight:700;
+    color:var(--muted);
+  }
+  .pill svg{width:14px;height:14px;color:var(--blue);}
+
+  /* ---------- credibility page ---------- */
+  .avatar-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .avatar-circle{
+    flex:none;
+    width:48px;height:48px;
+    border-radius:50%;
+    background:var(--blue);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:1rem;
+  }
+  .avatar-name{font-weight:800; color:var(--ink); font-size:0.95rem;}
+  .avatar-role{font-size:0.82rem; color:var(--muted);}
+
+  .quote-block{
+    font-size:0.98rem;
+    color:var(--body);
+    background:var(--paper);
+    border-left:3px solid var(--gold);
+    border-radius:8px;
+    padding:14px 16px;
+    margin-bottom:22px;
+  }
+
+  .results-checklist{
+    list-style:none;
+    margin:0 0 22px;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .results-checklist li{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    font-size:0.92rem;
+  }
+  .results-checklist .check-icon{
+    flex:none;
+    width:20px;height:20px;
+    color:var(--green);
+    margin-top:2px;
+  }
+
+  .approach-block{
+    font-size:0.92rem;
+    color:var(--muted);
+    margin-bottom:24px;
+  }
+
+  .cta-caption{
+    text-align:center;
+    font-size:0.82rem;
+    color:var(--muted);
+    margin-top:10px;
+  }
+
+  /* ---------- form fields ---------- */
+  .field{
+    margin-bottom:20px;
+  }
+  .field label{
+    display:block;
+    font-weight:700;
+    font-size:0.9rem;
+    color:var(--ink);
+    margin-bottom:7px;
+  }
+  .field .optional-tag{
+    font-weight:600;
+    color:var(--muted);
+    font-size:0.78rem;
+    text-transform:none;
+  }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="tel"]{
+    width:100%;
+    border:2px solid #D8D3C7;
+    border-radius:10px;
+    padding:13px 14px;
+    font-size:1rem;
+    font-family:inherit;
+    color:var(--ink);
+    background:#fff;
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field input.has-error{
+    border-color:var(--red);
+  }
+  .field-error{
+    color:var(--red);
+    font-size:0.82rem;
+    font-weight:700;
+    margin-top:6px;
+    display:none;
+  }
+  .field-error.show{display:block;}
+
+  .grade-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .grade-btn{
+    border:2px solid #D8D3C7;
+    background:#fff;
+    border-radius:12px;
+    padding:16px 10px;
+    font-weight:800;
+    font-family:'Manrope',sans-serif;
+    font-size:0.98rem;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .grade-btn:hover{border-color:var(--blue);}
+  .grade-btn.selected{
+    border-color:var(--blue);
+    background:#EAF1F8;
+    color:var(--blue-dark);
+  }
+
+  .checkbox-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    font-size:0.88rem;
+    color:var(--body);
+    cursor:pointer;
+    border-radius:8px;
+    padding:4px;
+  }
+  .checkbox-row input[type="checkbox"]{
+    flex:none;
+    width:20px;height:20px;
+    margin-top:1px;
+    accent-color:var(--blue);
+  }
+
+  .form-summary-error{
+    color:var(--red);
+    font-weight:700;
+    font-size:0.85rem;
+    margin-top:4px;
+    margin-bottom:12px;
+    display:none;
+    text-align:center;
+  }
+  .form-summary-error.show{display:block;}
+
+  /* ---------- question screens ---------- */
+  .q-progress-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .q-progress-label{
+    font-size:0.78rem;
+    font-weight:800;
+    color:var(--muted);
+    letter-spacing:0.02em;
+  }
+  .q-section-tag{
+    font-size:0.72rem;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--blue);
+    background:#EAF1F8;
+    padding:4px 10px;
+    border-radius:999px;
+  }
+
+  h2.q-text{
+    font-size:1.2rem;
+    line-height:1.35;
+    font-weight:800;
+    margin:14px 0 20px;
+  }
+  @media (min-width:480px){
+    h2.q-text{font-size:1.35rem;}
+  }
+
+  .options-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:22px;
+  }
+
+  .tap-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    width:100%;
+    text-align:left;
+    border:2px solid #D8D3C7;
+    background:#fff;
+    border-radius:12px;
+    padding:15px 16px;
+    font-size:0.96rem;
+    font-weight:700;
+    color:var(--body);
+    cursor:pointer;
+    transition:border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .tap-btn:hover{border-color:var(--blue);}
+  .tap-btn.selected{
+    border-color:var(--blue);
+    background:#EAF1F8;
+    color:var(--blue-dark);
+  }
+
+  .tap-check{
+    flex:none;
+    width:24px;height:24px;
+    border-radius:50%;
+    border:2px solid #D8D3C7;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    transition:border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .tap-btn.selected .tap-check{
+    border-color:var(--blue);
+    background:var(--blue);
+  }
+  .tap-check svg{
+    width:14px;height:14px;
+    transform:scale(0);
+    transition:transform 0.32s cubic-bezier(.34,1.56,.64,1);
+  }
+  .tap-btn.selected .tap-check svg{
+    transform:scale(1);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .tap-check svg{transition:none;}
+  }
+
+  .nav-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .nav-row .btn-primary{width:auto; flex:1;}
+
+  /* ---------- result page ---------- */
+  .band-strip{
+    display:flex;
+    gap:6px;
+    margin-bottom:22px;
+  }
+  .band-seg{
+    flex:1;
+    height:8px;
+    border-radius:999px;
+    background:#E4E0D4;
+    opacity:0.4;
+    transition:opacity 0.2s ease;
+  }
+  .band-seg.active-green{background:var(--green); opacity:1;}
+  .band-seg.active-orange{background:var(--orange); opacity:1;}
+  .band-seg.active-red{background:var(--red); opacity:1;}
+
+  .result-heading{
+    font-size:1.4rem;
+    font-weight:800;
+    margin-bottom:10px;
+    line-height:1.3;
+  }
+  .result-heading.green{color:var(--green);}
+  .result-heading.orange{color:var(--orange);}
+  .result-heading.red{color:var(--red);}
+
+  .result-body{
+    color:var(--body);
+    font-size:0.96rem;
+    margin-bottom:24px;
+  }
+
+  .insight-card{
+    background:var(--paper);
+    border-radius:12px;
+    padding:16px;
+    display:flex;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .insight-num{
+    flex:none;
+    width:26px;height:26px;
+    border-radius:50%;
+    background:var(--blue);
+    color:#fff;
+    font-weight:800;
+    font-size:0.82rem;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Manrope',sans-serif;
+  }
+  .insight-text{font-size:0.9rem; color:var(--body);}
+
+  .result-actions{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:24px;
+  }
+
+  .confirm-msg{
+    background:#EAF1F8;
+    color:var(--blue-dark);
+    border-radius:10px;
+    padding:14px;
+    font-size:0.9rem;
+    font-weight:600;
+    margin-top:14px;
+    display:none;
+  }
+  .confirm-msg.show{display:block;}
+
+  .disclaimer-box{
+    margin-top:26px;
+    padding:14px 16px;
+    background:#F7F1E3;
+    border-radius:10px;
+    font-size:0.82rem;
+    color:var(--muted);
+    line-height:1.5;
+  }
+
+  .contact-footer{
+    margin-top:22px;
+    padding-top:20px;
+    border-top:1px solid #E6E1D4;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    font-size:0.88rem;
+  }
+  .contact-footer a{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:var(--body);
+    font-weight:700;
+    text-decoration:none;
+  }
+  .contact-footer a:hover{color:var(--blue);}
+  .contact-footer svg{width:17px;height:17px;color:var(--blue); flex:none;}
+
+  .start-over-row{
+    text-align:center;
+    margin-top:20px;
+  }
+
+  .visually-hidden{
+    position:absolute;
+    width:1px;height:1px;
+    overflow:hidden;
+    clip:rect(0 0 0 0);
+    white-space:nowrap;
+  }
+
+  footer.page-footer{
+    max-width:640px;
+    width:100%;
+    text-align:center;
+    color:var(--muted);
+    font-size:0.76rem;
+    margin-top:22px;
+    padding:0 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <header class="site-header">
+    <div class="wordmark"><span class="t-local">Local</span><span class="t-tutors">Tutors</span></div>
+    <div class="header-sub">Reading check for Grade 3 to 6</div>
+  </header>
+
+  <div class="book-stage">
+    <div class="book-card">
+      <div class="ribbon-track" id="ribbonTrack">
+        <div class="ribbon-fill" id="ribbonFill"></div>
+      </div>
+      <div class="card-inner" id="cardInner">
+        <!-- screens injected here by JS -->
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    LocalTutors, Upington. This screening tool does not store your answers anywhere except in this browser session, until you choose to submit.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     Icon library (inline SVG, stroke style, currentColor)
+     ========================================================= */
+  var ICONS = {
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>',
+    tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L3 3l.24 6.59a2 2 0 0 0 .58 1.41l9.58 9.58a2 2 0 0 0 2.83 0l6.59-6.59a2 2 0 0 0-.24-2.58z"></path><circle cx="7.5" cy="7.5" r="1.25"></circle></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>',
+    target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg>',
+    compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m14.5 9.5-2 5-4 1.5 2-5z"></path></svg>',
+    signpost: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"></path><path d="M12 6h6l2 2-2 2h-6"></path><path d="M12 12H7l-2 2 2 2h5"></path></svg>',
+    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"></path></svg>',
+    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 6-10 7L2 6"></path></svg>',
+    arrowLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>'
+  };
+
+  /* =========================================================
+     Question bank
+     ========================================================= */
+  var FREQ_OPTS = ["Never","Rarely","Sometimes","Often","Very often"];
+
+  var QUESTIONS = [
+    {
+      id:"q1", section:"Reading check", area:null,
+      text:"When your child reads aloud, how often do they struggle to read words smoothly or pause for a long time?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q2", section:"Reading check", area:"working out unfamiliar words",
+      text:"How often does your child struggle to sound out or figure out unfamiliar words?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q3", section:"Reading check", area:"reading fluency",
+      text:"When reading, how often does your child skip words, add words, or replace a word with a different one?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q4", section:"Reading check", area:"understanding and remembering what is read",
+      text:"After reading a short passage, how often does your child struggle to explain what they have just read?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q5", section:"Reading check", area:"understanding and remembering what is read",
+      text:"How often does your child forget important information shortly after reading it?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q6", section:"Reading check", area:"reading independently",
+      text:"How often does your child need you or another adult to help them understand what they are reading?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q7", section:"Reading check", area:"confidence and willingness to read",
+      text:"How often does your child avoid reading when they are given the opportunity to read?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q8", section:"Reading check", area:"confidence and willingness to read",
+      text:"How often does your child become frustrated, tired, or upset when they have to read?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q9", section:"Reading check", area:"reading in other school subjects",
+      text:"How often does difficulty reading affect your child's ability to complete schoolwork or understand questions in subjects other than English?",
+      options: FREQ_OPTS
+    },
+    {
+      id:"q10", section:"Reading check", area:"reading fluency",
+      text:"Compared with other children in the same grade, how would you describe your child's reading ability?",
+      options:["They are ahead of most children","They are about where I would expect","They are slightly behind","They are significantly behind","I'm not sure"]
+    },
+    {
+      id:"q11", section:"Your situation", area:null, scored:false,
+      text:"Which best describes your child's current reading situation?",
+      options:["They read most things fine, just occasionally hesitant","They can read but avoid it whenever possible","They struggle with most books at their grade level","They're noticeably behind their classmates","I'm honestly not sure how they compare"]
+    },
+    {
+      id:"q12", section:"Your situation", area:null, scored:false,
+      text:"What would you most like to see happen?",
+      options:["Reading becomes less of a fight at home","Their marks in other subjects improve too","They feel confident picking up a book on their own","They catch up to where they should be for their grade","I just want to understand what's really going on"]
+    },
+    {
+      id:"q13", section:"Your situation", area:null, scored:false,
+      text:"What have you already tried that hasn't worked?",
+      options:["Reading with them at home more often","Extra worksheets or workbooks","Asking the school for extra help","Nothing yet, this is the first step"]
+    },
+    {
+      id:"q14", section:"Your situation", area:null, scored:false,
+      text:"What's the biggest thing holding you back from getting help so far?",
+      options:["Not sure it's serious enough to need help","Not sure what kind of help would actually work","Cost of extra lessons or tutoring","Haven't had the time to look into it","Nothing really, just haven't gotten around to it"]
+    }
+  ];
+
+  var Q13_FOLLOWUPS = {
+    "Reading with them at home more often": "which helps, but without knowing exactly which skill to target, it often plateaus rather than closing the gap.",
+    "Extra worksheets or workbooks": "which builds general practice, but generic worksheets don't target the specific area that's actually holding your child back.",
+    "Asking the school for extra help": "which is a great step, but with large class sizes, teachers often can't give the one-on-one attention this needs.",
+    "Nothing yet, this is the first step": "so this assessment is genuinely the starting point. There's no wrong move from here."
+  };
+
+  var Q14_FOLLOWUPS = {
+    "Not sure it's serious enough to need help": "That's exactly what this assessment is meant to answer, without you having to guess.",
+    "Not sure what kind of help would actually work": "The area highlighted above is exactly where a plan would start.",
+    "Cost of extra lessons or tutoring": "A free call costs nothing, and it'll tell you plainly whether support even makes sense before you spend a cent.",
+    "Haven't had the time to look into it": "Fair enough. The free call takes 15 minutes and does the legwork for you.",
+    "Nothing really, just haven't gotten around to it": "No judgment there. This is as good a moment as any to take the next small step."
+  };
+
+  var GUIDE_URL = "https://drive.google.com/file/d/1gkmL6uCsRU9aR3VLuLyyb1meWoKSh-qM/view";
+
+  /* =========================================================
+     State
+     ========================================================= */
+  var state = {
+    screen: "hook", // hook | credibility | details | q0..q13 | result
+    qIndex: 0,
+    parent: { name:"", email:"", grade:"", phone:"", consent:false },
+    answers: {}, // qid -> option text
+    location: null
+  };
+
+  var cardInner = document.getElementById("cardInner");
+  var ribbonFill = document.getElementById("ribbonFill");
+  var ribbonTrack = document.getElementById("ribbonTrack");
+
+  /* =========================================================
+     Silent IP-based location lookup (best-effort, never blocking)
+     ========================================================= */
+  function fetchLocationSilently(){
+    try{
+      fetch("https://ipapi.co/json/", { cache:"no-store" })
+        .then(function(res){ return res.ok ? res.json() : null; })
+        .then(function(data){
+          if(data){
+            state.location = {
+              city: data.city || null,
+              region: data.region || null,
+              country: data.country_name || null,
+              ip: data.ip || null
+            };
+          }
+        })
+        .catch(function(){ /* fail silently, never block the flow */ });
+    }catch(e){ /* fail silently */ }
+  }
+
+  /* =========================================================
+     Helpers
+     ========================================================= */
+  function el(html){
+    var t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+
+  function setRibbon(fraction, visible){
+    if(!visible){
+      ribbonTrack.style.display = "none";
+      return;
+    }
+    ribbonTrack.style.display = "";
+    ribbonFill.style.transform = "scaleX(" + fraction + ")";
+  }
+
+  function render(){
+    cardInner.innerHTML = "";
+    var screenEl;
+    if(state.screen === "hook"){
+      setRibbon(0,false);
+      screenEl = renderHook();
+    } else if(state.screen === "credibility"){
+      setRibbon(0,false);
+      screenEl = renderCredibility();
+    } else if(state.screen === "details"){
+      setRibbon(0,false);
+      screenEl = renderDetails();
+    } else if(state.screen === "question"){
+      var total = QUESTIONS.length;
+      setRibbon((state.qIndex+1)/total, true);
+      screenEl = renderQuestion(state.qIndex);
+    } else if(state.screen === "result"){
+      setRibbon(1,true);
+      screenEl = renderResult();
+    }
+    cardInner.appendChild(screenEl);
+    // move focus to the new screen heading for keyboard/SR users
+    var heading = screenEl.querySelector("h1,h2");
+    if(heading){
+      heading.setAttribute("tabindex","-1");
+      heading.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior: "instant" in window ? "instant" : "auto"});
+  }
+
+  /* =========================================================
+     Screen: Hook
+     ========================================================= */
+  function renderHook(){
+    var wrap = el('<div class="screen"></div>');
+    wrap.innerHTML =
+      '<h1 class="headline" id="hookHeading">Homework time turning into a nightly battle over reading?</h1>' +
+      '<p class="subhead">Answer 10 quick questions and find out why your child might be struggling, plus what to actually do about it.</p>' +
+      '<ul class="value-list">' +
+        '<li><span class="icon-wrap">' + ICONS.compass + '</span><span>Whether your child\'s reading difficulty is typical for their age, or a sign something needs attention</span></li>' +
+        '<li><span class="icon-wrap">' + ICONS.target + '</span><span>The specific area holding them back, whether that\'s sounding out words, understanding what they read, or confidence</span></li>' +
+        '<li><span class="icon-wrap">' + ICONS.signpost + '</span><span>A clear next step for your family, whether that\'s simple practice at home or a bit of extra support</span></li>' +
+      '</ul>' +
+      '<button type="button" class="btn btn-primary" id="startBtn">Start the free assessment</button>' +
+      '<div class="meta-row">' +
+        '<span class="pill">' + ICONS.clock + '3 minutes</span>' +
+        '<span class="pill">' + ICONS.tag + 'No cost</span>' +
+        '<span class="pill">' + ICONS.check + 'Instant recommendations</span>' +
+      '</div>';
+    wrap.querySelector("#startBtn").addEventListener("click", function(){
+      fetchLocationSilently();
+      state.screen = "credibility";
+      render();
+    });
+    return wrap;
+  }
+
+  /* =========================================================
+     Screen: Credibility
+     ========================================================= */
+  function renderCredibility(){
+    var wrap = el('<div class="screen"></div>');
+    wrap.innerHTML =
+      '<h2 class="headline" id="credHeading">Who\'s behind this assessment?</h2>' +
+      '<div class="avatar-row">' +
+        '<div class="avatar-circle" aria-hidden="true">KB</div>' +
+        '<div><div class="avatar-name">Kyle Britz</div><div class="avatar-role">Founder, LocalTutors</div></div>' +
+      '</div>' +
+      '<p class="quote-block">"I studied Industrial Psychology at the University of the Free State, and founded LocalTutors here in Upington because families deserve real results, not just more homework."</p>' +
+      '<ul class="results-checklist">' +
+        '<li><span class="check-icon">' + ICONS.check + '</span><span>A Grade 8 learner went from the start of the year to a 100% mark in Maths</span></li>' +
+        '<li><span class="check-icon">' + ICONS.check + '</span><span>A Grade 3 learner went from failing Maths to passing with a 5 in under 2 months of working with us</span></li>' +
+        '<li><span class="check-icon">' + ICONS.check + '</span><span>A Grade 4 learner who couldn\'t read went to reading on their own within their first month</span></li>' +
+      '</ul>' +
+      '<p class="approach-block">Every learner starts with an assessment like this one. We don\'t guess. We find out exactly where the gap is, build a plan around it, and check on progress every week until it actually moves.</p>' +
+      '<button type="button" class="btn btn-primary" id="credCta">Start the free assessment</button>' +
+      '<p class="cta-caption">Takes 3 minutes, and you\'ll get your results right away.</p>';
+    wrap.querySelector("#credCta").addEventListener("click", function(){
+      state.screen = "details";
+      render();
+    });
+    return wrap;
+  }
+
+  /* =========================================================
+     Screen: Parent details form
+     ========================================================= */
+  function renderDetails(){
+    var wrap = el('<div class="screen"></div>');
+    var p = state.parent;
+
+    wrap.innerHTML =
+      '<h2 class="headline" id="detailsHeading">A few details first</h2>' +
+      '<p class="subhead">So we can send your results and, if you\'d like, follow up.</p>' +
+      '<form id="detailsForm" novalidate>' +
+        '<div class="field">' +
+          '<label for="pName">Your name</label>' +
+          '<input type="text" id="pName" name="pName" autocomplete="name" value="' + escapeHtml(p.name) + '">' +
+          '<div class="field-error" id="pNameError">Please enter your name.</div>' +
+        '</div>' +
+        '<div class="field">' +
+          '<label for="pEmail">Email address</label>' +
+          '<input type="email" id="pEmail" name="pEmail" inputmode="email" autocomplete="email" placeholder="you@example.com" value="' + escapeHtml(p.email) + '">' +
+          '<div class="field-error" id="pEmailError">Please enter a valid email address.</div>' +
+        '</div>' +
+        '<div class="field">' +
+          '<label id="gradeLabel">Child\'s grade</label>' +
+          '<div class="grade-grid" role="group" aria-labelledby="gradeLabel" id="gradeGrid">' +
+            ['Grade 3','Grade 4','Grade 5','Grade 6'].map(function(g){
+              return '<button type="button" class="grade-btn' + (p.grade===g?' selected':'') + '" data-grade="' + g + '" aria-pressed="' + (p.grade===g) + '">' + g + '</button>';
+            }).join('') +
+          '</div>' +
+          '<div class="field-error" id="gradeError">Please select your child\'s grade.</div>' +
+        '</div>' +
+        '<div class="field">' +
+          '<label for="pPhone">Phone or WhatsApp number <span class="optional-tag">(optional)</span></label>' +
+          '<input type="tel" id="pPhone" name="pPhone" inputmode="tel" autocomplete="tel" placeholder="071 842 9367" value="' + escapeHtml(p.phone) + '">' +
+        '</div>' +
+        '<div class="field">' +
+          '<label class="checkbox-row" for="pConsent">' +
+            '<input type="checkbox" id="pConsent" name="pConsent"' + (p.consent ? ' checked' : '') + '>' +
+            '<span>Local Tutors may contact me about my result.</span>' +
+          '</label>' +
+        '</div>' +
+        '<div class="form-summary-error" id="formSummaryError" role="alert">Please fix the highlighted fields above.</div>' +
+        '<button type="submit" class="btn btn-primary">Start the questions</button>' +
+      '</form>';
+
+    var selectedGrade = p.grade;
+    var gradeGrid = wrap.querySelector("#gradeGrid");
+    gradeGrid.addEventListener("click", function(e){
+      var btn = e.target.closest(".grade-btn");
+      if(!btn) return;
+      selectedGrade = btn.getAttribute("data-grade");
+      gradeGrid.querySelectorAll(".grade-btn").forEach(function(b){
+        var isSel = b === btn;
+        b.classList.toggle("selected", isSel);
+        b.setAttribute("aria-pressed", isSel);
+      });
+      wrap.querySelector("#gradeError").classList.remove("show");
+    });
+
+    var form = wrap.querySelector("#detailsForm");
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var nameVal = wrap.querySelector("#pName").value.trim();
+      var emailVal = wrap.querySelector("#pEmail").value.trim();
+      var phoneVal = wrap.querySelector("#pPhone").value.trim();
+      var consentVal = wrap.querySelector("#pConsent").checked;
+
+      var nameInput = wrap.querySelector("#pName");
+      var emailInput = wrap.querySelector("#pEmail");
+      var nameError = wrap.querySelector("#pNameError");
+      var emailError = wrap.querySelector("#pEmailError");
+      var gradeError = wrap.querySelector("#gradeError");
+      var summaryError = wrap.querySelector("#formSummaryError");
+
+      var valid = true;
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      nameInput.classList.remove("has-error");
+      nameError.classList.remove("show");
+      emailInput.classList.remove("has-error");
+      emailError.classList.remove("show");
+      gradeError.classList.remove("show");
+      summaryError.classList.remove("show");
+
+      if(nameVal.length === 0){
+        nameInput.classList.add("has-error");
+        nameError.classList.add("show");
+        valid = false;
+      }
+      if(emailVal.length === 0 || !emailPattern.test(emailVal)){
+        emailInput.classList.add("has-error");
+        emailError.classList.add("show");
+        valid = false;
+      }
+      if(!selectedGrade){
+        gradeError.classList.add("show");
+        valid = false;
+      }
+
+      if(!valid){
+        summaryError.classList.add("show");
+        return;
+      }
+
+      state.parent = {
+        name: nameVal,
+        email: emailVal,
+        grade: selectedGrade,
+        phone: phoneVal,
+        consent: consentVal
+      };
+      state.screen = "question";
+      state.qIndex = 0;
+      render();
+    });
+
+    return wrap;
+  }
+
+  /* =========================================================
+     Screen: Question
+     ========================================================= */
+  function renderQuestion(index){
+    var q = QUESTIONS[index];
+    var wrap = el('<div class="screen"></div>');
+    var selected = state.answers[q.id] || null;
+
+    var optionsHtml = q.options.map(function(opt){
+      var isSel = selected === opt;
+      return '<button type="button" class="tap-btn' + (isSel?' selected':'') + '" data-opt="' + escapeHtml(opt) + '" aria-pressed="' + isSel + '">' +
+        '<span>' + escapeHtml(opt) + '</span>' +
+        '<span class="tap-check" aria-hidden="true">' + ICONS.check + '</span>' +
+      '</button>';
+    }).join('');
+
+    wrap.innerHTML =
+      '<div class="q-progress-row">' +
+        '<span class="q-progress-label">Question ' + (index+1) + ' of ' + QUESTIONS.length + '</span>' +
+        '<span class="q-section-tag">' + escapeHtml(q.section) + '</span>' +
+      '</div>' +
+      '<h2 class="q-text" id="qHeading' + index + '">' + escapeHtml(q.text) + '</h2>' +
+      '<div class="options-list" id="optionsList" role="group" aria-labelledby="qHeading' + index + '">' + optionsHtml + '</div>' +
+      '<div class="nav-row">' +
+        (index > 0
+          ? '<button type="button" class="btn-text" id="backBtn">' + ICONS.arrowLeft + 'Back</button>'
+          : '<span></span>') +
+      '</div>';
+
+    var optionsList = wrap.querySelector("#optionsList");
+    optionsList.addEventListener("click", function(e){
+      var btn = e.target.closest(".tap-btn");
+      if(!btn) return;
+      var val = btn.getAttribute("data-opt");
+      state.answers[q.id] = val;
+      optionsList.querySelectorAll(".tap-btn").forEach(function(b){
+        var isSel = b === btn;
+        b.classList.toggle("selected", isSel);
+        b.setAttribute("aria-pressed", isSel);
+      });
+      // small delay so the user sees the selection state before advancing
+      window.setTimeout(function(){
+        advanceQuestion(index);
+      }, 220);
+    });
+
+    var backBtn = wrap.querySelector("#backBtn");
+    if(backBtn){
+      backBtn.addEventListener("click", function(){
+        state.qIndex = index - 1;
+        render();
+      });
+    }
+
+    return wrap;
+  }
+
+  function advanceQuestion(index){
+    if(index < QUESTIONS.length - 1){
+      state.qIndex = index + 1;
+      render();
+    } else {
+      state.screen = "result";
+      render();
+    }
+  }
+
+  /* =========================================================
+     Scoring
+     ========================================================= */
+  var FREQ_SCORE = { "Never":0, "Rarely":1, "Sometimes":2, "Often":3, "Very often":4 };
+  var Q10_SCORE = {
+    "They are ahead of most children":0,
+    "They are about where I would expect":1,
+    "I'm not sure":2,
+    "They are slightly behind":3,
+    "They are significantly behind":4
+  };
+
+  function computeScore(){
+    var total = 0;
+    var highCount = 0; // count of Q1-Q10 scoring 3 or 4
+    var areaScores = {}; // area -> summed score, from Q2-Q10
+
+    for(var i=0;i<10;i++){
+      var q = QUESTIONS[i];
+      var answer = state.answers[q.id];
+      var score;
+      if(q.id === "q10"){
+        score = Q10_SCORE.hasOwnProperty(answer) ? Q10_SCORE[answer] : 0;
+      } else {
+        score = FREQ_SCORE.hasOwnProperty(answer) ? FREQ_SCORE[answer] : 0;
+      }
+      total += score;
+      if(score >= 3) highCount++;
+      if(i >= 1 && q.area){ // Q2-Q10 -> index 1..9
+        areaScores[q.area] = (areaScores[q.area] || 0) + score;
+      }
+    }
+
+    var band;
+    if(total <= 12) band = "green";
+    else if(total <= 23) band = "orange";
+    else band = "red";
+
+    if(highCount >= 2 && band === "green") band = "orange";
+    if(highCount >= 5) band = "red";
+
+    // find top area
+    var topArea = null, topScore = -1, tie = false;
+    Object.keys(areaScores).forEach(function(area){
+      if(areaScores[area] > topScore){
+        topScore = areaScores[area];
+        topArea = area;
+        tie = false;
+      } else if(areaScores[area] === topScore){
+        tie = true;
+      }
+    });
+    // require some meaningful signal, not just "anything above zero counts as standing out"
+    if(topScore <= 0 || tie){
+      topArea = null;
+    }
+
+    return { total: total, band: band, highCount: highCount, topArea: topArea, areaScores: areaScores };
+  }
+
+  /* =========================================================
+     Screen: Result
+     ========================================================= */
+  var BAND_CONTENT = {
+    green: {
+      heading: "Good news, reading looks like it's on track.",
+      body: "Nothing in your answers points to significant reading difficulty right now. Reading still grows fastest with regular practice, so the free guide below has short daily activities you can start using at home."
+    },
+    orange: {
+      heading: "There's a clear opportunity to get ahead of this.",
+      body: "It looks like your child is running into some real challenges with reading. The good news is that targeted practice in the right area tends to show up as a noticeable difference within a term."
+    },
+    red: {
+      heading: "Worth addressing soon, and it's very fixable.",
+      body: "A few areas stood out clearly in your answers. This screening can't diagnose a learning difficulty, but it's a strong enough signal that it's worth looking into properly, sooner rather than later."
+    }
+  };
+
+  var submissionSent = false;
+
+  function renderResult(){
+    var wrap = el('<div class="screen"></div>');
+    var scoring = computeScore();
+    var band = scoring.band;
+    var content = BAND_CONTENT[band];
+
+    var q12Answer = state.answers["q12"] || "";
+    var q13Answer = state.answers["q13"] || "";
+    var q14Answer = state.answers["q14"] || "";
+
+    // Insight 1
+    var insight1;
+    if(scoring.topArea){
+      insight1 = 'Out of everything you told us, <strong>' + escapeHtml(scoring.topArea) + '</strong> stood out the most. That\'s the clearest place to start.';
+    } else {
+      insight1 = 'Nothing in particular stood out more than anything else, which is actually a good sign.';
+    }
+
+    // Insight 2
+    var insight2;
+    var q12Lower = q12Answer ? q12Answer.charAt(0).toLowerCase() + q12Answer.slice(1) : "";
+    if(scoring.topArea){
+      insight2 = 'You said you\'d most like to see "' + escapeHtml(q12Lower) + '." That fits well with working on ' + escapeHtml(scoring.topArea) + ' first, since that\'s usually where a plan like this would begin.';
+    } else {
+      insight2 = 'You said you\'d most like to see "' + escapeHtml(q12Lower) + '." That\'s a great goal to keep in view as you decide on next steps.';
+    }
+
+    // Insight 3
+    var q13Follow = Q13_FOLLOWUPS[q13Answer] || "";
+    var q14Follow = Q14_FOLLOWUPS[q14Answer] || "";
+    var insight3Parts = [];
+    if(q13Answer){
+      insight3Parts.push('You mentioned trying "' + escapeHtml(q13Answer.charAt(0).toLowerCase() + q13Answer.slice(1)) + '," ' + q13Follow);
+    }
+    if(q14Answer){
+      insight3Parts.push(q14Follow);
+    }
+    var insight3 = insight3Parts.join(' ');
+    if(!insight3){
+      insight3 = "Whatever you've tried so far, this assessment is a solid next step toward understanding what will actually help.";
+    }
+
+    var bandStripHtml =
+      '<div class="band-strip" aria-hidden="true">' +
+        '<div class="band-seg' + (band==='green' ? ' active-green' : '') + '"></div>' +
+        '<div class="band-seg' + (band==='orange' ? ' active-orange' : '') + '"></div>' +
+        '<div class="band-seg' + (band==='red' ? ' active-red' : '') + '"></div>' +
+      '</div>';
+
+    var actionsHtml = "";
+    if(band === "green"){
+      actionsHtml = '<a class="btn btn-primary" href="' + GUIDE_URL + '" target="_blank" rel="noopener" id="guideBtn">Download the free reading guide</a>';
+    } else if(band === "orange"){
+      actionsHtml =
+        '<a class="btn btn-secondary" href="' + GUIDE_URL + '" target="_blank" rel="noopener" id="guideBtn">Download the free reading guide</a>' +
+        '<button type="button" class="btn btn-primary" id="bookBtn">Book a free call</button>';
+    } else {
+      actionsHtml =
+        '<button type="button" class="btn btn-primary" id="bookBtn">Book a free call</button>' +
+        '<a class="btn btn-secondary" href="' + GUIDE_URL + '" target="_blank" rel="noopener" id="guideBtn">Download the free reading guide</a>';
+    }
+
+    wrap.innerHTML =
+      bandStripHtml +
+      '<h2 class="result-heading ' + band + '" id="resultHeading">' + escapeHtml(content.heading) + '</h2>' +
+      '<p class="result-body">' + escapeHtml(content.body) + '</p>' +
+      '<div class="insight-card"><span class="insight-num" aria-hidden="true">1</span><span class="insight-text">' + insight1 + '</span></div>' +
+      '<div class="insight-card"><span class="insight-num" aria-hidden="true">2</span><span class="insight-text">' + insight2 + '</span></div>' +
+      '<div class="insight-card"><span class="insight-num" aria-hidden="true">3</span><span class="insight-text">' + insight3 + '</span></div>' +
+      '<div class="result-actions">' + actionsHtml + '</div>' +
+      '<div class="confirm-msg" id="confirmMsg" role="status">Thanks, we\'ve got your request. Someone from the LocalTutors team will be in touch soon.</div>' +
+      '<div class="disclaimer-box">This is a screening questionnaire, not a diagnosis. It cannot tell you whether your child has dyslexia or a learning difficulty, and it will never claim to.</div>' +
+      '<div class="contact-footer">' +
+        '<a href="tel:+27697346705">' + ICONS.phone + '069 734 6705</a>' +
+        '<a href="mailto:localtutors.upington@gmail.com">' + ICONS.mail + 'localtutors.upington@gmail.com</a>' +
+      '</div>' +
+      '<div class="start-over-row"><button type="button" class="btn-text" id="startOverBtn">Start over</button></div>';
+
+    var bookBtn = wrap.querySelector("#bookBtn");
+    if(bookBtn){
+      bookBtn.addEventListener("click", function(){
+        if(submissionSent) return;
+        bookBtn.disabled = true;
+        bookBtn.textContent = "Sending...";
+        window.setTimeout(function(){
+          submitBooking(scoring);
+          bookBtn.textContent = "Request sent";
+          wrap.querySelector("#confirmMsg").classList.add("show");
+        }, 1100);
+      });
+    }
+
+    wrap.querySelector("#startOverBtn").addEventListener("click", function(){
+      resetFlow();
+    });
+
+    return wrap;
+  }
+
+  function submitBooking(scoring){
+    submissionSent = true;
+    var payload = {
+      submittedAt: new Date().toISOString(),
+      parent: state.parent,
+      location: state.location,
+      score: {
+        total: scoring.total,
+        band: scoring.band,
+        topArea: scoring.topArea,
+        areaScores: scoring.areaScores
+      },
+      answers: QUESTIONS.map(function(q){
+        return { id: q.id, question: q.text, answer: state.answers[q.id] || null, section: q.section };
+      })
+    };
+    // TODO: once a backend exists, POST this payload there so it can email
+    // localtutors.upington@gmail.com with the new lead and result details.
+    console.log("LocalTutors Reading Check submission:", payload);
+  }
+
+  /* =========================================================
+     Reset
+     ========================================================= */
+  function resetFlow(){
+    state.screen = "hook";
+    state.qIndex = 0;
+    state.parent = { name:"", email:"", grade:"", phone:"", consent:false };
+    state.answers = {};
+    submissionSent = false;
+    render();
+  }
+
+  /* =========================================================
+     Init
+     ========================================================= */
+  render();
+})();
+</script>
+</body>
+</html>
