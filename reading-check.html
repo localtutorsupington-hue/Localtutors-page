@@ -359,7 +359,7 @@
     flex:none;
     width:48px;height:48px;
     border-radius:50%;
-    background:var(--blue);
+    background:linear-gradient(135deg, var(--blue), var(--blue-dark));
     color:#fff;
     display:flex;align-items:center;justify-content:center;
     font-family:'Manrope',sans-serif;
@@ -370,13 +370,25 @@
   .avatar-role{font-size:0.82rem; color:var(--muted);}
 
   .quote-block{
+    position:relative;
     font-size:0.98rem;
     color:var(--body);
     background:var(--paper);
     border-left:3px solid var(--gold);
     border-radius:8px;
-    padding:14px 16px;
+    padding:14px 16px 14px 40px;
     margin-bottom:22px;
+  }
+  .quote-block::before{
+    content:"\201C";
+    position:absolute;
+    top:2px;
+    left:12px;
+    font-family:Georgia, 'Times New Roman', serif;
+    font-size:2.4rem;
+    line-height:1;
+    color:var(--gold);
+    opacity:0.45;
   }
 
   .results-checklist{
@@ -476,7 +488,7 @@
     cursor:pointer;
     transition:border-color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
   }
-  .grade-btn:hover{border-color:var(--blue);}
+  .grade-btn:hover{border-color:var(--blue); transform:translateY(-1px);}
   .grade-btn:active{transform:scale(0.98);}
   .grade-btn.selected{
     border-color:var(--blue);
@@ -572,7 +584,7 @@
     cursor:pointer;
     transition:border-color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
   }
-  .tap-btn:hover{border-color:var(--blue);}
+  .tap-btn:hover{border-color:var(--blue); transform:translateY(-1px);}
   .tap-btn:active{transform:scale(0.98);}
   .tap-btn.selected{
     border-color:var(--blue);
@@ -659,7 +671,7 @@
     flex:none;
     width:26px;height:26px;
     border-radius:50%;
-    background:var(--blue);
+    background:linear-gradient(135deg, var(--blue), var(--blue-dark));
     color:#fff;
     font-weight:800;
     font-size:0.82rem;
