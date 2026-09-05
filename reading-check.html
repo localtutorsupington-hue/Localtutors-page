@@ -1420,8 +1420,14 @@
     return wrap;
   }
 
+  function formatLocation(location){
+    if(!location) return "Not available";
+    var parts = [location.city, location.region, location.country].filter(Boolean);
+    return parts.length ? parts.join(", ") : "Not available";
+  }
+
   function submitBooking(scoring){
-    var payload = {
+    var fullPayload = {
       submittedAt: new Date().toISOString(),
       parent: state.parent,
       location: state.location,
@@ -1435,13 +1441,40 @@
         return { id: q.id, question: q.text, answer: state.answers[q.id] || null, section: q.section };
       })
     };
-    console.log("LocalTutors Reading Check submission:", payload);
+    console.log("LocalTutors Reading Check submission:", fullPayload);
+
+    // Formspree renders each top-level key as a labelled row in the
+    // notification email, so the payload sent here is deliberately flat
+    // and human-readable rather than the nested object logged above.
+    // _subject sets the email subject line; a field literally named
+    // "email" is auto-detected by Formspree as the reply-to address.
+    var answersText = QUESTIONS.map(function(q, i){
+      var answer = state.answers[q.id] || "(no answer)";
+      return "Q" + (i + 1) + " [" + q.section + "] " + q.text + "\n    -> " + answer;
+    }).join("\n\n");
+
+    var formPayload = {
+      _subject: "New call booking: " + state.parent.name + " (" + scoring.band.toUpperCase() + " band, Grade " + state.parent.grade.replace("Grade ", "") + ")",
+      "Request type": "Book a free call",
+      "Parent name": state.parent.name,
+      "Parent email": state.parent.email,
+      "Parent phone": state.parent.phone || "Not provided",
+      "Child's grade": state.parent.grade,
+      "OK to contact": state.parent.consent ? "Yes" : "No",
+      "Result band": scoring.band.toUpperCase(),
+      "Top concern area": scoring.topArea || "Nothing stood out clearly",
+      "Approx. location (IP-based)": formatLocation(state.location),
+      "Submitted at": fullPayload.submittedAt,
+      "Full answers": answersText,
+      email: state.parent.email
+    };
+
     // POSTs the submission to Formspree, which forwards it by email to
     // localtutors.upington@gmail.com. See https://formspree.io/forms.
     return fetch(FORMSPREE_ENDPOINT, {
       method: "POST",
       headers: { "Accept": "application/json", "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(formPayload)
     }).then(function(res){
       if(!res.ok){
         throw new Error("Formspree responded with status " + res.status);
