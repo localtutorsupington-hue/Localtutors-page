@@ -39,7 +39,7 @@ function serve(){
 }
 
 let browser, BASE;
-const outside = [];
+const outside = [], supabaseCalls = [];
 async function newPage(width = 390, height = 844){
   const ctx = await browser.newContext({ viewport: { width, height } });
   const page = await ctx.newPage();
@@ -50,6 +50,8 @@ async function newPage(width = 390, height = 844){
     const u = route.request().url();
     if (u.startsWith(BASE)) return route.continue();
     if (u.startsWith("https://fonts.googleapis.com/")) return route.fulfill({ status: 200, contentType: "text/css", body: "" });
+    /* Never write test rows to the real sign-up database: answer as Supabase would and count the calls. */
+    if (/\.supabase\.co\/rest\/v1\//.test(u)){ supabaseCalls.push(u); return route.fulfill({ status: 201, body: "" }); }
     outside.push(u);
     return route.abort();
   });
@@ -546,6 +548,7 @@ async function check12(){
 
   const off = await newPage();
   await off.goto(BASE + "/index.html");
+  await off.evaluate("CONFIG.supabaseUrl = ''");
   await startWith(off, "Liam");
   const sentNothing = !outside.length;
   pass = pass && sentNothing;
@@ -573,6 +576,7 @@ async function check12(){
     srv.close();
   }
   console.log(`\nRequests outside localhost and Google Fonts: ${outside.length ? [...new Set(outside)].join(", ") : "none"}`);
+  console.log(`Sign-up saves answered by the test stub instead of the real database: ${supabaseCalls.length}`);
   const failed = results.filter(r => !r.pass);
   console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
   process.exit(failed.length || outside.length ? 1 : 0);
