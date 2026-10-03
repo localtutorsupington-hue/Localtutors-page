@@ -81,11 +81,16 @@ async function answerAll(page, plan){
   await page.waitForFunction('S.screen === "analysing"');
   await page.waitForFunction('S.screen === "report"', null, { timeout: 5000 });
 }
+async function fillSignup(page, child){
+  await page.fill("#nm", child);
+  await page.fill("#pn", "Sarah Botha");
+  await page.fill("#em", "sarah@example.com");
+}
 async function startWith(page, name, lang = "en"){
   await page.goto(BASE + "/index.html");
   if (lang === "af") await page.click('.lang [data-l="af"]');
-  await page.fill("#nm", name);
-  await page.press("#nm", "Enter");
+  await fillSignup(page, name);
+  await page.press("#em", "Enter"); await page.press("#wa", "Enter");
   await page.waitForFunction('S.screen === "q"');
 }
 /* Put the page straight onto a report with a given plan, without clicking through. */
@@ -145,7 +150,7 @@ async function check2(){
     await page.goto(BASE + "/index.html");
     await page.click('[data-act="toggle-paste"]');
     await measure("welcome");
-    await page.fill("#nm", "Bartholomewsandersen");
+    await fillSignup(page, "Bartholomewsandersen");
     await page.click('[data-act="start"]');
     await page.click('[data-act="choose"][data-j="0"]');
     await measure("question 1 + confidence panel");
@@ -172,8 +177,8 @@ async function check3(){
   await page.goto(BASE + "/index.html");
   await page.click('[data-act="start"]');
   const errShown = await page.isVisible(".err-msg");
-  await page.fill("#nm", "Liam");
-  await page.press("#nm", "Enter");
+  await fillSignup(page, "Liam");
+  await page.press("#em", "Enter"); await page.press("#wa", "Enter");
   await page.waitForFunction('S.screen === "q"');
   await page.click('[data-act="back"]');
   const backToWelcome = await page.evaluate('S.screen === "welcome"');
@@ -388,7 +393,7 @@ async function check9(){
   await page.click('[data-act="toggle-paste"]');
   await page.fill("#pc", "x"); await page.click('[data-act="open-code"]');
   await scan("welcome (name error, code card open)");
-  await page.fill("#nm", "Liam"); await page.click('[data-act="start"]');
+  await fillSignup(page, "Liam"); await page.click('[data-act="start"]');
   await page.click('[data-act="choose"][data-j="1"]');
   await scan("question 1 + confidence panel");
   await page.evaluate("S.qi = 6; render(true)"); await scan("question 7 (Vereenvoudig)");
@@ -441,7 +446,7 @@ async function check10(){
   await page.goto(BASE + "/index.html");
   await page.click('[data-act="toggle-paste"]');
   await measure("welcome");
-  await page.fill("#nm", "Liam"); await page.click('[data-act="start"]');
+  await fillSignup(page, "Liam"); await page.click('[data-act="start"]');
   await page.click('[data-act="choose"][data-j="0"]');
   await measure("question + confidence panel");
   await setReport(page, MIX, "Liam");
@@ -490,13 +495,76 @@ async function check11(){
   await page.context().close();
 }
 
+/* ===== 12. Parent sign-up and saving ===== */
+async function check12(){
+  const rows = []; let pass = true;
+  const page = await newPage();
+  await page.goto(BASE + "/index.html");
+  await page.click('[data-act="start"]');
+  const errs = await page.evaluate(() => [...document.querySelectorAll(".err-msg")].map(e => e.id.replace("-err", "")).join(","));
+  pass = pass && errs === "nm,pn,em";
+  rows.push(`empty form: errors on ${errs} (WhatsApp is optional)`);
+  await page.fill("#nm", "Liam"); await page.fill("#pn", "Sarah Botha"); await page.fill("#em", "sarah@"); await page.fill("#wa", "abc");
+  await page.click('[data-act="start"]');
+  const errs2 = await page.evaluate(() => [...document.querySelectorAll(".err-msg")].map(e => e.id.replace("-err", "")).join(","));
+  pass = pass && errs2 === "em,wa";
+  rows.push(`bad email + bad WhatsApp: errors on ${errs2}`);
+
+  const runWith = async (status) => {
+    const reqs = [];
+    await page.goto(BASE + "/index.html");
+    await page.route("https://db.example.test/**", route => {
+      const r = route.request();
+      reqs.push({ table: new URL(r.url()).pathname, key: r.headers()["apikey"], body: JSON.parse(r.postData()) });
+      return route.fulfill({ status, body: "" });
+    });
+    await page.evaluate("CONFIG.supabaseUrl = 'https://db.example.test'; CONFIG.supabaseKey = 'sb_publishable_test'");
+    await fillSignup(page, "Liam"); await page.fill("#wa", "082 123 4567");
+    await page.click('[data-act="start"]');
+    for (let i = 0; i < 12; i++){ await page.waitForFunction(`S.screen === "q" && S.qi === ${i}`); await page.click('[data-act="idk"]'); }
+    await page.waitForFunction('S.screen === "report"', null, { timeout: 5000 });
+    await page.click('.lang [data-l="af"]'); await page.click('.lang [data-l="en"]');
+    await page.waitForTimeout(status >= 400 ? 3500 : 600);
+    const code = await page.evaluate("encode()");
+    await page.unroute("https://db.example.test/**");
+    return { reqs, code };
+  };
+
+  let { reqs, code } = await runWith(201);
+  const lead = reqs.find(r => r.table === "/rest/v1/leads"), res = reqs.filter(r => r.table === "/rest/v1/lead_results");
+  const leadOk = lead && lead.key === "sb_publishable_test" && lead.body.child_name === "Liam" && lead.body.parent_name === "Sarah Botha" && lead.body.email === "sarah@example.com" && lead.body.whatsapp === "082 123 4567" && lead.body.lang === "en";
+  const resOk = res.length === 1 && res[0].body.lead_id === lead.body.id && res[0].body.report_code === code && res[0].body.result_type === "B" && res[0].body.score === 0;
+  pass = pass && leadOk && resOk && reqs.length === 2;
+  rows.push(`sign-up saved: ${leadOk} ${JSON.stringify({ ...lead.body, id: "<uuid>" })}`);
+  rows.push(`result saved once, linked to the sign-up: ${resOk} (requests: ${reqs.map(r => r.table.split("/").pop()).join(", ")}, language switched twice on the report)`);
+
+  ({ reqs } = await runWith(500));
+  const reached = await page.evaluate('S.screen');
+  const tries = reqs.filter(r => r.table === "/rest/v1/leads").length;
+  pass = pass && reached === "report" && tries === 2;
+  rows.push(`database down (HTTP 500): learner still reaches the ${reached}, sign-up tried ${tries} times`);
+
+  const off = await newPage();
+  await off.goto(BASE + "/index.html");
+  await startWith(off, "Liam");
+  const sentNothing = !outside.length;
+  pass = pass && sentNothing;
+  rows.push(`no CONFIG.supabaseUrl: nothing sent anywhere: ${sentNothing}`);
+  /* The browser logs each simulated HTTP 500 as a failed resource; anything else is a real error. */
+  const real = [...page.errors, ...off.errors].filter(e => !/status of 500/.test(e));
+  if (real.length){ pass = false; rows.push("console errors: " + real.join(" | ")); }
+  else rows.push("console errors: none apart from the simulated 500 responses");
+  record(12, "Parent sign-up and saving", pass, rows.join("\n"));
+  await page.context().close(); await off.context().close();
+}
+
 (async () => {
   const srv = await serve();
   BASE = `http://127.0.0.1:${srv.address().port}`;
   browser = await chromium.launch();
   try {
     check1();
-    for (const fn of [check2, check3, check4, check5, check6, check7, check8, check9, check10, check11]){
+    for (const fn of [check2, check3, check4, check5, check6, check7, check8, check9, check10, check11, check12]){
       try { await fn(); }
       catch (e) { record(+fn.name.slice(5), fn.name, false, "threw: " + (e.stack || e.message).split("\n").slice(0, 4).join(" ")); }
     }

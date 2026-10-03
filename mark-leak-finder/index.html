@@ -307,6 +307,7 @@ main.wide{padding-bottom:110px}
 .r-sticky .btn{min-height:48px}
 .codebox input,.sum-text{font-size:16px}
 .r-id h1{overflow-wrap:anywhere}
+.signup{gap:16px}
 
 /* Motion and interaction polish */
 .back,.link{transition:transform 160ms var(--ease-out),color 160ms ease}
@@ -341,11 +342,13 @@ main.wide{padding-bottom:110px}
 const CONFIG = {
   pageUrl: "https://localtutorsupington-hue.github.io/Localtutors-page/mark-leak-finder/",                      // the live URL of this page, set after hosting. Used to build the results link.
   whatsapp: "27697346705",
-  whatsappShown: "069 734 6705"
+  whatsappShown: "069 734 6705",
+  supabaseUrl: "",                  // Supabase project URL (https://<ref>.supabase.co). Sign-ups and results are saved there. Empty = nothing is saved.
+  supabaseKey: ""                   // the project's publishable (anon) key. Safe in the page: the tables only accept new rows.
 };
 
 /* ===== STATE ===== */
-const S = { lang:"en", screen:"welcome", qi:0, name:"", answers:[], shared:null, doneDay:null, pasteOpen:false, nameErr:false };
+const S = { lang:"en", screen:"welcome", qi:0, name:"", parent:"", email:"", wa:"", errs:{}, leadId:"", saved:"", answers:[], shared:null, doneDay:null, pasteOpen:false };
 function L(en, af){ return S.lang === "af" ? af : en; }
 
 /* ===== ICONS ===== */
@@ -502,6 +505,30 @@ function analyse(){
 }
 
 /* ===== VIEWS ===== */
+const FIELD_ERR = {
+  nm:()=>L("Add your child's first name so LocalTutors knows whose Leak Map it is.","Sit jou kind se voornaam in sodat LocalTutors weet wie se Leak Map dit is."),
+  pn:()=>L("Add your name.","Sit jou naam in."),
+  em:()=>L("Add an email address that works, like you@example.com.","Sit 'n e-posadres in wat werk, soos jy@voorbeeld.com."),
+  wa:()=>L("Check the number, or leave it empty.","Kyk na die nommer, of los dit leeg.")
+};
+function field(id, label, value, attrs){
+  const err = S.errs[id];
+  return `<div class="group">
+      <label class="lab" for="${id}">${label}</label>
+      <input class="field ${err ? "err" : ""}" id="${id}" data-field="${id}" ${attrs} value="${esc(value)}"${err ? ` aria-invalid="true" aria-describedby="${id}-err"` : ""}>
+      ${err ? `<p class="err-msg" id="${id}-err">${FIELD_ERR[id]()}</p>` : ""}
+    </div>`;
+}
+function checkSignup(){
+  const e = {};
+  if (!S.name.trim()) e.nm = 1;
+  if (!S.parent.trim()) e.pn = 1;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(S.email.trim())) e.em = 1;
+  const digits = S.wa.replace(/\D/g, "");
+  if (S.wa.trim() && (digits.length < 9 || digits.length > 15 || /[^\d\s()+-]/.test(S.wa))) e.wa = 1;
+  return e;
+}
+
 function vWelcome(){
   return `<div class="screen">
     <span class="chip">${L("Grade 9 Maths · About 8 minutes","Graad 9 Wiskunde · Sowat 8 minute")}</span>
@@ -511,17 +538,24 @@ function vWelcome(){
     </div>
     <p class="lead">${L("12 quick questions. Not a test, no marks, and nobody at school sees it. At the end you get your own Leak Map and three 20-minute quick wins to start on your biggest leak.",
                         "12 vinnige vrae. Nie 'n toets nie, geen punte nie, en niemand by die skool sien dit nie. Aan die einde kry jy jou eie Leak Map en drie vinnige wenke van 20 minute om jou grootste lek aan te pak.")}</p>
+    <div class="card signup">
+      <div class="group">
+        <p class="eyebrow">${L("For a parent or guardian","Vir 'n ouer of voog")}</p>
+        <p class="small muted">${L("Fill this in first, then hand the phone to your child.","Vul dit eers in en gee dan die foon vir jou kind.")}</p>
+      </div>
+      ${field("nm", L("Your child's first name","Jou kind se voornaam"), S.name, `autocomplete="off" enterkeyhint="next" maxlength="20" placeholder="${L("e.g. Liam","bv. Liam")}"`)}
+      ${field("pn", L("Your name","Jou naam"), S.parent, `autocomplete="name" enterkeyhint="next" maxlength="60" placeholder="${L("e.g. Sarah Botha","bv. Sarah Botha")}"`)}
+      ${field("em", L("Email","E-pos"), S.email, `type="email" inputmode="email" autocomplete="email" enterkeyhint="next" maxlength="120" placeholder="${L("you@example.com","jy@voorbeeld.com")}"`)}
+      ${field("wa", L("WhatsApp number (optional)","WhatsApp-nommer (opsioneel)"), S.wa, `type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="go" maxlength="20" placeholder="${L("e.g. 082 123 4567","bv. 082 123 4567")}"`)}
+      <p class="tiny muted">${L("LocalTutors keeps these details with your child's results so we can help. We don't share them with anyone. Ask us on WhatsApp to delete them at any time.","LocalTutors hou hierdie besonderhede saam met jou kind se uitslae sodat ons kan help. Ons deel dit met niemand nie. Vra ons op WhatsApp om dit enige tyd uit te vee.")}</p>
+    </div>
     <div class="card">
+      <p class="eyebrow">${L("For the learner","Vir die leerder")}</p>
       <ol class="rules">
         <li>${L("Use paper if you want. Work it out properly.","Gebruik papier as jy wil. Werk dit behoorlik uit.")}</li>
         <li>${L("After each answer, tap whether you were sure. Be honest, it makes the map accurate.","Tik ná elke antwoord of jy seker was. Wees eerlik, dit maak die kaart akkuraat.")}</li>
         <li>${L("Don't know? Tap “I don't know yet”. That's a useful answer, not a bad one.","Weet jy nie? Tik “Ek weet nog nie”. Dis 'n nuttige antwoord, nie 'n slegte een nie.")}</li>
       </ol>
-    </div>
-    <div class="group">
-      <label class="lab" for="nm">${L("Your first name","Jou voornaam")}</label>
-      <input class="field ${S.nameErr ? "err" : ""}" id="nm" autocomplete="given-name" maxlength="20" value="${esc(S.name)}" placeholder="${L("e.g. Liam","bv. Liam")}">
-      ${S.nameErr ? `<p class="err-msg">${L("Add your first name so LocalTutors knows whose Leak Map it is.","Sit jou voornaam in sodat LocalTutors weet wie se Leak Map dit is.")}</p>` : ""}
     </div>
     <button type="button" class="btn btn-primary" data-act="start">${L("Start the 12 questions","Begin die 12 vrae")} ${I.arrow}</button>
     <button type="button" class="link" data-act="toggle-paste">${L("LocalTutors: open a report code","LocalTutors: maak 'n verslagkode oop")}</button>
@@ -813,6 +847,29 @@ function waLink(R){
   return `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`;
 }
 
+/* ===== SAVING =====
+   Sign-ups go to Supabase when CONFIG has a URL and key. The tables accept new rows only, nobody can read them
+   back through this key. A failed save never stops the learner. */
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)));
+function post(table, row){
+  if (!CONFIG.supabaseUrl || !CONFIG.supabaseKey) return Promise.resolve(false);
+  const headers = { "Content-Type":"application/json", apikey: CONFIG.supabaseKey, Prefer:"return=minimal" };
+  if (CONFIG.supabaseKey.startsWith("eyJ")) headers.Authorization = "Bearer " + CONFIG.supabaseKey;
+  const send = () => fetch(`${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/${table}`, { method:"POST", headers, body: JSON.stringify(row), keepalive:true }).then(r => r.ok);
+  return send().catch(() => false).then(ok => ok || new Promise(res => setTimeout(res, 1500)).then(send).catch(() => false));
+}
+function saveLead(){
+  S.leadId = uuid(); S.saved = "";
+  S.leadSave = post("leads", { id:S.leadId, child_name:S.name, parent_name:S.parent, email:S.email, whatsapp:S.wa || null, lang:S.lang });
+}
+function saveResult(R){
+  if (S.shared || !S.leadId || S.saved === S.leadId) return;
+  S.saved = S.leadId;
+  const row = { lead_id:S.leadId, report_code:encode(), result_type:R.type, right_answers:R.correct, right_and_sure:R.cnt.solid,
+                score:+((R.cnt.solid + R.cnt.shaky * 0.5) / 12 * 100).toFixed(2), biggest_leak:R.leaking[0] ? R.leaking[0].k : null, lang:S.lang };
+  Promise.resolve(S.leadSave).then(() => post("lead_results", row));
+}
+
 /* ===== WIRING ===== */
 let spy = null, timers = [], anStart = 0, busy = false, ticking = false, lastView = "", spyLock = false, spyRefresh = null;
 const motion = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
@@ -835,7 +892,7 @@ function render(top){
   document.querySelector(".lang").setAttribute("aria-label", L("Language","Taal"));
   if (top) window.scrollTo(0, 0);
   if (S.screen === "analysing") startAnalysing();
-  if (S.screen === "report") wireReport();
+  if (S.screen === "report"){ wireReport(); if (!S.shared) saveResult(analyse()); }
 }
 
 function startAnalysing(){
@@ -940,7 +997,7 @@ async function copyText(text, btn, fallback){
 }
 
 function openShared(d){
-  Object.assign(S, { shared:{ lang:d.lang }, lang:d.lang, answers:d.answers, name:d.name, doneDay:d.day, screen:"report", pasteOpen:false, nameErr:false });
+  Object.assign(S, { shared:{ lang:d.lang }, lang:d.lang, answers:d.answers, name:d.name, doneDay:d.day, screen:"report", pasteOpen:false, errs:{} });
   render(true);
 }
 function fromHash(){
@@ -954,9 +1011,13 @@ function fromHash(){
 }
 
 function start(){
-  const v = ($("nm").value || "").trim();
-  if (!v){ S.name = ""; S.nameErr = true; render(false); $("nm").focus(); return; }
-  Object.assign(S, { name:v, nameErr:false, qi:0, screen:"q" });
+  [["nm","name"],["pn","parent"],["em","email"],["wa","wa"]].forEach(([id, k]) => { const el = $(id); if (el) S[k] = el.value; });
+  S.errs = checkSignup();
+  const first = ["nm","pn","em","wa"].find(k => S.errs[k]);
+  if (first){ render(false); $(first).focus(); return; }
+  S.name = S.name.trim(); S.parent = S.parent.trim(); S.email = S.email.trim(); S.wa = S.wa.trim();
+  saveLead();
+  Object.assign(S, { qi:0, screen:"q" });
   render(true);
   guard();
 }
@@ -1022,7 +1083,7 @@ document.addEventListener("click", (e) => {
       break;
     case "open-code": openCode(); break;
     case "restart":
-      Object.assign(S, { screen:"welcome", qi:0, name:"", answers:[], shared:null, doneDay:null, pasteOpen:false, nameErr:false });
+      Object.assign(S, { screen:"welcome", qi:0, name:"", answers:[], shared:null, doneDay:null, pasteOpen:false, errs:{}, leadId:"", saved:"" });
       history.replaceState(null, "", location.pathname + location.search);
       render(true); break;
   }
@@ -1030,17 +1091,22 @@ document.addEventListener("click", (e) => {
 
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
-  if (e.target.id === "nm"){ e.preventDefault(); start(); }
+  if (e.target.dataset && e.target.dataset.field){
+    e.preventDefault();
+    const order = ["nm","pn","em","wa"], nextField = $(order[order.indexOf(e.target.id) + 1]);
+    if (nextField) nextField.focus(); else start();
+  }
   else if (e.target.id === "pc"){ e.preventDefault(); openCode(); }
 });
 
 document.addEventListener("input", (e) => {
   const t = e.target;
-  if (t.id === "nm"){
-    S.name = t.value;
-    if (S.nameErr && t.value.trim()){
-      S.nameErr = false; t.classList.remove("err");
-      const m = t.parentNode.querySelector(".err-msg"); if (m) m.remove();
+  const k = t.dataset && t.dataset.field;
+  if (k){
+    S[{ nm:"name", pn:"parent", em:"email", wa:"wa" }[k]] = t.value;
+    if (S.errs[k] && !checkSignup()[k]){
+      delete S.errs[k]; t.classList.remove("err"); t.removeAttribute("aria-invalid");
+      const m = $(k + "-err"); if (m) m.remove();
     }
   } else if (t.id === "pc"){ t.classList.remove("err"); $("pc-err").hidden = true; }
 });
