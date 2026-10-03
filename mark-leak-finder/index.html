@@ -28,7 +28,7 @@ h1,h2,h3,p{margin:0}
 h1,h2,h3{font-family:var(--f-display);color:var(--ink);letter-spacing:-0.02em;line-height:1.1;text-wrap:balance}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 input{font:inherit}
-a{color:inherit}
+a{color:inherit;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:8px}
 
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:saturate(1.3) blur(10px);-webkit-backdrop-filter:saturate(1.3) blur(10px)}
@@ -39,11 +39,11 @@ a{color:inherit}
 .brand-name{font-family:var(--f-display);font-weight:800;font-size:17px;color:var(--ink);line-height:1}
 .brand-tag{font-size:11px;font-weight:600;color:var(--muted);line-height:1.3;margin-top:2px}
 .lang{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px}
-.lang button{padding:6px 12px;border-radius:999px;font-size:13px;font-weight:800;color:var(--muted);transition:background-color 180ms ease,color 180ms ease}
+.lang button{padding:6px 12px;border-radius:999px;font-size:13px;font-weight:800;color:var(--muted);transition:background-color 180ms ease,color 180ms ease,transform 160ms var(--ease-out)}
 .lang button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px var(--shadow)}
 
 main{max-width:600px;margin:0 auto;padding-inline:16px;padding-block:16px 56px}
-.screen{display:flex;flex-direction:column;gap:16px;animation:enter 300ms var(--ease-out) both}
+.screen{display:flex;flex-direction:column;gap:16px;animation:enter 300ms var(--ease-out) backwards}
 @keyframes enter{from{opacity:0;transform:translateY(10px)}}
 @keyframes fade{from{opacity:0}}
 
@@ -90,7 +90,7 @@ label.lab{font-size:14px;font-weight:700;color:var(--ink)}
 /* Question */
 .qtop{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .pips{display:flex;gap:4px;flex-wrap:wrap}
-.pips svg{width:11px;height:14px;transition:transform 200ms var(--ease-out)}
+.pips svg{width:11px;height:14px}
 .pips .cur{transform:translateY(-2px)}
 .topic-chip{align-self:flex-start;font-size:12px;font-weight:800;color:var(--accent-text);background:var(--accent-soft);padding:5px 10px;border-radius:999px}
 .qcard{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px 20px;text-align:center;min-width:0}
@@ -108,8 +108,8 @@ sup{font-size:.58em;line-height:0}
 .opt.sel .k{background:var(--accent);color:var(--accent-ink)}
 .opt-idk{justify-content:center;background:transparent;border-style:dashed;color:var(--muted);font-size:16px;min-height:50px}
 .opt-idk.sel{color:var(--accent-text)}
-.conf{background:var(--panel);border:1px solid var(--panel-line);border-radius:18px;padding:16px;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity 200ms var(--ease-out),transform 200ms var(--ease-out)}
-.conf.show{opacity:1;transform:none;pointer-events:auto}
+.conf{background:var(--panel);border:1px solid var(--panel-line);border-radius:18px;padding:16px;opacity:0;transform:translateY(8px);pointer-events:none;visibility:hidden;transition:opacity 200ms var(--ease-out),transform 200ms var(--ease-out),visibility 0s linear 200ms}
+.conf.show{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition-delay:0s}
 .conf-q{font-family:var(--f-display);font-weight:600;font-size:18px;color:#FFFFFF}
 .conf-hint{font-size:13px;color:var(--panel-muted);margin-top:2px}
 .conf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
@@ -129,7 +129,7 @@ sup{font-size:.58em;line-height:0}
 .an-item.done .an-ic svg{opacity:1;transform:none}
 
 /* Report */
-.report>*{animation:enter 360ms var(--ease-out) both}
+.report>*{animation:enter 360ms var(--ease-out) backwards}
 .report>*:nth-child(2){animation-delay:50ms}
 .report>*:nth-child(3){animation-delay:100ms}
 .report>*:nth-child(4){animation-delay:150ms}
@@ -161,7 +161,7 @@ sup{font-size:.58em;line-height:0}
 .mist-row .top{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:700;color:var(--ink)}
 .mist-row .d{font-size:12.5px;color:var(--muted)}
 .bar{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-top:6px}
-.bar i{display:block;height:100%;background:var(--ink);border-radius:99px;transform-origin:left center;animation:grow 700ms var(--ease-out) 300ms both}
+.bar i{display:block;height:100%;background:var(--ink);border-radius:99px;transform-origin:left center;animation:grow 700ms var(--ease-out) 300ms backwards}
 @keyframes grow{from{transform:scaleX(0)}}
 .fix{display:grid;gap:10px}
 .fix-card{border-radius:16px;padding:16px;background:var(--surface-2);display:flex;flex-direction:column;gap:6px}
@@ -240,7 +240,7 @@ main.wide{max-width:780px}
 .r-metric b{font-family:var(--f-display);font-size:24px;font-weight:600;color:var(--accent-text);font-variant-numeric:tabular-nums}
 .r-metric span{font-size:13px;font-weight:600;color:var(--text)}
 .r-bar{height:4px;border-radius:99px;background:var(--tick);margin-top:6px;overflow:hidden}
-.r-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sky),var(--accent));transform-origin:left center;animation:grow 700ms var(--ease-out) 250ms both}
+.r-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sky),var(--accent));transform-origin:left center;animation:grow 700ms var(--ease-out) 250ms backwards}
 .r-cta{background:var(--accent);color:#FFFFFF;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
 .r-cta-eye{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--sky)}
 .r-cta-h{font-family:var(--f-display);font-size:clamp(22px,5.6vw,28px);font-weight:800;color:#FFFFFF;line-height:1.12;text-wrap:balance}
@@ -279,8 +279,8 @@ details.acc:not([open]) summary svg{transform:none}
 .r-nav button.cta.on{background:var(--accent);color:#FFFFFF}
 #r-overview,.r-cta,.panel{scroll-margin-top:130px}
 details.acc{scroll-margin-top:130px!important}
-.r-sticky{position:fixed;left:0;right:0;bottom:0;z-index:25;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);transform:translateY(110%);transition:transform 260ms var(--ease-out)}
-.r-sticky.show{transform:none}
+.r-sticky{position:fixed;left:0;right:0;bottom:0;z-index:25;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);transform:translateY(110%);transition:transform 180ms var(--ease-out)}
+.r-sticky.show{transform:none;transition-duration:260ms}
 .r-sticky-in{max-width:780px;margin:0 auto;display:flex;align-items:center;gap:12px}
 .r-sticky-in span{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.3}
 .r-sticky .btn{width:auto;min-height:46px;padding:10px 16px;font-size:14.5px;flex:none}
@@ -288,7 +288,7 @@ main.wide{padding-bottom:110px}
 @media (max-width:380px){ .r-sticky-in span{display:none} .r-sticky .btn{width:100%} }
 
 @media (prefers-reduced-motion: reduce){
-  .screen,.report>*{animation:fade 200ms ease both}
+  .screen,.report>*{animation:fade 200ms ease backwards}
   .bar i,.r-bar i,.drip{animation:none}
   .r-sticky{transition:none}
   .conf{transform:none}
@@ -300,6 +300,20 @@ main.wide{padding-bottom:110px}
 .r-sticky .btn{min-height:48px}
 .codebox input,.sum-text{font-size:16px}
 .r-id h1{overflow-wrap:anywhere}
+
+/* Motion and interaction polish */
+.back,.link{transition:transform 160ms var(--ease-out),color 160ms ease}
+.back:active,.link:active,.lang button:active{transform:scale(0.97)}
+.conf-row .btn.picked{transform:scale(0.97);box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--sky)}
+.codebox button{min-width:104px}
+.lbl{display:inline-block;transition:opacity 120ms ease,filter 120ms ease}
+.lbl.out{opacity:0;filter:blur(2px)}
+#app.wide .screen{animation-name:fade}
+@media (prefers-reduced-motion: no-preference){
+  #app[data-enter="q"] .screen{animation:enter-q 200ms var(--ease-out) backwards}
+}
+@keyframes enter-q{from{opacity:0;transform:translateY(6px)}}
+#app[data-enter="none"] .screen,#app[data-enter="none"] .report>*,#app[data-enter="none"] .bar i,#app[data-enter="none"] .r-bar i{animation:none}
 </style>
 </head>
 <body>
@@ -793,15 +807,20 @@ function waLink(R){
 }
 
 /* ===== WIRING ===== */
-let spy = null, timers = [], anStart = 0, busy = false, ticking = false;
+let spy = null, timers = [], anStart = 0, busy = false, ticking = false, lastView = "", spyLock = false, spyRefresh = null;
 const motion = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 const $ = (id) => document.getElementById(id);
 
 function render(top){
   timers.forEach(clearTimeout); timers = [];
   if (spy){ spy.disconnect(); spy = null; }
+  spyRefresh = null; unlockSpy();
   document.querySelectorAll("body > .r-sticky").forEach(el => el.remove());
   const app = $("app");
+  /* Entry motion only when the view changes: a language switch or an error message is not an entrance. */
+  const view = S.screen + (S.screen === "q" ? S.qi : "") + (S.shared ? "s" : "");
+  app.dataset.enter = view === lastView ? "none" : S.screen === "q" && lastView.startsWith("q") ? "q" : "";
+  lastView = view;
   app.innerHTML = S.screen === "welcome" ? vWelcome() : S.screen === "q" ? vQ() : S.screen === "analysing" ? vAnalysing() : vReport();
   app.classList.toggle("wide", S.screen === "report");
   document.documentElement.lang = S.lang;
@@ -831,18 +850,34 @@ function wireReport(){
     const chips = [...nav.querySelectorAll("button")], ids = chips.map(b => b.dataset.to), vis = new Set();
     spy = new IntersectionObserver(es => {
       es.forEach(e => e.isIntersecting ? vis.add(e.target.id) : vis.delete(e.target.id));
-      const cur = ids.find(id => vis.has(id));
-      if (!cur) return;
-      chips.forEach(b => {
-        const on = b.dataset.to === cur;
-        if (on && !b.classList.contains("on")) nav.scrollTo({ left: b.offsetLeft - nav.offsetLeft - (nav.clientWidth - b.offsetWidth) / 2, behavior: motion() });
-        b.classList.toggle("on", on);
-        if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
-      });
+      if (!spyLock) spyRefresh();
     }, { rootMargin: "-130px 0px -55% 0px" });
+    spyRefresh = () => { const cur = ids.find(id => vis.has(id)); if (cur) setChip(cur); };
     ids.forEach(id => { const el = $(id); if (el) spy.observe(el); });
   }
   checkSticky();
+}
+
+function setChip(cur){
+  const nav = document.querySelector(".r-nav-in");
+  if (!nav) return;
+  nav.querySelectorAll("button").forEach(b => {
+    const on = b.dataset.to === cur;
+    if (on && !b.classList.contains("on")) nav.scrollTo({ left: b.offsetLeft - nav.offsetLeft - (nav.clientWidth - b.offsetWidth) / 2, behavior: motion() });
+    b.classList.toggle("on", on);
+    if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+  });
+}
+/* After a jump, keep the chip that was asked for (no flicking through every section on the way)
+   until the learner scrolls by hand again. */
+const INTENT = ["wheel", "touchstart", "keydown"];
+function unlockSpy(){
+  INTENT.forEach(ev => window.removeEventListener(ev, unlockSpy));
+  if (spyLock){ spyLock = false; if (spyRefresh) spyRefresh(); }
+}
+function lockSpy(){
+  spyLock = true;
+  INTENT.forEach(ev => window.addEventListener(ev, unlockSpy, { passive:true }));
 }
 
 /* Sticky bar: requestAnimationFrame scroll check. Shown after 500px, hidden while either CTA is on screen. */
@@ -868,11 +903,19 @@ function next(){
 }
 function advance(){ busy = true; setTimeout(() => { busy = false; next(); }, 140); }
 
+/* Copy feedback: the button keeps its width and the label crossfades, so the code field never shifts. */
+function swapLabel(btn, text){
+  let lbl = btn.querySelector(".lbl");
+  if (!lbl){ btn.dataset.orig = btn.textContent; btn.innerHTML = `<span class="lbl">${esc(btn.textContent)}</span>`; lbl = btn.firstChild; }
+  btn.style.minWidth = btn.offsetWidth + "px";
+  lbl.classList.add("out");
+  setTimeout(() => { lbl.textContent = text; lbl.classList.remove("out"); }, 120);
+}
 async function copyText(text, btn, fallback){
-  const orig = btn.textContent;
-  try { await navigator.clipboard.writeText(text); btn.textContent = L("Copied","Gekopieer"); }
-  catch (err) { fallback(); btn.textContent = L("Selected","Gekies"); }
-  setTimeout(() => { btn.textContent = orig; }, 1600);
+  clearTimeout(btn._restore);
+  try { await navigator.clipboard.writeText(text); swapLabel(btn, L("Copied","Gekopieer")); }
+  catch (err) { fallback(); swapLabel(btn, L("Selected","Gekies")); }
+  btn._restore = setTimeout(() => swapLabel(btn, btn.dataset.orig), 1600);
 }
 
 function openShared(d){
@@ -924,6 +967,7 @@ document.addEventListener("click", (e) => {
       const a = S.answers[S.qi];
       if (busy || !a || a.c < 0) return;
       a.sure = t.dataset.v === "1";
+      t.classList.add("picked");
       advance(); break;
     }
     case "idk":
@@ -936,6 +980,7 @@ document.addEventListener("click", (e) => {
       const el = $(t.dataset.to);
       if (!el) return;
       if (el.tagName === "DETAILS") el.open = true;
+      if (document.querySelector(`.r-nav [data-to="${t.dataset.to}"]`)){ setChip(t.dataset.to); lockSpy(); }
       el.scrollIntoView({ behavior: motion(), block:"start" });
       break;
     }
