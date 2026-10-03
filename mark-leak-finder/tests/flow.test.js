@@ -456,13 +456,47 @@ async function check10(){
   await page.context().close();
 }
 
+/* ===== 11. Phone Back during the questions ===== */
+async function check11(){
+  const rows = []; let pass = true;
+  const page = await newPage();
+  await page.goto("about:blank");
+  await startWith(page, "Liam");
+  for (let i = 0; i < 3; i++){
+    await page.waitForFunction(`S.qi === ${i}`);
+    await page.click('[data-act="choose"][data-j="1"]');
+    await page.click('[data-act="sure"][data-v="1"]');
+  }
+  await page.waitForFunction("S.qi === 3");
+  const where = () => page.evaluate(() => S.screen + (S.screen === "q" ? " Q" + (S.qi + 1) : "") + ", " + S.answers.filter(Boolean).length + " answers kept");
+  await page.goBack(); await page.waitForTimeout(150);
+  const a = await where(); pass = pass && a === "q Q3, 3 answers kept";
+  await page.goBack(); await page.waitForTimeout(150);
+  const b = await where(); pass = pass && b === "q Q2, 3 answers kept";
+  rows.push(`at Q4, Back: ${a}`, `Back again: ${b}`);
+  await page.click('[data-act="back"]'); await page.click('[data-act="back"]'); await page.waitForTimeout(150);
+  const c = await where(); pass = pass && c.startsWith("welcome");
+  await page.goBack(); await page.waitForTimeout(300);
+  const left = page.url() === "about:blank"; pass = pass && left;
+  rows.push(`in-app Back to welcome: ${c}`, `Back on welcome leaves the page: ${left}`);
+  await startWith(page, "Liam");
+  for (let i = 0; i < 12; i++){ await page.waitForFunction(`S.screen === "q" && S.qi === ${i}`); await page.click('[data-act="idk"]'); }
+  await page.waitForFunction('S.screen === "report"', null, { timeout: 5000 });
+  await page.goBack(); await page.waitForTimeout(300);
+  const leftReport = page.url() === "about:blank"; pass = pass && leftReport;
+  rows.push(`Back on the report leaves in one press: ${leftReport}`);
+  if (page.errors.length){ pass = false; rows.push("console errors: " + page.errors.join(" | ")); }
+  record(11, "Phone Back during the questions", pass, rows.join("\n"));
+  await page.context().close();
+}
+
 (async () => {
   const srv = await serve();
   BASE = `http://127.0.0.1:${srv.address().port}`;
   browser = await chromium.launch();
   try {
     check1();
-    for (const fn of [check2, check3, check4, check5, check6, check7, check8, check9, check10]){
+    for (const fn of [check2, check3, check4, check5, check6, check7, check8, check9, check10, check11]){
       try { await fn(); }
       catch (e) { record(+fn.name.slice(5), fn.name, false, "threw: " + (e.stack || e.message).split("\n").slice(0, 4).join(" ")); }
     }
