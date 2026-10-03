@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FFFFFF">
+<title>Mark Leak Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF; --shell:#FFFFFF; --surface:#FFFFFF; --surface-2:#F4F6F8; --ink:#111111; --text:#1F2933; --muted:#5B6570; --line:#E7E9ED; --tick:#E6E8EC;
+  --accent:#2563A6; --accent-hover:#1D528A; --accent-ink:#FFFFFF; --accent-text:#2563A6; --accent-soft:#EAF2FB;
+  --sky:#8CC8E8; --sky-ink:#111111;
+  --leak:#C2410C; --leak-soft:#FCEDE4; --warn:#B7791F; --warn-soft:#FBF1DE; --good:#1F7A4D; --good-soft:#E6F3EC;
+  --panel:#111111; --panel-2:#24272B; --panel-line:#3A3F45; --panel-text:#E9E7E1; --panel-muted:#A9B1BA;
+  --drop-empty:#E3E6EA; --shadow:rgba(17,17,17,.06);
+  color-scheme:light;
+  --f-display:"Bricolage Grotesque",Manrope,system-ui,sans-serif;
+  --f-body:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--f-display);color:var(--ink);letter-spacing:-0.02em;line-height:1.1;text-wrap:balance}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input{font:inherit}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:8px}
+
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:saturate(1.3) blur(10px);-webkit-backdrop-filter:saturate(1.3) blur(10px)}
+.topbar-in{max-width:600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{flex:none;width:30px;height:30px;border-radius:9px;background:var(--panel);display:grid;place-items:center}
+.brand-mark svg{width:13px;height:17px}
+.brand-name{font-family:var(--f-display);font-weight:800;font-size:17px;color:var(--ink);line-height:1}
+.brand-tag{font-size:11px;font-weight:600;color:var(--muted);line-height:1.3;margin-top:2px}
+.lang{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.lang button{padding:6px 12px;border-radius:999px;font-size:13px;font-weight:800;color:var(--muted);transition:background-color 180ms ease,color 180ms ease}
+.lang button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px var(--shadow)}
+
+main{max-width:600px;margin:0 auto;padding-inline:16px;padding-block:16px 56px}
+.screen{display:flex;flex-direction:column;gap:16px;animation:enter 300ms var(--ease-out) both}
+@keyframes enter{from{opacity:0;transform:translateY(10px)}}
+@keyframes fade{from{opacity:0}}
+
+.chip{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--text)}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--accent-text)}
+.h1{font-size:clamp(32px,8.8vw,46px);font-weight:800}
+.h2{font-size:clamp(24px,6.4vw,30px);font-weight:800}
+.h3{font-size:19px;font-weight:600}
+.lead{font-size:17px;max-width:62ch}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.tiny{font-size:12.5px}
+.group{display:flex;flex-direction:column;gap:8px}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;padding:14px 20px;border-radius:14px;font-weight:800;font-size:16px;text-decoration:none;text-align:center;transition:transform 160ms var(--ease-out),background-color 180ms ease,border-color 180ms ease}
+.btn:active{transform:scale(0.97)}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-ghost{background:var(--surface);border:1.5px solid var(--line);color:var(--ink)}
+.btn-sky{background:var(--sky);color:var(--sky-ink)}
+.link{align-self:center;font-size:14px;font-weight:700;color:var(--accent-text);text-decoration:underline;text-underline-offset:3px;padding:6px}
+.back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--muted);padding:6px 0}
+@media (hover:hover) and (pointer:fine){
+  .btn-primary:hover{background:var(--accent-hover)}
+  .btn-ghost:hover{border-color:var(--muted)}
+  .opt:hover{border-color:var(--muted)}
+  .back:hover{color:var(--ink)}
+}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card-tint{background:var(--accent-soft);border-color:transparent}
+.panel{background:var(--panel);border:1px solid var(--panel-line);color:var(--panel-text);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.panel h2,.panel h3{color:#FFFFFF}
+
+.rules{display:grid;gap:12px;counter-reset:r;margin:0;padding:0;list-style:none}
+.rules li{display:flex;gap:12px;align-items:flex-start;font-size:15px;min-width:0}
+.rules li::before{counter-increment:r;content:counter(r);flex:none;width:26px;height:26px;border-radius:50%;background:var(--sky);color:var(--sky-ink);font-weight:800;font-size:13px;display:grid;place-items:center;margin-top:1px}
+label.lab{font-size:14px;font-weight:700;color:var(--ink)}
+.field{display:block;width:100%;min-height:52px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:12px 14px;font-size:16px;transition:border-color 160ms ease}
+.field:focus{outline:none;border-color:var(--accent)}
+.field.err{border-color:var(--leak)}
+.err-msg{font-size:13px;font-weight:700;color:var(--leak)}
+
+/* Question */
+.qtop{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pips{display:flex;gap:4px;flex-wrap:wrap}
+.pips svg{width:11px;height:14px;transition:transform 200ms var(--ease-out)}
+.pips .cur{transform:translateY(-2px)}
+.topic-chip{align-self:flex-start;font-size:12px;font-weight:800;color:var(--accent-text);background:var(--accent-soft);padding:5px 10px;border-radius:999px}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px 20px;text-align:center;min-width:0}
+.qprompt{font-size:15px;font-weight:600;color:var(--muted)}
+.qmath{font-size:clamp(30px,9vw,40px);font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.25;margin-top:6px}
+.qword{font-size:19px;font-weight:600;color:var(--ink);line-height:1.45;text-align:left}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.7em;line-height:1.08;margin:0 .08em}
+.fr span:first-child{border-bottom:2px solid currentColor;padding:0 .18em}
+sup{font-size:.58em;line-height:0}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;min-height:58px;font-weight:700;font-size:19px;color:var(--ink);font-variant-numeric:tabular-nums;transition:transform 160ms var(--ease-out),border-color 160ms ease,background-color 160ms ease}
+.opt:active{transform:scale(0.98)}
+.opt .k{flex:none;width:30px;height:30px;border-radius:9px;background:var(--surface-2);display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--muted);transition:background-color 160ms ease,color 160ms ease}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel .k{background:var(--accent);color:var(--accent-ink)}
+.opt-idk{justify-content:center;background:transparent;border-style:dashed;color:var(--muted);font-size:16px;min-height:50px}
+.opt-idk.sel{color:var(--accent-text)}
+.conf{background:var(--panel);border:1px solid var(--panel-line);border-radius:18px;padding:16px;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity 200ms var(--ease-out),transform 200ms var(--ease-out)}
+.conf.show{opacity:1;transform:none;pointer-events:auto}
+.conf-q{font-family:var(--f-display);font-weight:600;font-size:18px;color:#FFFFFF}
+.conf-hint{font-size:13px;color:var(--panel-muted);margin-top:2px}
+.conf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.conf-row .btn{min-height:52px}
+.conf-row .btn-ghost{background:var(--panel-2);border-color:var(--panel-line);color:#FFFFFF}
+
+/* Analysing */
+.an-wrap{padding-top:32px;align-items:center;text-align:center}
+.drip{width:56px;height:72px;animation:bob 1.3s var(--ease-in-out) infinite alternate}
+@keyframes bob{to{transform:translateY(6px)}}
+.an-list{display:grid;gap:14px;width:100%;max-width:340px;text-align:left}
+.an-item{display:flex;align-items:center;gap:12px;font-weight:700;color:var(--ink);opacity:.35;transition:opacity 240ms ease}
+.an-item.done{opacity:1}
+.an-ic{flex:none;width:26px;height:26px;border-radius:50%;background:var(--drop-empty);display:grid;place-items:center;transition:background-color 240ms ease}
+.an-item.done .an-ic{background:var(--accent)}
+.an-ic svg{width:14px;height:14px;color:#FFFFFF;opacity:0;transform:scale(.8);transition:opacity 200ms var(--ease-out),transform 200ms var(--ease-out)}
+.an-item.done .an-ic svg{opacity:1;transform:none}
+
+/* Report */
+.report>*{animation:enter 360ms var(--ease-out) both}
+.report>*:nth-child(2){animation-delay:50ms}
+.report>*:nth-child(3){animation-delay:100ms}
+.report>*:nth-child(4){animation-delay:150ms}
+.report>*:nth-child(5){animation-delay:200ms}
+.report>*:nth-child(n+6){animation-delay:240ms}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface-2);border-radius:14px;padding:12px;min-width:0}
+.stat b{display:block;font-family:var(--f-display);font-size:26px;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;font-weight:600;color:var(--muted)}
+.leak-list{display:flex;flex-direction:column}
+.leak-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.leak-row:first-child{border-top:0;padding-top:2px}
+.leak-row .name{flex:1;min-width:0;font-weight:700;color:var(--ink);font-size:15px}
+.leak-row .name small{display:block;font-weight:500;color:var(--muted);font-size:12.5px;line-height:1.35;margin-top:1px}
+.drops{display:flex;gap:3px;flex:none}
+.drops svg{width:13px;height:17px}
+.lvl{flex:none;font-size:12px;font-weight:800;padding:4px 9px;border-radius:999px;min-width:88px;text-align:center}
+.lvl-0{background:var(--good-soft);color:var(--good)}
+.lvl-1,.lvl-2{background:var(--warn-soft);color:var(--warn)}
+.lvl-3{background:var(--leak-soft);color:var(--leak)}
+.quad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{border-radius:14px;padding:12px;border:1.5px solid transparent;min-width:0}
+.tile b{display:block;font-family:var(--f-display);font-size:30px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.tile .tt{font-weight:800;font-size:13.5px;color:var(--ink);margin-top:6px}
+.tile .td{font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:2px}
+.tile.solid{background:var(--good-soft)} .tile.shaky{background:var(--warn-soft)} .tile.misc{background:var(--leak-soft)} .tile.gap{background:var(--surface-2)}
+.tile.hi{border-color:var(--ink)}
+.mist{display:grid;gap:12px}
+.mist-row .top{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:700;color:var(--ink)}
+.mist-row .d{font-size:12.5px;color:var(--muted)}
+.bar{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--ink);border-radius:99px;transform-origin:left center;animation:grow 700ms var(--ease-out) 300ms both}
+@keyframes grow{from{transform:scaleX(0)}}
+.fix{display:grid;gap:10px}
+.fix-card{border-radius:16px;padding:16px;background:var(--surface-2);display:flex;flex-direction:column;gap:6px}
+.fix-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fix-n{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text)}
+.fix-time{font-size:12px;font-weight:800;color:var(--muted)}
+.fix-card p{font-size:14.5px}
+.fix-warn{font-size:13px;font-weight:600;color:var(--leak);background:var(--leak-soft);padding:8px 10px;border-radius:10px}
+details.answers summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:800;color:var(--ink)}
+details.answers summary::-webkit-details-marker{display:none}
+details.answers summary svg{width:18px;height:18px;flex:none;transition:transform 200ms var(--ease-out)}
+details.answers[open] summary svg{transform:rotate(180deg)}
+.ans{padding:14px 0;border-top:1px solid var(--line)}
+.ans:first-of-type{margin-top:12px}
+.ans .aq{font-weight:700;color:var(--ink);font-size:15px}
+.ans .am{font-size:13.5px;margin-top:4px;color:var(--muted)}
+.ans .am b{color:var(--ink)}
+.ans .ae{font-size:14px;margin-top:6px}
+.tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:1px}
+.tag.solid{background:var(--good-soft);color:var(--good)} .tag.shaky{background:var(--warn-soft);color:var(--warn)} .tag.misc{background:var(--leak-soft);color:var(--leak)} .tag.gap{background:var(--surface-2);color:var(--muted)}
+.send-steps{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.send-steps li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--panel-text)}
+.send-steps svg{flex:none;width:18px;height:18px;color:var(--sky);margin-top:2px}
+.codebox{display:flex;gap:8px;align-items:stretch}
+.codebox input{flex:1;min-width:0;min-height:46px;border-radius:12px;border:1px solid var(--panel-line);background:var(--panel-2);color:#FFFFFF;padding:10px 12px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.codebox button{flex:none;border-radius:12px;background:var(--panel-2);border:1px solid var(--panel-line);color:#FFFFFF;font-weight:800;font-size:14px;padding:0 14px;transition:transform 160ms var(--ease-out)}
+.codebox button:active{transform:scale(0.96)}
+.num{font-weight:800;color:#FFFFFF;user-select:all}
+.disclaim{font-size:12.5px;color:var(--muted);text-align:center;padding-inline:8px}
+.banner{background:var(--accent-soft);border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.banner .meta{font-size:13px;font-weight:700;color:var(--muted)}
+.banner .focus{font-size:14.5px;font-weight:700;color:var(--ink);margin-top:4px}
+.paste{display:flex;flex-direction:column;gap:8px}
+
+
+/* Results */
+main.wide{max-width:780px}
+.r-shell{background:var(--shell);border:1px solid var(--line);border-radius:22px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.r-top{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:6px 4px 4px}
+.r-logo{flex:none;width:52px;height:52px;border-radius:12px;background:var(--panel);display:grid;place-items:center}
+.r-logo svg{width:20px;height:26px}
+.r-id{flex:1;min-width:170px}
+.r-id h1{font-size:22px;font-weight:600;letter-spacing:-0.02em}
+.r-id p{font-size:13.5px;color:var(--muted);margin-top:2px}
+.r-actions{display:grid;grid-template-columns:1fr 1.6fr;gap:8px;width:100%}
+.r-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 14px;border-radius:10px;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;min-width:0;white-space:normal;line-height:1.2;text-align:center;transition:transform 160ms var(--ease-out),border-color 160ms ease}
+.r-btn:active{transform:scale(0.97)}
+.r-btn svg{width:16px;height:16px;flex:none}
+.r-btn.dark{background:var(--panel);border-color:var(--panel);color:#FFFFFF;padding:6px 12px}
+.r-btn-sm{flex:none;min-height:36px;padding:0 12px;font-size:13px}
+.r-row{display:grid;gap:12px}
+.r-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.r-info{display:grid;grid-template-columns:1fr 1fr;gap:18px 16px}
+.r-k{font-size:12px;font-weight:600;color:var(--muted)}
+.r-v{font-size:14px;font-weight:700;color:var(--ink);margin-top:4px;overflow-wrap:break-word}
+.r-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.r-chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;padding:5px 9px;border-radius:8px;border:1px solid transparent}
+.r-chip svg{width:10px;height:13px;flex:none}
+.r-chip.l0 svg{width:12px;height:12px}
+.r-chip.l0{color:var(--good);background:var(--good-soft)}
+.r-chip.l1,.r-chip.l2{color:var(--warn);background:var(--warn-soft)}
+.r-chip.l3{color:var(--leak);background:var(--leak-soft)}
+.r-score{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.r-score-top{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px}
+.r-score-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.r-meter-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px}
+.r-num{display:flex;align-items:baseline;flex:none;font-variant-numeric:tabular-nums}
+.r-num b{font-family:var(--f-display);font-size:54px;font-weight:600;line-height:1;letter-spacing:-0.04em;color:var(--accent-text)}
+.r-num span{font-size:18px;font-weight:600;color:var(--accent-text)}
+.r-num small{font-size:12px;font-weight:600;color:var(--muted);margin-left:6px}
+.r-meter{flex:1;min-width:200px}
+.r-ticks{display:flex;gap:2px;height:24px}
+.r-ticks i{flex:1;border-radius:2px;background:var(--tick)}
+.r-band{background:var(--surface-2);border-top:1px solid var(--line);padding:14px 16px;display:grid;gap:14px}
+.r-metric .top{display:flex;align-items:baseline;gap:6px}
+.r-metric b{font-family:var(--f-display);font-size:24px;font-weight:600;color:var(--accent-text);font-variant-numeric:tabular-nums}
+.r-metric span{font-size:13px;font-weight:600;color:var(--text)}
+.r-bar{height:4px;border-radius:99px;background:var(--tick);margin-top:6px;overflow:hidden}
+.r-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sky),var(--accent));transform-origin:left center;animation:grow 700ms var(--ease-out) 250ms both}
+.r-cta{background:var(--accent);color:#FFFFFF;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.r-cta-eye{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--sky)}
+.r-cta-h{font-family:var(--f-display);font-size:clamp(22px,5.6vw,28px);font-weight:800;color:#FFFFFF;line-height:1.12;text-wrap:balance}
+.r-cta-p{font-size:15px;color:#E4EEF8;max-width:60ch}
+.r-cta-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.r-cta-list li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;font-weight:600;color:#FFFFFF}
+.r-cta-list svg{flex:none;width:18px;height:18px;color:var(--sky);margin-top:2px}
+.r-cta .btn{margin-top:4px}
+.r-cta-note{font-size:12.5px;color:#CFE0F1;text-align:center}
+details.acc{scroll-margin-top:84px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+details.acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px;font-size:15px;font-weight:700;color:var(--ink)}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary svg{width:18px;height:18px;flex:none;color:var(--muted);transform:rotate(180deg);transition:transform 200ms var(--ease-out)}
+details.acc:not([open]) summary svg{transform:none}
+.acc-body{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px}
+.r-p{font-size:15px;color:var(--text);max-width:68ch}
+.acc-body .ans:first-of-type{margin-top:0}
+.banner{border-radius:16px}
+.banner-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sum-text{display:none;width:100%;min-height:150px;margin-top:8px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
+.sum-text.show{display:block}
+@media (min-width:600px){
+  .r-shell{padding:20px}
+  .r-actions{display:flex;width:auto}
+  .r-info{grid-template-columns:repeat(4,1fr)}
+  .r-band{grid-template-columns:repeat(3,1fr)}
+}
+
+.r-nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);z-index:15;background:var(--bg);margin-inline:-16px;padding:6px 16px 8px;border-bottom:1px solid var(--line)}
+.r-nav-in{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.r-nav-in::-webkit-scrollbar{display:none}
+.r-nav button{flex:none;font-size:13px;font-weight:700;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:7px 12px;white-space:nowrap;transition:background-color 160ms ease,color 160ms ease,transform 160ms var(--ease-out)}
+.r-nav button:active{transform:scale(0.96)}
+.r-nav button.on{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+.r-nav button.cta{background:var(--accent-soft);border-color:transparent;color:var(--accent-text)}
+.r-nav button.cta.on{background:var(--accent);color:#FFFFFF}
+#r-overview,.r-cta,.panel{scroll-margin-top:130px}
+details.acc{scroll-margin-top:130px!important}
+.r-sticky{position:fixed;left:0;right:0;bottom:0;z-index:25;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);transform:translateY(110%);transition:transform 260ms var(--ease-out)}
+.r-sticky.show{transform:none}
+.r-sticky-in{max-width:780px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.r-sticky-in span{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.3}
+.r-sticky .btn{width:auto;min-height:46px;padding:10px 16px;font-size:14.5px;flex:none}
+main.wide{padding-bottom:110px}
+@media (max-width:380px){ .r-sticky-in span{display:none} .r-sticky .btn{width:100%} }
+
+@media (prefers-reduced-motion: reduce){
+  .screen,.report>*{animation:fade 200ms ease both}
+  .bar i,.r-bar i,.drip{animation:none}
+  .r-sticky{transition:none}
+  .conf{transform:none}
+}
+
+/* Added for the acceptance checks: 36px secondary tap targets, 48px primary buttons, 16px inputs (no iOS zoom), topbar kept at 64px under the sticky nav, long names wrap. */
+.topbar-in{padding-block:10px}
+.lang button,.link,.back{min-height:36px}
+.r-sticky .btn{min-height:48px}
+.codebox input,.sum-text{font-size:16px}
+.r-id h1{overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 1C12 1 3 12.5 3 18.5a9 9 0 0 0 18 0C21 12.5 12 1 12 1Z" fill="#8CC8E8"/></svg></span>
+      <div><div class="brand-name">LocalTutors</div><div class="brand-tag">Een kind op 'n slag</div></div>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" class="on" data-act="lang" data-l="en" aria-pressed="true">ENG</button>
+      <button type="button" data-act="lang" data-l="af" aria-pressed="false">AFR</button>
+    </div>
+  </div>
+</header>
+<main id="app"></main>
+<script>
+const CONFIG = {
+  pageUrl: "",                      // the live URL of this page, set after hosting. Used to build the results link.
+  whatsapp: "27697346705",
+  whatsappShown: "069 734 6705"
+};
+
+/* ===== STATE ===== */
+const S = { lang:"en", screen:"welcome", qi:0, name:"", answers:[], shared:null, doneDay:null, pasteOpen:false, nameErr:false };
+function L(en, af){ return S.lang === "af" ? af : en; }
+
+/* ===== ICONS ===== */
+const DROP = (fill) => `<svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 1C12 1 3 12.5 3 18.5a9 9 0 0 0 18 0C21 12.5 12 1 12 1Z" fill="${fill}"/></svg>`;
+const I = {
+  arrow:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
+  back:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`,
+  chev:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`,
+  wa:`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.3.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>`
+};
+const col = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ===== CONTENT ===== */
+const F = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+const TOPICS = {
+  neg:{ en:"Negative numbers", af:"Negatiewe getalle",
+    why:{ en:"Inside almost every algebra question.", af:"Binne-in amper elke algebravraag." },
+    tip:{ en:"Draw a number line from −10 to 10. Do 10 add and subtract questions with negatives, moving along the line for each. Then 5 multiply questions using one rule: same signs give a positive, different signs give a negative.",
+          af:"Teken 'n getallelyn van −10 tot 10. Doen 10 optel- en aftrekvrae met negatiewe getalle en beweeg op die lyn vir elkeen. Doen dan 5 maalvrae met een reël: dieselfde tekens gee 'n positief, verskillende tekens gee 'n negatief." } },
+  frac:{ en:"Fractions", af:"Breuke",
+    why:{ en:"Shows up in equations, ratios and exponents.", af:"Kom voor in vergelykings, verhoudings en eksponente." },
+    tip:{ en:"Do 8 add and subtract questions where step one is always written out: make the bottoms the same. Then 4 division questions using keep, change, flip.",
+          af:"Doen 8 optel- en aftrekvrae waar stap een altyd uitgeskryf word: maak die noemers dieselfde. Doen dan 4 deelvrae met hou, verander, draai om." } },
+  exp:{ en:"Exponents", af:"Eksponente",
+    why:{ en:"One of the first topics in Grade 10 Maths.", af:"Een van die eerste onderwerpe in Graad 10 Wiskunde." },
+    tip:{ en:"Write the exponent laws on a card: multiply means add the exponents, divide means subtract, power of a power means multiply, power 0 is 1, negative means 1 over. Do 10 mixed questions with the card, then 5 without it.",
+          af:"Skryf die eksponentwette op 'n kaartjie: maal beteken tel die eksponente op, deel beteken trek af, mag van 'n mag beteken maal, mag 0 is 1, negatief beteken 1 oor. Doen 10 gemengde vrae met die kaartjie, dan 5 sonder." } },
+  alg:{ en:"Algebraic expressions", af:"Algebraïese uitdrukkings",
+    why:{ en:"The base for equations and Grade 10 algebra.", af:"Die basis vir vergelykings en Graad 10 algebra." },
+    tip:{ en:"Before simplifying, circle like terms in the same colour. Do 8 simplify questions, then 4 expand questions, drawing an arrow from the number outside to every term inside the bracket.",
+          af:"Omkring gelyksoortige terme in dieselfde kleur voordat jy vereenvoudig. Doen 8 vereenvoudig-vrae, dan 4 uitbrei-vrae, en trek 'n pyltjie van die getal buite na elke term binne die hakie." } },
+  eq:{ en:"Equations", af:"Vergelykings",
+    why:{ en:"Carries a big share of marks in tests.", af:"Dra 'n groot deel van die punte in toetse." },
+    tip:{ en:"Solve 8 equations with one step per line, writing what you did to both sides. Check every answer by putting it back into the equation.",
+          af:"Los 8 vergelykings op met een stap per reël, en skryf neer wat jy aan albei kante gedoen het. Toets elke antwoord deur dit terug in die vergelyking te sit." } },
+  word:{ en:"Word problems", af:"Woordprobleme",
+    why:{ en:"Tests the Maths and the reading at once.", af:"Toets die Wiskunde en die lees tegelyk." },
+    tip:{ en:"Before solving, answer two questions out loud: what are they asking for, and what do I know? Do 5 word problems this way, underlining the actual question first.",
+          af:"Beantwoord twee vrae hardop voordat jy begin: wat vra hulle, en wat weet ek? Doen 5 woordprobleme so, en onderstreep eers die eintlike vraag." } }
+};
+const EXAM_TIP = {
+  en:{ t:"Exam technique", p:"Do one section of a past paper under time. Mark it with the memo, and for every lost mark write why: didn't know, slip, misread, or ran out of time." },
+  af:{ t:"Eksamentegniek", p:"Doen een afdeling van 'n ou vraestel onder tyd. Merk dit met die memo, en skryf vir elke punt wat verlore is hoekom: het nie geweet nie, 'n glips, verkeerd gelees, of tyd het opgeraak." }
+};
+/* Wrong options are tagged: sign / rule / step / read. Evan to check before launch. */
+const QS = [
+  { t:"neg", m:"−3 − (−7)", o:[{h:"−10",m:"sign"},{h:"4",ok:1},{h:"10",m:"sign"},{h:"−4",m:"sign"}],
+    x:{ en:"Subtracting a negative is the same as adding: −3 + 7 = 4.", af:"Om 'n negatief af te trek is dieselfde as om by te tel: −3 + 7 = 4." } },
+  { t:"neg", m:"(−4) × (−3) − 5", o:[{h:"−17",m:"sign"},{h:"7",ok:1},{h:"−7",m:"sign"},{h:"17",m:"sign"}],
+    x:{ en:"Negative × negative = positive, so it's 12 − 5 = 7.", af:"Negatief × negatief = positief, so dit is 12 − 5 = 7." } },
+  { t:"frac", m:`${F(2,3)} + ${F(1,4)}`, o:[{h:F(3,7),m:"rule"},{h:F(11,12),ok:1},{h:F(3,12),m:"rule"},{h:F(2,12),m:"rule"}],
+    x:{ en:"Make the bottoms the same first: 8/12 + 3/12 = 11/12. You never add the bottoms.", af:"Maak eers die noemers dieselfde: 8/12 + 3/12 = 11/12. Jy tel nooit die noemers bymekaar nie." } },
+  { t:"frac", m:`${F(3,4)} ÷ ${F(1,2)}`, o:[{h:F(3,8),m:"rule"},{h:F(2,3),m:"rule"},{h:"1½",ok:1},{h:F(1,4),m:"rule"}],
+    x:{ en:"Dividing by ½ is the same as multiplying by 2: 3/4 × 2 = 3/2 = 1½.", af:"Deel deur ½ is dieselfde as maal met 2: 3/4 × 2 = 3/2 = 1½." } },
+  { t:"exp", m:"2<sup>3</sup> × 2<sup>4</sup>", o:[{h:"2<sup>12</sup>",m:"rule"},{h:"2<sup>7</sup>",ok:1},{h:"4<sup>7</sup>",m:"rule"},{h:"4<sup>12</sup>",m:"rule"}],
+    x:{ en:"Same base and multiplying: add the exponents. 3 + 4 = 7, so 2⁷.", af:"Dieselfde grondtal en maal: tel die eksponente op. 3 + 4 = 7, so 2⁷." } },
+  { t:"exp", m:"5<sup>0</sup> + 3<sup>−1</sup>", o:[{h:"−3",m:"rule"},{h:"5⅓",m:"rule"},{h:"1⅓",ok:1},{h:"−2",m:"rule"}],
+    x:{ en:"Anything to the power 0 is 1. A negative exponent means 1 over: 3⁻¹ = ⅓. So 1 + ⅓ = 1⅓.", af:"Enigiets tot die mag 0 is 1. 'n Negatiewe eksponent beteken 1 oor: 3⁻¹ = ⅓. So 1 + ⅓ = 1⅓." } },
+  { t:"alg", p:{en:"Simplify",af:"Vereenvoudig"}, m:"3x + 2y − x + 4y", o:[{h:"8xy",m:"rule"},{h:"2x + 6y",ok:1},{h:"4x + 6y",m:"sign"},{h:"3x + 6y",m:"step"}],
+    x:{ en:"Only like terms go together: 3x − x = 2x and 2y + 4y = 6y.", af:"Net gelyksoortige terme gaan saam: 3x − x = 2x en 2y + 4y = 6y." } },
+  { t:"alg", p:{en:"Expand",af:"Brei uit"}, m:"−2(x − 5)", o:[{h:"−2x − 10",m:"sign"},{h:"−2x − 5",m:"step"},{h:"−2x + 10",ok:1},{h:"2x + 10",m:"sign"}],
+    x:{ en:"Multiply −2 into both terms: −2 × x = −2x and −2 × −5 = +10.", af:"Maal −2 in albei terme in: −2 × x = −2x en −2 × −5 = +10." } },
+  { t:"eq", p:{en:"Solve for x",af:"Los op vir x"}, m:"3x + 5 = 20", o:[{h:"x = 15",m:"step"},{h:"x = 5",ok:1},{h:"x = 8⅓",m:"step"}],
+    x:{ en:"Undo in reverse order: subtract 5 (3x = 15), then divide by 3 (x = 5).", af:"Maak in omgekeerde volgorde ongedaan: trek 5 af (3x = 15), deel dan deur 3 (x = 5)." } },
+  { t:"eq", p:{en:"Solve for x",af:"Los op vir x"}, m:"2(x − 3) = 10", o:[{h:"x = 6½",m:"step"},{h:"x = 2",m:"sign"},{h:"x = 8",ok:1},{h:"x = 5",m:"step"}],
+    x:{ en:"Divide both sides by 2: x − 3 = 5. Then add 3: x = 8. Check: 2(8 − 3) = 10.", af:"Deel albei kante deur 2: x − 3 = 5. Tel dan 3 by: x = 8. Toets: 2(8 − 3) = 10." } },
+  { t:"word", w:{ en:"A school bag costs R240. It's on sale at 25% off. What does it cost now?", af:"'n Skooltas kos R240. Dit is op uitverkoping teen 25% af. Wat kos dit nou?" },
+    o:[{h:"R60",m:"read"},{h:"R215",m:"read"},{h:"R180",ok:1},{h:"R300",m:"read"}],
+    x:{ en:"25% of R240 is R60. That's the discount, not the price: R240 − R60 = R180.", af:"25% van R240 is R60. Dit is die afslag, nie die prys nie: R240 − R60 = R180." } },
+  { t:"word", w:{ en:"Sipho is 3 times as old as his sister. Together their ages add up to 28. How old is his sister?", af:"Sipho is 3 keer so oud soos sy suster. Saam tel hulle ouderdomme op tot 28. Hoe oud is sy suster?" },
+    o:[{h:"21",m:"read"},{h:"7",ok:1},{h:"9⅓",m:"read"},{h:"25",m:"read"}],
+    x:{ en:"Call her age x, so Sipho is 3x. x + 3x = 28, so 4x = 28 and x = 7. (21 is Sipho's age.)", af:"Noem haar ouderdom x, so Sipho is 3x. x + 3x = 28, so 4x = 28 en x = 7. (21 is Sipho se ouderdom.)" } }
+];
+const MIST = {
+  sign:{ en:"Sign slips", af:"Tekenfoute", d:{ en:"Losing track of minus signs.", af:"Verloor die minustekens." } },
+  rule:{ en:"Rule mix-ups", af:"Reëls deurmekaar", d:{ en:"Using a rule that looks right but isn't.", af:"Gebruik 'n reël wat reg lyk, maar nie is nie." } },
+  step:{ en:"Step errors", af:"Stapfoute", d:{ en:"Skipping or reversing a step.", af:"Slaan 'n stap oor of doen dit agterstevoor." } },
+  read:{ en:"Reading the question", af:"Die vraag lees", d:{ en:"Answering something other than what was asked.", af:"Antwoord iets anders as wat gevra is." } }
+};
+const TYPES = {
+  A:{ t:()=>L("Some rules got learned wrong.","Party reëls is verkeerd geleer."),
+      b:()=>L("You answered some questions feeling sure, and they were still wrong. That usually means a rule got learned the wrong way, not that you forgot it. Here's the catch: practising a wrong rule makes it stronger. It needs to be retaught first, then practised.",
+              "Jy het party vrae beantwoord en seker gevoel, maar dit was steeds verkeerd. Dit beteken gewoonlik dat 'n reël verkeerd geleer is, nie dat jy dit vergeet het nie. Die probleem is: as jy 'n verkeerde reël oefen, word dit sterker. Dit moet eers herleer word, dan geoefen.") },
+  B:{ t:()=>L("There are a few gaps from earlier.","Daar is 'n paar gate van vroeër."),
+      b:()=>L("Quite a few times you knew you didn't know. That's a gap: something from earlier in the year that never fully clicked. Gaps carry into every new topic, which is why Maths can feel hard even when you're trying.",
+              "'n Paar keer het jy geweet jy weet nie. Dit is 'n gat: iets van vroeër in die jaar wat nooit heeltemal gesit het nie. Gate word saamgedra in elke nuwe onderwerp, en dis hoekom Wiskunde moeilik kan voel selfs as jy probeer.") },
+  C:{ t:()=>L("You know more than your marks show.","Jy ken meer as wat jou punte wys."),
+      b:()=>L("Lots of your right answers came with “not sure”. The knowledge is there, it just isn't locked in yet, and that's exactly what slips away in a test. Locking it in is very fixable.",
+              "Baie van jou regte antwoorde het met “nie seker nie” gekom. Die kennis is daar, dit is net nog nie vasgelê nie, en dit is presies wat in 'n toets wegglip. Om dit vas te lê, is baie regmaakbaar.") },
+  D:{ t:()=>L("Your Maths is fine. Reading the question is the leak.","Jou Wiskunde is reg. Die lees van die vraag is die lek."),
+      b:()=>L("Your calculations mostly held up, but both word problems leaked. That's usually answering the wrong thing or setting it up wrong, not a Maths problem. Tests have lots of word problems, so this one is worth fixing.",
+              "Jou berekeninge het meestal gehou, maar albei woordprobleme het weggelek. Dit is gewoonlik om die verkeerde ding te antwoord of dit verkeerd op te stel, nie 'n Wiskunde-probleem nie. Toetse het baie woordprobleme, so dit is die moeite werd om reg te maak.") },
+  E:{ t:()=>L("Your foundations are solid.","Jou grondslag is stewig."),
+      b:()=>L("Most answers were right and you were sure. Nice. For you, marks probably leak higher up: harder Grade 9 topics, exam technique, or running out of time. That's the next thing to check.",
+              "Die meeste antwoorde was reg en jy was seker. Mooi so. By jou lek punte waarskynlik hoër op: moeiliker Graad 9-onderwerpe, eksamentegniek, of tyd wat opraak. Dit is die volgende ding om na te kyk.") }
+};
+
+/* ===== HELPERS ===== */
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const plain = (h) => h.replace(/<span class="fr"><span>(\d+)<\/span><span>(\d+)<\/span><\/span>/g, "$1/$2").replace(/<sup>(.*?)<\/sup>/g, "^$1").replace(/<[^>]+>/g, "");
+const tName = (k) => TOPICS[k][S.lang];
+const lower = (s) => s.charAt(0).toLowerCase() + s.slice(1);
+const LVL = () => [L("Holding","Hou"), L("Small drip","Klein druppel"), L("Dripping","Drup"), L("Leaking","Lek")];
+const today = () => Math.floor(Date.now() / 864e5);
+const fmtDay = (d) => new Date(d * 864e5).toLocaleDateString(S.lang === "af" ? "af-ZA" : "en-ZA", { day:"numeric", month:"long", year:"numeric" });
+const cleanName = (n) => n.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9]/g, "").slice(0, 20);
+
+/* ===== REPORT CODE =====
+   lt-<12 digits>-<a|e>-<day base36>-<name>
+   digit: 0 = didn't know, else 1 + choice*2 + sure. Only plain characters so it survives as a link anchor. */
+function encode(){
+  const digits = QS.map((q, i) => { const a = S.answers[i]; return !a || a.c < 0 ? 0 : 1 + a.c * 2 + (a.sure ? 1 : 0); }).join("");
+  return `lt-${digits}-${S.lang === "af" ? "a" : "e"}-${(S.doneDay || today()).toString(36)}-${cleanName(S.name) || "learner"}`;
+}
+function decode(text){
+  const m = String(text || "").match(/lt-([0-8]{12})-([ae])-([0-9a-z]+)-([A-Za-z0-9]{1,20})/);
+  if (!m) return null;
+  const answers = m[1].split("").map((ch, i) => {
+    const v = +ch; if (v === 0) return { c:-1, sure:false };
+    const c = Math.floor((v - 1) / 2), sure = (v - 1) % 2 === 1;
+    return c < QS[i].o.length ? { c, sure } : { c:-1, sure:false };
+  });
+  return { answers, lang: m[2] === "a" ? "af" : "en", day: parseInt(m[3], 36), name: m[4] === "learner" ? "" : m[4] };
+}
+function reportLink(){ return CONFIG.pageUrl ? `${CONFIG.pageUrl}#${encode()}` : ""; }
+
+/* ===== ANALYSIS ===== */
+function analyse(){
+  const cnt = { solid:0, shaky:0, misc:0, gap:0 }, mist = { sign:0, rule:0, step:0, read:0 }, per = {};
+  Object.keys(TOPICS).forEach(k => per[k] = []);
+  const rows = QS.map((q, i) => {
+    const a = S.answers[i] || { c:-1, sure:false }; let cat, pts;
+    if (a.c >= 0 && q.o[a.c].ok){ cat = a.sure ? "solid" : "shaky"; pts = a.sure ? 1 : 0.5; }
+    else if (a.c >= 0){ cat = a.sure ? "misc" : "gap"; pts = 0; mist[q.o[a.c].m]++; }
+    else { cat = "gap"; pts = 0; }
+    cnt[cat]++; per[q.t].push({ pts, cat }); return { q, a, cat };
+  });
+  const topics = Object.keys(per).map(k => {
+    const leak = 1 - per[k].reduce((s, x) => s + x.pts, 0) / per[k].length;
+    return { k, leak, level: leak >= 0.75 ? 3 : leak >= 0.5 ? 2 : leak >= 0.25 ? 1 : 0, misc: per[k].filter(x => x.cat === "misc").length, gap: per[k].filter(x => x.cat === "gap").length };
+  }).sort((a, b) => b.leak - a.leak || b.misc - a.misc);
+  const correct = cnt.solid + cnt.shaky;
+  const nonWordCorrect = rows.filter(r => r.q.t !== "word" && (r.cat === "solid" || r.cat === "shaky")).length;
+  const wordWrong = per.word.filter(x => x.pts === 0).length;
+  let type;
+  if (cnt.solid >= 10) type = "E";
+  else if (wordWrong === 2 && nonWordCorrect >= 8) type = "D";
+  else if (cnt.misc >= 2 && cnt.misc >= cnt.shaky) type = "A";
+  else if (cnt.gap >= 3) type = "B";
+  else if (cnt.shaky >= 3) type = "C";
+  else { const m = Math.max(cnt.misc, cnt.gap, cnt.shaky); type = m === cnt.misc && m > 0 ? "A" : m === cnt.gap && m > 0 ? "B" : "C"; }
+  return { cnt, mist, topics, rows, correct, type, leaking: topics.filter(t => t.level > 0) };
+}
+
+/* ===== VIEWS ===== */
+function vWelcome(){
+  return `<div class="screen">
+    <span class="chip">${L("Grade 9 Maths · About 8 minutes","Graad 9 Wiskunde · Sowat 8 minute")}</span>
+    <div class="group">
+      <p class="eyebrow">Mark Leak Finder</p>
+      <h1 class="h1">${L("Find where your Maths marks are leaking.","Vind uit waar jou Wiskunde-punte weglek.")}</h1>
+    </div>
+    <p class="lead">${L("12 quick questions. Not a test, no marks, and nobody at school sees it. At the end you get your own Leak Map and three 20-minute quick wins to start on your biggest leak.",
+                        "12 vinnige vrae. Nie 'n toets nie, geen punte nie, en niemand by die skool sien dit nie. Aan die einde kry jy jou eie Leak Map en drie vinnige wenke van 20 minute om jou grootste lek aan te pak.")}</p>
+    <div class="card">
+      <ol class="rules">
+        <li>${L("Use paper if you want. Work it out properly.","Gebruik papier as jy wil. Werk dit behoorlik uit.")}</li>
+        <li>${L("After each answer, tap whether you were sure. Be honest, it makes the map accurate.","Tik ná elke antwoord of jy seker was. Wees eerlik, dit maak die kaart akkuraat.")}</li>
+        <li>${L("Don't know? Tap “I don't know yet”. That's a useful answer, not a bad one.","Weet jy nie? Tik “Ek weet nog nie”. Dis 'n nuttige antwoord, nie 'n slegte een nie.")}</li>
+      </ol>
+    </div>
+    <div class="group">
+      <label class="lab" for="nm">${L("Your first name","Jou voornaam")}</label>
+      <input class="field ${S.nameErr ? "err" : ""}" id="nm" autocomplete="given-name" maxlength="20" value="${esc(S.name)}" placeholder="${L("e.g. Liam","bv. Liam")}">
+      ${S.nameErr ? `<p class="err-msg">${L("Add your first name so LocalTutors knows whose Leak Map it is.","Sit jou voornaam in sodat LocalTutors weet wie se Leak Map dit is.")}</p>` : ""}
+    </div>
+    <button type="button" class="btn btn-primary" data-act="start">${L("Start the 12 questions","Begin die 12 vrae")} ${I.arrow}</button>
+    <button type="button" class="link" data-act="toggle-paste">${L("LocalTutors: open a report code","LocalTutors: maak 'n verslagkode oop")}</button>
+    ${S.pasteOpen ? `<div class="paste card">
+      <label class="lab" for="pc">${L("Paste the code or the whole WhatsApp message","Plak die kode of die hele WhatsApp-boodskap")}</label>
+      <input class="field" id="pc" placeholder="lt-213874651230-e-...">
+      <p class="err-msg" id="pc-err" hidden>${L("No report code found in that text.","Geen verslagkode in daardie teks gevind nie.")}</p>
+      <button type="button" class="btn btn-ghost" data-act="open-code">${L("Open report","Maak verslag oop")}</button>
+    </div>` : ""}
+  </div>`;
+}
+
+function pips(){
+  let s = "";
+  for (let k = 0; k < 12; k++){
+    const done = S.answers[k] && (S.answers[k].c < 0 || S.answers[k].sure !== null);
+    s += `<span class="${k === S.qi ? "cur" : ""}">${DROP(done ? col("--sky") : k === S.qi ? col("--accent") : col("--drop-empty"))}</span>`;
+  }
+  return `<div class="pips" aria-label="${L(`Question ${S.qi + 1} of 12`,`Vraag ${S.qi + 1} van 12`)}">${s}</div>`;
+}
+
+function vQ(){
+  const i = S.qi, q = QS[i], a = S.answers[i];
+  const body = q.w ? `<p class="qword">${q.w[S.lang]}</p>`
+                   : `<p class="qprompt">${q.p ? q.p[S.lang] : L("Work it out","Werk uit")}</p><div class="qmath">${q.m}</div>`;
+  return `<div class="screen">
+    <div class="qtop"><button type="button" class="back" data-act="back">${I.back}${L("Back","Terug")}</button><span class="tiny muted" style="font-weight:800">${i + 1} / 12</span></div>
+    ${pips()}
+    <span class="topic-chip">${tName(q.t)}</span>
+    <div class="qcard">${body}</div>
+    <div class="opts" id="opts">
+      ${q.o.map((o, j) => `<button type="button" class="opt ${a && a.c === j ? "sel" : ""}" data-act="choose" data-j="${j}"><span class="k">${"ABCD"[j]}</span><span>${o.h}</span></button>`).join("")}
+      <button type="button" class="opt opt-idk ${a && a.c === -1 ? "sel" : ""}" data-act="idk">${L("I don't know yet","Ek weet nog nie")}</button>
+    </div>
+    <div class="conf ${a && a.c >= 0 ? "show" : ""}" id="conf" aria-live="polite">
+      <div class="conf-q">${L("How sure were you?","Hoe seker was jy?")}</div>
+      <div class="conf-hint">${L("Be honest. This is the most useful part.","Wees eerlik. Dit is die nuttigste deel.")}</div>
+      <div class="conf-row">
+        <button type="button" class="btn btn-sky" data-act="sure" data-v="1">${L("Sure","Seker")}</button>
+        <button type="button" class="btn btn-ghost" data-act="sure" data-v="0">${L("Not sure","Nie seker nie")}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function vAnalysing(){
+  const items = [L("Checking 6 topics","Kyk na 6 onderwerpe"), L("Sorting your mistakes by type","Sorteer jou foute volgens tipe"), L("Matching sure against right","Vergelyk seker teenoor reg"), L("Drawing your Leak Map","Teken jou Leak Map")];
+  return `<div class="screen an-wrap">
+    <div class="drip">${DROP(col("--accent"))}</div>
+    <h2 class="h2">${L("Finding your leaks…","Soek jou lekke…")}</h2>
+    <div class="an-list">${items.map((t, k) => `<div class="an-item" id="an${k}"><span class="an-ic">${I.check}</span>${t}</div>`).join("")}</div>
+  </div>`;
+}
+
+function drops(level){
+  const c = level === 3 ? col("--leak") : level > 0 ? col("--warn") : col("--good");
+  let s = "";
+  for (let k = 0; k < 3; k++) s += DROP(level === 0 ? (k === 0 ? col("--good-soft") : col("--drop-empty")) : (k < level ? c : col("--drop-empty")));
+  return `<span class="drops">${s}</span>`;
+}
+
+const TYPE_SHORT = {
+  A:()=>L("Rules learned wrong","Reëls verkeerd geleer"), B:()=>L("Gaps from earlier","Gate van vroeër"),
+  C:()=>L("Not locked in yet","Nog nie vasgelê nie"), D:()=>L("Reading the question","Die vraag lees"), E:()=>L("Solid foundations","Stewige grondslag")
+};
+const ICON_LIST = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>`;
+const ICON_BOLT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>`;
+
+function mixHex(a, b, t){
+  const p = (h) => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const A = p(a), B = p(b);
+  return "#" + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, "0")).join("");
+}
+function ticks(pct){
+  const N = 64, on = Math.round(N * pct), s = col("--sky"), a = col("--accent");
+  let h = "";
+  for (let k = 0; k < N; k++) h += k < on ? `<i style="background:${mixHex(s, a, on > 1 ? k / (on - 1) : 1)}"></i>` : "<i></i>";
+  return `<div class="r-ticks" role="img" aria-label="${Math.round(pct * 100)}%">${h}</div>`;
+}
+
+function vReport(){
+  const R = analyse(), T = TYPES[R.type], lv = LVL();
+  const n = S.name.trim();
+  const whose = n ? (S.lang === "af" ? `${esc(n)} se Leak Map` : `${esc(n)}${/s$/i.test(n) ? "'" : "'s"} Leak Map`) : L("Your Leak Map","Jou Leak Map");
+  const fixes = R.leaking.slice(0, 3).map(t => ({ title: tName(t.k), p: TOPICS[t.k].tip[S.lang], warn: t.misc > 0 }));
+  if (fixes.length < 3) fixes.push({ title: EXAM_TIP[S.lang].t, p: EXAM_TIP[S.lang].p, warn: false });
+  const biggest = ["misc","gap","shaky"].sort((a, b) => R.cnt[b] - R.cnt[a])[0];
+  const tile = (k, t, d) => `<div class="tile ${k} ${k === biggest && R.cnt[k] > 0 ? "hi" : ""}"><b>${R.cnt[k]}</b><div class="tt">${t}</div><div class="td">${d}</div></div>`;
+  const maxM = Math.max(1, ...Object.values(R.mist)), anyMist = Object.values(R.mist).some(v => v > 0);
+  const topM = Object.entries(R.mist).sort((a, b) => b[1] - a[1])[0];
+  const catLab = { solid:L("Right, sure","Reg, seker"), shaky:L("Right, not sure","Reg, nie seker nie"), misc:L("Wrong, sure","Verkeerd, seker"), gap:L("Wrong / didn't know","Verkeerd / nie geweet nie") };
+  const answers = R.rows.map((r, i) => {
+    const qText = r.q.w ? r.q.w[S.lang] : `${r.q.p ? r.q.p[S.lang] + ": " : ""}${r.q.m}`;
+    const their = r.a.c >= 0 ? r.q.o[r.a.c].h : L("Didn't know yet","Het nog nie geweet nie");
+    return `<div class="ans"><div class="aq">${i + 1}. ${qText}<span class="tag ${r.cat}">${catLab[r.cat]}</span></div>
+      <div class="am">${L("Answered","Geantwoord")}: <b>${their}</b> · ${L("Correct","Korrek")}: <b>${r.q.o.find(o => o.ok).h}</b></div>
+      <div class="ae">${r.q.x[S.lang]}</div></div>`;
+  }).join("");
+
+  const score = (R.cnt.solid + R.cnt.shaky * 0.5) / 12 * 100;
+  const [si, sd] = score.toFixed(2).split(".");
+  const holding = R.topics.filter(t => t.level === 0).length;
+  const metrics = [
+    [R.correct / 12, L("Right answers","Regte antwoorde")],
+    [R.cnt.solid / 12, L("Right and sure","Reg en seker")],
+    [holding / 6, L("Topics holding","Onderwerpe wat hou")]
+  ];
+  const info = [
+    [L("Learner","Leerder"), esc(n || "-")],
+    [L("Grade","Graad"), "9"],
+    [L("Subject","Vak"), L("Mathematics","Wiskunde")],
+    [L("Finished","Voltooi"), new Date((S.doneDay || today()) * 864e5).toLocaleDateString(S.lang === "af" ? "af-ZA" : "en-ZA", { day:"numeric", month:"short", year:"numeric" })],
+    [L("Result","Uitslag"), TYPE_SHORT[R.type]()],
+    [L("Right answers","Regte antwoorde"), `${R.correct} / 12`],
+    [L("Biggest leak","Grootste lek"), R.leaking[0] ? tName(R.leaking[0].k) : L("None","Geen")],
+    [L("Top mistake","Grootste fout"), topM[1] ? MIST[topM[0]][S.lang] : L("None","Geen")]
+  ];
+  const chip = (t) => `<span class="r-chip l${t.level}">${t.level === 0 ? I.check : DROP("currentColor")}${tName(t.k)}</span>`;
+  const acc = (id, title, body, open = true) => `<details class="acc" id="${id}" ${open ? "open" : ""}><summary>${title}${I.chev}</summary><div class="acc-body">${body}</div></details>`;
+
+  return `<div class="screen">
+   ${navBar()}
+   <div class="r-shell report">
+    ${S.shared ? sharedBanner(R) : ""}
+    <div class="r-top" id="r-overview">
+      <div class="r-logo">${DROP(col("--sky"))}</div>
+      <div class="r-id"><h1>${whose}</h1><p>${L("Grade 9 Maths · Mark Leak Finder","Graad 9 Wiskunde · Mark Leak Finder")}</p></div>
+      <div class="r-actions">
+        <button type="button" class="r-btn" data-act="jump" data-to="answers">${ICON_LIST}${L("Working","Uitwerking")}</button>
+        ${S.shared ? "" : `<a class="r-btn dark" href="${waLink(R)}" target="_blank" rel="noopener">${I.wa}${L("Get my programme","Kry my program")}</a>`}
+      </div>
+    </div>
+
+    <div class="r-row">
+      <div class="r-card r-info">${info.map(([k, v]) => `<div><div class="r-k">${k}</div><div class="r-v">${v}</div></div>`).join("")}</div>
+      <div class="r-card">
+        <div class="r-k">${L("Topics","Onderwerpe")}</div>
+        <div class="r-chips">${R.topics.map(chip).join("")}</div>
+      </div>
+    </div>
+
+    <div class="r-score">
+      <div class="r-score-top">
+        <div class="r-score-head">
+          <span class="r-k" style="font-size:13px">${L("Foundation score","Grondslag-telling")}</span>
+          <button type="button" class="r-btn r-btn-sm" data-act="jump" data-to="fixplan">${ICON_BOLT}${L("Quick wins","Vinnige wenke")}</button>
+        </div>
+        <div class="r-meter-row">
+          <div class="r-num"><b>${si}</b><span>.${sd}</span><small>${L("of 100","uit 100")}</small></div>
+          <div class="r-meter">${ticks(score / 100)}</div>
+        </div>
+      </div>
+      <div class="r-band">
+        ${metrics.map(([p, lab]) => `<div class="r-metric"><div class="top"><b>${Math.round(p * 100)}%</b><span>${lab}</span></div><div class="r-bar"><i style="transform:scaleX(${p})"></i></div></div>`).join("")}
+      </div>
+    </div>
+
+    ${S.shared ? "" : planCta(R)}
+
+    ${acc("meaning", L("What this means","Wat dit beteken"), `<h2 class="h3">${T.t()}</h2><p class="r-p">${T.b()}</p>`)}
+    ${acc("leaks", L("Where the marks are leaking","Waar die punte weglek"), `<p class="small muted">${L("6 topics, 2 questions each. Biggest leak first.","6 onderwerpe, 2 vrae elk. Grootste lek eerste.")}</p>
+      <div class="leak-list">${R.topics.map(t => `<div class="leak-row"><div class="name">${tName(t.k)}<small>${TOPICS[t.k].why[S.lang]}</small></div>${drops(t.level)}<span class="lvl lvl-${t.level}">${lv[t.level]}</span></div>`).join("")}</div>`)}
+    ${acc("sure", L("Sure vs right","Seker teenoor reg"), `<p class="small muted">${L("A normal test mark can't show you this.","'n Gewone toetspunt kan jou dit nie wys nie.")}</p>
+      <div class="quad">
+        ${tile("solid", L("Right and sure","Reg en seker"), L("Locked in.","Vasgelê."))}
+        ${tile("shaky", L("Right, not sure","Reg, nie seker nie"), L("Could slip in a test.","Kan in 'n toets wegglip."))}
+        ${tile("misc", L("Wrong but sure","Verkeerd maar seker"), L("A rule to relearn.","'n Reël om oor te leer."))}
+        ${tile("gap", L("Wrong or didn't know","Verkeerd of nie geweet nie"), L("A gap to fill.","'n Gat om toe te maak."))}
+      </div>`)}
+    ${acc("mistakes", L("The kind of mistakes","Die soort foute"), anyMist
+      ? `<div class="mist">${Object.keys(MIST).map(k => `<div class="mist-row"><div class="top"><span>${MIST[k][S.lang]}</span><span>${R.mist[k]}</span></div><div class="d">${MIST[k].d[S.lang]}</div><div class="bar"><i style="transform:scaleX(${R.mist[k] / maxM})"></i></div></div>`).join("")}</div>`
+      : `<p class="small">${L("No mistake pattern showed up in these 12 questions.","Geen foutpatroon het in hierdie 12 vrae uitgekom nie.")}</p>`)}
+    ${acc("fixplan", L("Quick wins to start with","Vinnige wenke om mee te begin"), `<p class="small muted">${L("Three 20-minute sessions to try at home this week. They help, but they are not a programme: lasting marks need the right order, weekly practice and someone checking the work.","Drie sessies van 20 minute om hierdie week by die huis te probeer. Dit help, maar dit is nie 'n program nie: blywende punte vra die regte volgorde, weeklikse oefening en iemand wat die werk nagaan.")}</p>
+      <div class="fix">${fixes.map((f, k) => `<div class="fix-card">
+        <div class="fix-top"><span class="fix-n">${L("Session","Sessie")} ${k + 1}</span><span class="fix-time">20 min</span></div>
+        <h3 class="h3">${f.title}</h3><p>${f.p}</p>
+        ${f.warn ? `<div class="fix-warn">${L("Heads up: you were sure about a wrong answer here. Read the working first, so you don't practise the wrong rule.","Let op: jy was seker oor 'n verkeerde antwoord hier. Lees eers die uitwerking, sodat jy nie die verkeerde reël oefen nie.")}</div>` : ""}
+      </div>`).join("")}</div>`)}
+    ${acc("answers", L("Every question with the working","Elke vraag met die uitwerking"), answers, !!S.shared)}
+   </div>
+
+    ${S.shared ? "" : sendPanel(R)}
+    ${S.shared ? "" : stickyBar(R)}
+    <p class="disclaim">${L("12 questions on 6 foundation topics. It's a quick check, not a full assessment or a mark prediction.","12 vrae oor 6 grondslag-onderwerpe. Dit is 'n vinnige toets, nie 'n volledige assessering of 'n puntvoorspelling nie.")}</p>
+    ${S.shared ? `<button type="button" class="link" data-act="restart">${L("Take the check yourself","Doen self die toets")}</button>` : ""}
+  </div>`;
+}
+
+function planCta(R){
+  const top = R.leaking[0];
+  const head = top
+    ? L(`Want to fix ${lower(tName(top.k))} before the final exam?`, `Wil jy ${lower(tName(top.k))} regkry voor die eindeksamen?`)
+    : L("Want to turn solid basics into a higher final mark?", "Wil jy 'n stewige basis in 'n hoër eindpunt omsit?");
+  const pts = [
+    L("What to fix first, based on every answer above","Wat eerste reggemaak moet word, gebaseer op elke antwoord hierbo"),
+    L("A week-by-week programme built around this Leak Map","'n Week-vir-week program, gebou rondom hierdie Leak Map")
+  ];
+  return `<div class="r-cta" id="help-top">
+    <p class="r-cta-eye">${L("For learners and parents","Vir leerders en ouers")}</p>
+    <h2 class="r-cta-h">${head}</h2>
+    <p class="r-cta-p">${L("Send this Leak Map to LocalTutors and we'll work out a 4-week programme for you.",
+                          "Stuur hierdie Leak Map vir LocalTutors en ons werk 'n 4-weke program vir jou uit.")}</p>
+    <ul class="r-cta-list">${pts.map(t => `<li>${I.check}<span>${t}</span></li>`).join("")}</ul>
+    <a class="btn btn-sky" href="${waLink(R)}" target="_blank" rel="noopener">${I.wa}${L("Send my results, get my 4-week programme","Stuur my uitslae, kry my 4-weke program")}</a>
+    <p class="r-cta-note">${L("We reply on WhatsApp.","Ons antwoord op WhatsApp.")}</p>
+  </div>`;
+}
+
+function sendPanel(R){
+  const code = encode(), top = R.leaking[0];
+  return `<div class="panel" id="help">
+    <p class="eyebrow" style="color:var(--sky)">${L("Your 4-week programme","Jou 4-weke program")}</p>
+    <h2 class="h2">${L("Ready to turn these leaks into marks?","Gereed om hierdie lekke in punte te verander?")}</h2>
+    <ul class="send-steps">
+      <li>${I.check}<span>${L("A LocalTutors tutor goes through every answer, not just the score.","'n LocalTutors-tutor gaan deur elke antwoord, nie net die punt nie.")}</span></li>
+      <li>${I.check}<span>${top ? L(`We work out a 4-week programme for you, starting with ${lower(tName(top.k))}.`,`Ons werk 'n 4-weke program vir jou uit, wat by ${lower(tName(top.k))} begin.`) : L("We work out a 4-week programme built around current schoolwork and exam technique.","Ons werk 'n 4-weke program uit, gebou rondom huidige skoolwerk en eksamentegniek.")}</span></li>
+    </ul>
+    <a class="btn btn-sky" href="${waLink(R)}" target="_blank" rel="noopener">${I.wa}${L("Send my results, get my 4-week programme","Stuur my uitslae, kry my 4-weke program")}</a>
+    <p class="tiny" style="color:var(--panel-muted)">${L("WhatsApp opens with your results typed in. Tap send there. If it doesn't open, copy your code and WhatsApp it to","WhatsApp maak oop met jou uitslae reeds ingetik. Tik daar op stuur. As dit nie oopmaak nie, kopieer jou kode en WhatsApp dit na")} <span class="num">${CONFIG.whatsappShown}</span>.</p>
+    <div class="codebox">
+      <input id="code" readonly value="${code}" aria-label="${L("Your report code","Jou verslagkode")}">
+      <button type="button" data-act="copy" id="copy-btn">${L("Copy","Kopieer")}</button>
+    </div>
+  </div>`;
+}
+
+function navBar(){
+  const items = [["r-overview",L("Overview","Oorsig")],["leaks",L("Leaks","Lekke")],["sure",L("Sure vs right","Seker teenoor reg")],["mistakes",L("Mistakes","Foute")],["fixplan",L("Quick wins","Vinnige wenke")],["answers",L("Working","Uitwerking")]];
+  if (!S.shared) items.push(["help",L("Programme","Program")]);
+  return `<nav class="r-nav" aria-label="${L("Results sections","Uitslag-afdelings")}"><div class="r-nav-in">${items.map(([id, t]) => `<button type="button" data-act="jump" data-to="${id}" class="${id === "help" ? "cta" : ""}">${t}</button>`).join("")}</div></nav>`;
+}
+
+function stickyBar(R){
+  return `<div class="r-sticky" id="r-sticky" aria-hidden="true">
+    <div class="r-sticky-in">
+      <span>${L("Want better marks this term?","Wil jy hierdie kwartaal beter punte hê?")}</span>
+      <a class="btn btn-primary" href="${waLink(R)}" target="_blank" rel="noopener" tabindex="-1">${I.wa}${L("Get my programme","Kry my program")}</a>
+    </div>
+  </div>`;
+}
+
+function lessonFocus(R){
+  const top = R.leaking[0];
+  return top
+    ? L(`Start lesson 1 with ${lower(tName(top.k))}${top.misc ? `: wrong but sure ${top.misc}x, so reteach the rule first.` : top.gap ? `: a gap, so rebuild it from the basics.` : "."}`,
+        `Begin les 1 by ${lower(tName(top.k))}${top.misc ? `: ${top.misc}x verkeerd maar seker, so herleer eers die reël.` : top.gap ? `: 'n gat, so bou dit van die basis af op.` : "."}`)
+    : L("Foundations held. Start lesson 1 on current Term 4 work and exam technique.","Die grondslag het gehou. Begin les 1 by huidige Kwartaal 4-werk en eksamentegniek.");
+}
+
+function summaryText(R){
+  const lv = LVL();
+  return [
+    `Mark Leak Finder · ${S.name || L("Learner","Leerder")}`,
+    `${L("Finished","Voltooi")}: ${fmtDay(S.doneDay)} (${S.shared && S.shared.lang === "af" ? "Afrikaans" : L("English","Engels")})`,
+    `${L("Result","Uitslag")}: ${TYPE_SHORT[R.type]()}`,
+    `${L("Score","Punt")}: ${R.correct}/12 ${L("right","reg")}, ${R.cnt.solid}/12 ${L("right and sure","reg en seker")}`,
+    "",
+    ...R.topics.map(t => `${tName(t.k)}: ${lv[t.level]}`),
+    "",
+    `${L("Sure vs right","Seker teenoor reg")}: ${R.cnt.solid} ${L("right+sure","reg+seker")}, ${R.cnt.shaky} ${L("right not sure","reg nie seker nie")}, ${R.cnt.misc} ${L("wrong but sure","verkeerd maar seker")}, ${R.cnt.gap} ${L("gaps","gate")}`,
+    `${L("Next step","Volgende stap")}: ${lessonFocus(R)}`
+  ].join("\n");
+}
+
+function sharedBanner(R){
+  return `<div class="banner">
+    <div class="banner-top">
+      <p class="eyebrow">${L("LocalTutors view","LocalTutors-aansig")}</p>
+      <button type="button" class="r-btn r-btn-sm" data-act="copy-summary" id="sum-btn">${L("Copy summary","Kopieer opsomming")}</button>
+    </div>
+    <h2 class="h3">${esc(S.name || L("This learner","Hierdie leerder"))} · ${TYPE_SHORT[R.type]()}</h2>
+    <p class="meta">${L("Finished","Voltooi")} ${fmtDay(S.doneDay)} · ${L("Answered in","Beantwoord in")} ${S.shared.lang === "af" ? "Afrikaans" : L("English","Engels")} · ${R.correct}/12 ${L("right","reg")}</p>
+    <p class="focus">${lessonFocus(R)}</p>
+    <textarea id="sum-text" class="sum-text" readonly aria-hidden="true" tabindex="-1">${esc(summaryText(R))}</textarea>
+  </div>`;
+}
+
+function waLink(R){
+  const link = reportLink();
+  const lines = [
+    L("Hi LocalTutors! I did the Mark Leak Finder and would like you to work out a 4-week programme for me.","Hi LocalTutors! Ek het die Mark Leak Finder gedoen en wil graag hê julle moet 'n 4-weke program vir my uitwerk."),
+    `${L("Name","Naam")}: ${S.name.trim()}`,
+    `${L("Result","Uitslag")}: ${TYPES[R.type].t()}`,
+    "",
+    ...(link ? [L("Open full results:","Maak volle uitslae oop:"), link, ""] : []),
+    `${L("Score","Punt")}: ${R.correct}/12 ${L("right","reg")} (${R.cnt.solid} ${L("right and sure","reg en seker")})`,
+    `${L("Code","Kode")}: ${encode()}`
+  ];
+  return `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`;
+}
+
+/* ===== WIRING ===== */
+let spy = null, timers = [], anStart = 0, busy = false, ticking = false;
+const motion = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+const $ = (id) => document.getElementById(id);
+
+function render(top){
+  timers.forEach(clearTimeout); timers = [];
+  if (spy){ spy.disconnect(); spy = null; }
+  document.querySelectorAll("body > .r-sticky").forEach(el => el.remove());
+  const app = $("app");
+  app.innerHTML = S.screen === "welcome" ? vWelcome() : S.screen === "q" ? vQ() : S.screen === "analysing" ? vAnalysing() : vReport();
+  app.classList.toggle("wide", S.screen === "report");
+  document.documentElement.lang = S.lang;
+  document.querySelectorAll(".lang button").forEach(b => { const on = b.dataset.l === S.lang; b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); });
+  document.querySelector(".lang").setAttribute("aria-label", L("Language","Taal"));
+  if (top) window.scrollTo(0, 0);
+  if (S.screen === "analysing") startAnalysing();
+  if (S.screen === "report") wireReport();
+}
+
+function startAnalysing(){
+  const gone = Date.now() - anStart;
+  for (let k = 0; k < 4; k++){
+    const tick = () => { const it = $("an" + k); if (it) it.classList.add("done"); };
+    const wait = 320 + 360 * k - gone;
+    if (wait <= 0) tick(); else timers.push(setTimeout(tick, wait));
+  }
+  timers.push(setTimeout(() => { S.screen = "report"; render(true); }, Math.max(0, 2000 - gone)));
+}
+
+function wireReport(){
+  /* The animated .screen would become the containing block of a fixed element, so the sticky bar lives on body. */
+  const bar = $("r-sticky");
+  if (bar) document.body.appendChild(bar);
+  const nav = document.querySelector(".r-nav-in");
+  if (nav){
+    const chips = [...nav.querySelectorAll("button")], ids = chips.map(b => b.dataset.to), vis = new Set();
+    spy = new IntersectionObserver(es => {
+      es.forEach(e => e.isIntersecting ? vis.add(e.target.id) : vis.delete(e.target.id));
+      const cur = ids.find(id => vis.has(id));
+      if (!cur) return;
+      chips.forEach(b => {
+        const on = b.dataset.to === cur;
+        if (on && !b.classList.contains("on")) nav.scrollTo({ left: b.offsetLeft - nav.offsetLeft - (nav.clientWidth - b.offsetWidth) / 2, behavior: motion() });
+        b.classList.toggle("on", on);
+        if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+      });
+    }, { rootMargin: "-130px 0px -55% 0px" });
+    ids.forEach(id => { const el = $(id); if (el) spy.observe(el); });
+  }
+  checkSticky();
+}
+
+/* Sticky bar: requestAnimationFrame scroll check. Shown after 500px, hidden while either CTA is on screen. */
+function checkSticky(){
+  ticking = false;
+  const bar = $("r-sticky");
+  if (!bar) return;
+  const seen = (id) => { const el = $(id); if (!el) return false; const r = el.getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; };
+  const show = window.scrollY > 500 && !seen("help-top") && !seen("help");
+  if (show === bar.classList.contains("show")) return;
+  bar.classList.toggle("show", show);
+  bar.setAttribute("aria-hidden", String(!show));
+  bar.querySelector("a").tabIndex = show ? 0 : -1;
+}
+const onScroll = () => { if (!ticking){ ticking = true; requestAnimationFrame(checkSticky); } };
+window.addEventListener("scroll", onScroll, { passive:true });
+window.addEventListener("resize", onScroll);
+
+function next(){
+  if (S.qi < QS.length - 1){ S.qi++; S.screen = "q"; }
+  else { S.doneDay = today(); anStart = Date.now(); S.screen = "analysing"; }
+  render(true);
+}
+function advance(){ busy = true; setTimeout(() => { busy = false; next(); }, 140); }
+
+async function copyText(text, btn, fallback){
+  const orig = btn.textContent;
+  try { await navigator.clipboard.writeText(text); btn.textContent = L("Copied","Gekopieer"); }
+  catch (err) { fallback(); btn.textContent = L("Selected","Gekies"); }
+  setTimeout(() => { btn.textContent = orig; }, 1600);
+}
+
+function openShared(d){
+  Object.assign(S, { shared:{ lang:d.lang }, lang:d.lang, answers:d.answers, name:d.name, doneDay:d.day, screen:"report", pasteOpen:false, nameErr:false });
+  render(true);
+}
+function fromHash(){
+  let h = location.hash.slice(1);
+  if (!h) return false;
+  try { h = decodeURIComponent(h); } catch (err) { return false; }
+  const d = decode(h);
+  if (!d) return false;
+  openShared(d);
+  return true;
+}
+
+function start(){
+  const v = ($("nm").value || "").trim();
+  if (!v){ S.name = ""; S.nameErr = true; render(false); $("nm").focus(); return; }
+  Object.assign(S, { name:v, nameErr:false, qi:0, screen:"q" });
+  render(true);
+}
+function openCode(){
+  const d = decode($("pc").value);
+  if (!d){ $("pc").classList.add("err"); $("pc-err").hidden = false; return; }
+  openShared(d);
+}
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-act]");
+  if (!t) return;
+  switch (t.dataset.act){
+    case "lang": if (S.lang !== t.dataset.l){ S.lang = t.dataset.l; render(false); } break;
+    case "start": start(); break;
+    case "back":
+      if (busy) return;
+      if (S.qi > 0) S.qi--; else S.screen = "welcome";
+      render(true); break;
+    case "choose": {
+      if (busy) return;
+      S.answers[S.qi] = { c:+t.dataset.j, sure:null };
+      document.querySelectorAll("#opts .opt").forEach(b => b.classList.toggle("sel", b === t));
+      const conf = $("conf");
+      conf.classList.add("show");
+      if (innerWidth < 700) conf.scrollIntoView({ behavior: motion(), block:"nearest" });
+      break;
+    }
+    case "sure": {
+      const a = S.answers[S.qi];
+      if (busy || !a || a.c < 0) return;
+      a.sure = t.dataset.v === "1";
+      advance(); break;
+    }
+    case "idk":
+      if (busy) return;
+      S.answers[S.qi] = { c:-1, sure:false };
+      document.querySelectorAll("#opts .opt").forEach(b => b.classList.toggle("sel", b === t));
+      $("conf").classList.remove("show");
+      advance(); break;
+    case "jump": {
+      const el = $(t.dataset.to);
+      if (!el) return;
+      if (el.tagName === "DETAILS") el.open = true;
+      el.scrollIntoView({ behavior: motion(), block:"start" });
+      break;
+    }
+    case "copy": {
+      const inp = $("code");
+      copyText(inp.value, t, () => { inp.focus(); inp.select(); inp.setSelectionRange(0, inp.value.length); });
+      break;
+    }
+    case "copy-summary": {
+      const ta = $("sum-text");
+      copyText(ta.value, t, () => { ta.classList.add("show"); ta.removeAttribute("aria-hidden"); ta.tabIndex = 0; ta.focus(); ta.select(); });
+      break;
+    }
+    case "toggle-paste":
+      S.pasteOpen = !S.pasteOpen; render(false);
+      if (S.pasteOpen) $("pc").focus();
+      break;
+    case "open-code": openCode(); break;
+    case "restart":
+      Object.assign(S, { screen:"welcome", qi:0, name:"", answers:[], shared:null, doneDay:null, pasteOpen:false, nameErr:false });
+      history.replaceState(null, "", location.pathname + location.search);
+      render(true); break;
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter") return;
+  if (e.target.id === "nm"){ e.preventDefault(); start(); }
+  else if (e.target.id === "pc"){ e.preventDefault(); openCode(); }
+});
+
+document.addEventListener("input", (e) => {
+  const t = e.target;
+  if (t.id === "nm"){
+    S.name = t.value;
+    if (S.nameErr && t.value.trim()){
+      S.nameErr = false; t.classList.remove("err");
+      const m = t.parentNode.querySelector(".err-msg"); if (m) m.remove();
+    }
+  } else if (t.id === "pc"){ t.classList.remove("err"); $("pc-err").hidden = true; }
+});
+
+window.addEventListener("hashchange", fromHash);
+if (!fromHash()) render(true);
+</script>
+</body>
+</html>
