@@ -1,0 +1,250 @@
+{
+ "sample_rate": 22050,
+ "total": 83.953,
+ "scenes": [
+  {
+   "scene": 1,
+   "start": 0.6,
+   "sentences": [
+    {
+     "text": "Hi friends!",
+     "start": 0.6,
+     "end": 1.831
+    },
+    {
+     "text": "Why do some lifts feel heavier than others?",
+     "start": 2.151,
+     "end": 4.757
+    },
+    {
+     "text": "Let's find out!",
+     "start": 5.077,
+     "end": 6.076
+    }
+   ],
+   "end": 6.826
+  },
+  {
+   "scene": 2,
+   "start": 6.826,
+   "sentences": [
+    {
+     "text": "Hold a heavy backpack close to your chest.",
+     "start": 6.826,
+     "end": 9.437
+    },
+    {
+     "text": "Easy!",
+     "start": 9.757,
+     "end": 10.36
+    },
+    {
+     "text": "Now hold it out with straight arms.",
+     "start": 10.68,
+     "end": 13.25
+    },
+    {
+     "text": "Much heavier!",
+     "start": 13.57,
+     "end": 14.614
+    },
+    {
+     "text": "The backpack did not change.",
+     "start": 14.934,
+     "end": 16.777
+    },
+    {
+     "text": "The distance did.",
+     "start": 17.097,
+     "end": 18.257
+    }
+   ],
+   "end": 19.007
+  },
+  {
+   "scene": 3,
+   "start": 19.007,
+   "sentences": [
+    {
+     "text": "That distance is called the moment arm.",
+     "start": 19.007,
+     "end": 21.378
+    },
+    {
+     "text": "It is how far a joint is from the line where a weight pulls.",
+     "start": 21.698,
+     "end": 25.625
+    },
+    {
+     "text": "We will call it the distance from the joint to the weight's pull.",
+     "start": 25.945,
+     "end": 28.85
+    },
+    {
+     "text": "Longer is harder.",
+     "start": 29.17,
+     "end": 30.632
+    },
+    {
+     "text": "Shorter is easier.",
+     "start": 30.952,
+     "end": 32.356
+    }
+   ],
+   "end": 33.106
+  },
+  {
+   "scene": 4,
+   "start": 33.106,
+   "sentences": [
+    {
+     "text": "First, the biceps curl.",
+     "start": 33.106,
+     "end": 34.97
+    },
+    {
+     "text": "The elbow is the joint.",
+     "start": 35.29,
+     "end": 36.627
+    },
+    {
+     "text": "Arm hanging low?",
+     "start": 36.947,
+     "end": 38.115
+    },
+    {
+     "text": "The weight is close.",
+     "start": 38.435,
+     "end": 39.76
+    },
+    {
+     "text": "Easier.",
+     "start": 40.08,
+     "end": 40.74
+    },
+    {
+     "text": "Arm sticking straight out?",
+     "start": 41.06,
+     "end": 42.942
+    },
+    {
+     "text": "The weight is far.",
+     "start": 43.262,
+     "end": 44.49
+    },
+    {
+     "text": "Harder!",
+     "start": 44.81,
+     "end": 45.316
+    }
+   ],
+   "end": 46.066
+  },
+  {
+   "scene": 5,
+   "start": 46.066,
+   "sentences": [
+    {
+     "text": "Next, the side raise.",
+     "start": 46.066,
+     "end": 48.024
+    },
+    {
+     "text": "The shoulder is the joint.",
+     "start": 48.344,
+     "end": 49.796
+    },
+    {
+     "text": "Bent elbow?",
+     "start": 50.116,
+     "end": 51.092
+    },
+    {
+     "text": "The weight stays close.",
+     "start": 51.412,
+     "end": 53.07
+    },
+    {
+     "text": "Easier.",
+     "start": 53.39,
+     "end": 54.155
+    },
+    {
+     "text": "Straight arm?",
+     "start": 54.475,
+     "end": 55.763
+    },
+    {
+     "text": "The weight goes far.",
+     "start": 56.083,
+     "end": 57.438
+    },
+    {
+     "text": "Harder!",
+     "start": 57.758,
+     "end": 58.317
+    }
+   ],
+   "end": 59.067
+  },
+  {
+   "scene": 6,
+   "start": 59.067,
+   "sentences": [
+    {
+     "text": "Last, the squat.",
+     "start": 59.067,
+     "end": 60.398
+    },
+    {
+     "text": "The hip is the joint.",
+     "start": 60.718,
+     "end": 62.05
+    },
+    {
+     "text": "Stand tall, and the weight stays close.",
+     "start": 62.37,
+     "end": 65.719
+    },
+    {
+     "text": "Easier.",
+     "start": 66.039,
+     "end": 66.805
+    },
+    {
+     "text": "Lean far forward, and your hips move far away.",
+     "start": 67.125,
+     "end": 70.825
+    },
+    {
+     "text": "Harder for your hips!",
+     "start": 71.145,
+     "end": 72.603
+    }
+   ],
+   "end": 73.353
+  },
+  {
+   "scene": 7,
+   "start": 73.353,
+   "sentences": [
+    {
+     "text": "Remember: the longer the distance from the joint to the weight's pull, the harder it feels.",
+     "start": 73.353,
+     "end": 78.651
+    },
+    {
+     "text": "Want more fun science?",
+     "start": 78.971,
+     "end": 80.807
+    },
+    {
+     "text": "Learn with Local Tutors!",
+     "start": 81.127,
+     "end": 83.203
+    }
+   ],
+   "end": 83.953
+  }
+ ]
+}

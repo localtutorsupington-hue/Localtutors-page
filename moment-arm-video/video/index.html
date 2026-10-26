@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "DMS"; src: url("assets/fonts/dm-sans-latin-700-normal.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "DMS"; src: url("assets/fonts/dm-sans-latin-800-normal.woff2") format("woff2"); font-weight: 800; }
+      :root { --ink: #1b1b1f; --dist: #ff7a00; --pull: #4f6d8f; --joint: #2f6fe4; --easy: #1f9d55; --hard: #e0393e; --bg: #ffffff; --cap: #f3f4f7; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: "DMS", sans-serif; color: var(--ink); }
+      .scene { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      .scene svg, #hostlayer svg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+      #hostlayer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      #caps { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      .cap { position: absolute; left: 260px; top: 905px; width: 1400px; min-height: 130px; padding: 18px 36px; border-radius: 28px; background: var(--cap);
+             font-size: 46px; font-weight: 800; line-height: 1.18; text-align: center; color: var(--ink); opacity: 0; display: flex; align-items: center; justify-content: center; }
+      text { font-family: "DMS", sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="85.153" data-width="1920" data-height="1080">
+      <div id="scene1" class="scene clip" data-start="0.000" data-duration="6.826" data-track-index="1"><svg viewBox="0 0 1920 1080" id="svg1"></svg></div>
+      <div id="scene2" class="scene clip" data-start="6.576" data-duration="12.431" data-track-index="2"><svg viewBox="0 0 1920 1080" id="svg2"></svg></div>
+      <div id="scene3" class="scene clip" data-start="18.757" data-duration="14.349" data-track-index="3"><svg viewBox="0 0 1920 1080" id="svg3"></svg></div>
+      <div id="scene4" class="scene clip" data-start="32.856" data-duration="13.210" data-track-index="4"><svg viewBox="0 0 1920 1080" id="svg4"></svg></div>
+      <div id="scene5" class="scene clip" data-start="45.816" data-duration="13.251" data-track-index="5"><svg viewBox="0 0 1920 1080" id="svg5"></svg></div>
+      <div id="scene6" class="scene clip" data-start="58.817" data-duration="14.536" data-track-index="6"><svg viewBox="0 0 1920 1080" id="svg6"></svg></div>
+      <div id="scene7" class="scene clip" data-start="73.103" data-duration="12.050" data-track-index="7"><svg viewBox="0 0 1920 1080" id="svg7"></svg></div>
+      <div id="hostlayer" class="clip" data-start="0" data-duration="85.153" data-track-index="9"><svg viewBox="0 0 1920 1080" id="hostsvg"></svg></div>
+      <div id="caps" class="clip" data-start="0" data-duration="85.153" data-track-index="10"></div>
+      <audio id="vo" src="assets/audio/voiceover.wav" data-start="0" data-duration="85.153" data-track-index="20" data-volume="1"></audio>
+    </div>
+    <script>
+      const T = {"sample_rate": 22050, "total": 83.953, "scenes": [{"scene": 1, "start": 0.6, "sentences": [{"text": "Hi friends!", "start": 0.6, "end": 1.831}, {"text": "Why do some lifts feel heavier than others?", "start": 2.151, "end": 4.757}, {"text": "Let's find out!", "start": 5.077, "end": 6.076}], "end": 6.826}, {"scene": 2, "start": 6.826, "sentences": [{"text": "Hold a heavy backpack close to your chest.", "start": 6.826, "end": 9.437}, {"text": "Easy!", "start": 9.757, "end": 10.36}, {"text": "Now hold it out with straight arms.", "start": 10.68, "end": 13.25}, {"text": "Much heavier!", "start": 13.57, "end": 14.614}, {"text": "The backpack did not change.", "start": 14.934, "end": 16.777}, {"text": "The distance did.", "start": 17.097, "end": 18.257}], "end": 19.007}, {"scene": 3, "start": 19.007, "sentences": [{"text": "That distance is called the moment arm.", "start": 19.007, "end": 21.378}, {"text": "It is how far a joint is from the line where a weight pulls.", "start": 21.698, "end": 25.625}, {"text": "We will call it the distance from the joint to the weight's pull.", "start": 25.945, "end": 28.85}, {"text": "Longer is harder.", "start": 29.17, "end": 30.632}, {"text": "Shorter is easier.", "start": 30.952, "end": 32.356}], "end": 33.106}, {"scene": 4, "start": 33.106, "sentences": [{"text": "First, the biceps curl.", "start": 33.106, "end": 34.97}, {"text": "The elbow is the joint.", "start": 35.29, "end": 36.627}, {"text": "Arm hanging low?", "start": 36.947, "end": 38.115}, {"text": "The weight is close.", "start": 38.435, "end": 39.76}, {"text": "Easier.", "start": 40.08, "end": 40.74}, {"text": "Arm sticking straight out?", "start": 41.06, "end": 42.942}, {"text": "The weight is far.", "start": 43.262, "end": 44.49}, {"text": "Harder!", "start": 44.81, "end": 45.316}], "end": 46.066}, {"scene": 5, "start": 46.066, "sentences": [{"text": "Next, the side raise.", "start": 46.066, "end": 48.024}, {"text": "The shoulder is the joint.", "start": 48.344, "end": 49.796}, {"text": "Bent elbow?", "start": 50.116, "end": 51.092}, {"text": "The weight stays close.", "start": 51.412, "end": 53.07}, {"text": "Easier.", "start": 53.39, "end": 54.155}, {"text": "Straight arm?", "start": 54.475, "end": 55.763}, {"text": "The weight goes far.", "start": 56.083, "end": 57.438}, {"text": "Harder!", "start": 57.758, "end": 58.317}], "end": 59.067}, {"scene": 6, "start": 59.067, "sentences": [{"text": "Last, the squat.", "start": 59.067, "end": 60.398}, {"text": "The hip is the joint.", "start": 60.718, "end": 62.05}, {"text": "Stand tall, and the weight stays close.", "start": 62.37, "end": 65.719}, {"text": "Easier.", "start": 66.039, "end": 66.805}, {"text": "Lean far forward, and your hips move far away.", "start": 67.125, "end": 70.825}, {"text": "Harder for your hips!", "start": 71.145, "end": 72.603}], "end": 73.353}, {"scene": 7, "start": 73.353, "sentences": [{"text": "Remember: the longer the distance from the joint to the weight's pull, the harder it feels.", "start": 73.353, "end": 78.651}, {"text": "Want more fun science?", "start": 78.971, "end": 80.807}, {"text": "Learn with Local Tutors!", "start": 81.127, "end": 83.203}], "end": 83.953}]};
+      const CAPS = [{"text": "Hi friends!", "start": 0.6, "end": 2.151}, {"text": "Why do some lifts feel heavier than others?", "start": 2.151, "end": 5.077}, {"text": "Let's find out!", "start": 5.077, "end": 6.826}, {"text": "Hold a heavy backpack close to your chest.", "start": 6.826, "end": 9.757}, {"text": "Easy!", "start": 9.757, "end": 10.68}, {"text": "Now hold it out with straight arms.", "start": 10.68, "end": 13.57}, {"text": "Much heavier!", "start": 13.57, "end": 14.934}, {"text": "The backpack did not change.", "start": 14.934, "end": 17.097}, {"text": "The distance did.", "start": 17.097, "end": 19.007}, {"text": "That distance is called the moment arm.", "start": 19.007, "end": 21.698}, {"text": "It is how far a joint is from the", "start": 21.698, "end": 23.894}, {"text": "line where a weight pulls.", "start": 23.894, "end": 25.945}, {"text": "We will call it the distance from", "start": 25.945, "end": 27.443}, {"text": "the joint to the weight's pull.", "start": 27.443, "end": 29.17}, {"text": "Longer is harder.", "start": 29.17, "end": 30.952}, {"text": "Shorter is easier.", "start": 30.952, "end": 33.106}, {"text": "First, the biceps curl.", "start": 33.106, "end": 35.29}, {"text": "The elbow is the joint.", "start": 35.29, "end": 36.947}, {"text": "Arm hanging low?", "start": 36.947, "end": 38.435}, {"text": "The weight is close.", "start": 38.435, "end": 40.08}, {"text": "Easier.", "start": 40.08, "end": 41.06}, {"text": "Arm sticking straight out?", "start": 41.06, "end": 43.262}, {"text": "The weight is far.", "start": 43.262, "end": 44.81}, {"text": "Harder!", "start": 44.81, "end": 46.066}, {"text": "Next, the side raise.", "start": 46.066, "end": 48.344}, {"text": "The shoulder is the joint.", "start": 48.344, "end": 50.116}, {"text": "Bent elbow?", "start": 50.116, "end": 51.412}, {"text": "The weight stays close.", "start": 51.412, "end": 53.39}, {"text": "Easier.", "start": 53.39, "end": 54.475}, {"text": "Straight arm?", "start": 54.475, "end": 56.083}, {"text": "The weight goes far.", "start": 56.083, "end": 57.758}, {"text": "Harder!", "start": 57.758, "end": 59.067}, {"text": "Last, the squat.", "start": 59.067, "end": 60.718}, {"text": "The hip is the joint.", "start": 60.718, "end": 62.37}, {"text": "Stand tall, and the weight stays close.", "start": 62.37, "end": 66.039}, {"text": "Easier.", "start": 66.039, "end": 67.125}, {"text": "Lean far forward, and your hips move far away.", "start": 67.125, "end": 71.145}, {"text": "Harder for your hips!", "start": 71.145, "end": 73.353}, {"text": "Remember: the longer the distance from the joint", "start": 73.353, "end": 76.179}, {"text": "to the weight's pull, the harder it feels.", "start": 76.179, "end": 78.971}, {"text": "Want more fun science?", "start": 78.971, "end": 81.127}, {"text": "Learn with Local Tutors!", "start": 81.127, "end": 83.203}];
+      const L = {"panels": [[470, 830, 1.0], [1130, 830, 1.0]], "labelDx": 0, "labelDy": -636, "title": [800, 120], "titleFs": 64, "host": [960, 880, 1.15], "hostIn": -1300, "hostSide": [1700, 860, 0.85], "hostEnd": [1560, 880, 1.05], "def": [640, 760, 0.95], "rule": [760, 360], "ruleW": 1000, "ruleFs": 64};
+      const NS = "http://www.w3.org/2000/svg";
+      const INK = "#1b1b1f", DIST = "#ff7a00", PULL = "#4f6d8f", JOINT = "#2f6fe4", EASY = "#1f9d55", HARD = "#e0393e";
+      const SW = 7; // one line weight for every figure
+
+      function el(parent, tag, attrs, id) {
+        const e = document.createElementNS(NS, tag);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        if (id) e.id = id;
+        parent.appendChild(e);
+        return e;
+      }
+      const G = (p, id, tr) => el(p, "g", tr ? { transform: tr } : {}, id);
+      const line = (p, a, b, extra) => el(p, "line", Object.assign({ x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: INK, "stroke-width": SW, "stroke-linecap": "round" }, extra || {}));
+      const poly = (p, pts, extra) => el(p, "polyline", Object.assign({ points: pts.map((q) => q.join(",")).join(" "), fill: "none", stroke: INK, "stroke-width": SW, "stroke-linecap": "round", "stroke-linejoin": "round" }, extra || {}));
+      const oval = (p, c, rx, ry, rot) => el(p, "ellipse", { cx: c[0], cy: c[1], rx, ry, fill: "#fff", stroke: INK, "stroke-width": SW - 2, transform: `rotate(${rot || 0} ${c[0]} ${c[1]})` });
+      const txt = (p, x, y, s, size, fill, anchor, id) => { const t = el(p, "text", { x, y, "font-size": size, "font-weight": 800, fill: fill || INK, "text-anchor": anchor || "middle" }, id); t.textContent = s; return t; };
+
+      // ---------- shared face/head in the host's style ----------
+      function head(p, c, r, look, mood) {
+        el(p, "circle", { cx: c[0], cy: c[1], r, fill: "#fff", stroke: INK, "stroke-width": SW });
+        const dx = look === "right" ? r * 0.28 : look === "left" ? -r * 0.28 : 0;
+        const ex = r * 0.3, ey = -r * 0.12;
+        [[-ex, ey], [ex, ey]].forEach(([x, y]) => {
+          if (mood === "tired") line(p, [c[0] + dx + x - r * 0.13, c[1] + y], [c[0] + dx + x + r * 0.13, c[1] + y + 2], { "stroke-width": 4 });
+          else el(p, "ellipse", { cx: c[0] + dx + x, cy: c[1] + y, rx: r * 0.09, ry: r * 0.15, fill: INK });
+        });
+        // brows
+        const by = c[1] - r * 0.42;
+        if (mood === "tired") { line(p, [c[0] + dx - ex - 10, by + 4], [c[0] + dx - ex + 8, by - 4], { "stroke-width": 3 }); line(p, [c[0] + dx + ex - 8, by - 4], [c[0] + dx + ex + 10, by + 4], { "stroke-width": 3 }); }
+        else { line(p, [c[0] + dx - ex - 9, by], [c[0] + dx - ex + 9, by - 3], { "stroke-width": 3 }); line(p, [c[0] + dx + ex - 9, by - 3], [c[0] + dx + ex + 9, by], { "stroke-width": 3 }); }
+        const my = c[1] + r * 0.42, mx = c[0] + dx;
+        if (mood === "happy") el(p, "path", { d: `M ${mx - r * 0.3} ${my - 6} Q ${mx} ${my + r * 0.28} ${mx + r * 0.3} ${my - 6}`, fill: "none", stroke: INK, "stroke-width": 4, "stroke-linecap": "round" });
+        else if (mood === "tired") el(p, "path", { d: `M ${mx - r * 0.28} ${my + 6} Q ${mx} ${my - r * 0.18} ${mx + r * 0.28} ${my + 6}`, fill: "none", stroke: INK, "stroke-width": 4, "stroke-linecap": "round" });
+        else line(p, [mx - r * 0.2, my], [mx + r * 0.22, my - 4], { "stroke-width": 4 });
+        // a few hair strands
+        [[-0.25, -1.0], [-0.05, -1.08], [0.15, -1.02]].forEach(([a, b]) => el(p, "path", { d: `M ${c[0] + a * r} ${c[1] + b * r * 0.95} q ${r * 0.06} ${-r * 0.22} ${r * 0.22} ${-r * 0.26}`, fill: "none", stroke: INK, "stroke-width": 3, "stroke-linecap": "round" }));
+      }
+
+      // ---------- props ----------
+      function dumbbell(p, c, s) {
+        s = s || 1;
+        el(p, "rect", { x: c[0] - 30 * s, y: c[1] - 5 * s, width: 60 * s, height: 10 * s, rx: 4 * s, fill: INK });
+        [[-30, 1], [30, 1]].forEach(([x]) => el(p, "rect", { x: c[0] + x * s - 9 * s, y: c[1] - 22 * s, width: 18 * s, height: 44 * s, rx: 5 * s, fill: "#fff", stroke: INK, "stroke-width": 5 * s }));
+      }
+      function backpack(p, c) {
+        el(p, "rect", { x: c[0] - 42, y: c[1] - 50, width: 84, height: 100, rx: 22, fill: "#ffd84d", stroke: INK, "stroke-width": SW - 1 });
+        el(p, "path", { d: `M ${c[0] - 42} ${c[1] - 14} Q ${c[0]} ${c[1] + 6} ${c[0] + 42} ${c[1] - 14}`, fill: "none", stroke: INK, "stroke-width": 4 });
+        el(p, "rect", { x: c[0] - 20, y: c[1] + 14, width: 40, height: 24, rx: 7, fill: "#fff", stroke: INK, "stroke-width": 4 });
+      }
+
+      // ---------- the moment-arm overlay: joint dot, the weight's pull (vertical), distance (horizontal) ----------
+      function overlay(p, joint, wx, wy, id) {
+        const g = G(p, id);
+        const top = Math.min(joint[1], wy) - 70, bot = Math.max(joint[1], wy) + 120;
+        const pull = G(g, id + "-pull");
+        line(pull, [wx, top], [wx, bot - 18], { stroke: PULL, "stroke-width": 5, "stroke-dasharray": "14 11" });
+        el(pull, "path", { d: `M ${wx - 15} ${bot - 26} L ${wx} ${bot} L ${wx + 15} ${bot - 26} Z`, fill: PULL });
+        const dist = G(g, id + "-dist");
+        const len = Math.abs(wx - joint[0]);
+        el(dist, "line", { x1: joint[0], y1: joint[1], x2: wx, y2: joint[1], stroke: DIST, "stroke-width": 12, "stroke-linecap": "round", "stroke-dasharray": `${len + 1} ${len + 1}`, "stroke-dashoffset": len + 1, id: id + "-dl" });
+        // little right-angle mark where the distance meets the pull line
+        const sx = wx > joint[0] ? -1 : 1;
+        poly(dist, [[wx + sx * 18, joint[1]], [wx + sx * 18, joint[1] - 18], [wx, joint[1] - 18]], { stroke: DIST, "stroke-width": 4, id: id + "-sq", opacity: 0 });
+        el(g, "circle", { cx: joint[0], cy: joint[1], r: 14, fill: JOINT, stroke: "#fff", "stroke-width": 4, id: id + "-j" });
+        return len;
+      }
+
+      // ---------- figures (local coords, ground y=0, facing right) ----------
+      function standingSide(p) {
+        const hip = [0, -265], sh = [0, -430], ank = [0, -14];
+        line(p, sh, hip);
+        poly(p, [hip, [8, -140], ank]);
+        oval(p, [14, -6], 26, 10, 0);
+        return { hip, sh };
+      }
+      function curlFig(p, angleDeg, id) {
+        const b = standingSide(p);
+        head(p, [8, -482], 44, "right", "neutral");
+        const el1 = [8, -305];
+        const a = (angleDeg * Math.PI) / 180, fl = 132;
+        const hand = [el1[0] + fl * Math.sin(a), el1[1] + fl * Math.cos(a)];
+        poly(p, [b.sh, el1, hand]);
+        oval(p, hand, 13, 11, 0);
+        dumbbell(p, hand, 0.9);
+        return overlay(p, el1, hand[0], hand[1], id);
+      }
+      function backpackFig(p, far, id) {
+        const b = standingSide(p);
+        head(p, [8, -482], 44, "right", far ? "tired" : "neutral");
+        let bp, hand, elb;
+        if (!far) { bp = [62, -372]; elb = [34, -322]; hand = [76, -398]; }
+        else { hand = [205, -430]; elb = [105, -430]; bp = [210, -362]; }
+        if (far) line(p, hand, [bp[0], bp[1] - 50], { "stroke-width": 5 });
+        backpack(p, bp);
+        poly(p, [b.sh, elb, hand]);
+        oval(p, hand, 13, 11, 0);
+        return overlay(p, b.sh, bp[0], bp[1], id);
+      }
+      function raiseFig(p, bent, id) {
+        const shL = [-48, -430], shR = [48, -430], neck = [0, -440], hipC = [0, -262];
+        line(p, neck, hipC);
+        line(p, shL, shR);
+        poly(p, [hipC, [-28, -140], [-44, -12]]);
+        poly(p, [hipC, [28, -140], [44, -12]]);
+        oval(p, [-52, -6], 22, 10, 0); oval(p, [52, -6], 22, 10, 0);
+        head(p, [0, -490], 44, "front", bent ? "neutral" : "tired");
+        let handR, elbR;
+        if (bent) { elbR = [48 + 118, -430]; handR = [48 + 118, -318]; }
+        else { elbR = [48 + 118, -430]; handR = [48 + 236, -430]; }
+        const mirror = (q) => [-q[0], q[1]];
+        poly(p, [shR, elbR, handR]); poly(p, [shL, mirror(elbR), mirror(handR)]);
+        oval(p, handR, 12, 12, 0); oval(p, mirror(handR), 12, 12, 0);
+        dumbbell(p, [handR[0], handR[1] + (bent ? 18 : 0)], 0.85);
+        dumbbell(p, [-handR[0], handR[1] + (bent ? 18 : 0)], 0.85);
+        return overlay(p, shR, handR[0], handR[1] + (bent ? 18 : 0), id);
+      }
+      function ik(hip, ank, l1, l2) {
+        const dx = ank[0] - hip[0], dy = ank[1] - hip[1], d = Math.min(Math.hypot(dx, dy), l1 + l2 - 0.5);
+        const a = Math.acos((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)), base = Math.atan2(dy, dx);
+        const t = base - a; // knee bends forward (toward +x)
+        return [hip[0] + l1 * Math.cos(t), hip[1] + l1 * Math.sin(t)];
+      }
+      function squatFig(p, lean, id) {
+        const leanDeg = lean ? 55 : 12, hipY = lean ? -232 : -300, tl = 178;
+        const s = Math.sin((leanDeg * Math.PI) / 180), c = Math.cos((leanDeg * Math.PI) / 180);
+        // place the hip so the bar sits right over the middle of the foot (x = 0)
+        const barOff = 6;
+        const hip = [-(tl * s - barOff), hipY];
+        const sh = [hip[0] + tl * s, hip[1] - tl * c];
+        const bar = [sh[0] - barOff, sh[1] + 10];
+        // plate behind the body
+        el(p, "circle", { cx: bar[0], cy: bar[1], r: 32, fill: "#eef1f6", stroke: INK, "stroke-width": SW - 1 });
+        el(p, "circle", { cx: bar[0], cy: bar[1], r: 7, fill: INK });
+        const ank = [-16, -14];
+        const knee = ik(hip, ank, 150, 146);
+        line(p, sh, hip);
+        poly(p, [hip, knee, ank]);
+        oval(p, [10, -6], 34, 10, 0);
+        line(p, [-60, 0], [90, 0], { "stroke-width": 4, stroke: "#c9ced8" });
+        const hc = [sh[0] + 78 * s + 8, sh[1] - 78 * c];
+        head(p, hc, 40, "right", lean ? "tired" : "neutral");
+        const elb = [bar[0] - 18, bar[1] + 58];
+        poly(p, [sh, elb, [bar[0] + 14, bar[1] + 4]]);
+        return overlay(p, hip, bar[0], bar[1], id);
+      }
+
+      // ---------- original host (same drawing in every scene; poses swap) ----------
+      function host(svg) {
+        const g = G(svg, "host");
+        const inner = G(g, "host-in");
+        const legs = G(inner);
+        line(legs, [0, -420], [0, -160]);
+        poly(legs, [[0, -160], [-30, -80], [-44, 0]]); poly(legs, [[0, -160], [30, -80], [44, 0]]);
+        oval(legs, [-56, 4], 24, 10, 0); oval(legs, [56, 4], 24, 10, 0);
+        const poses = {
+          think: { arms: [[[0, -400], [-62, -300], [-18, -175]], [[0, -400], [58, -330], [22, -448]]], hands: [[-18, -175], [22, -448]], look: "left", mood: "neutral" },
+          point: { arms: [[[0, -400], [-92, -392], [-188, -404]], [[0, -400], [26, -300], [36, -205]]], hands: [[-188, -404], [36, -205]], look: "left", mood: "happy" },
+          tired: { arms: [[[0, -390], [-34, -290], [-46, -190]], [[0, -390], [34, -290], [46, -190]]], hands: [[-46, -190], [46, -190]], look: "front", mood: "tired" },
+          happy: { arms: [[[0, -400], [-40, -300], [-48, -205]], [[0, -400], [70, -452], [104, -540]]], hands: [[-48, -205], [104, -540]], look: "front", mood: "happy" },
+        };
+        for (const k in poses) {
+          const P = poses[k], pg = G(inner, "pose-" + k);
+          P.arms.forEach((a) => poly(pg, a));
+          P.hands.forEach((h) => oval(pg, h, 14, 12, 0));
+          if (k === "point") line(pg, [-188, -404], [-212, -410], { "stroke-width": 5 });
+          head(pg, [k === "tired" ? 6 : 0, k === "tired" ? -462 : -470], 52, P.look, P.mood);
+          pg.setAttribute("opacity", k === "think" ? 1 : 0);
+        }
+        txt(inner, 70, -560, "?", 90, JOINT, "middle", "host-q").setAttribute("opacity", 0);
+      }
+
+      // ---------- build scenes ----------
+      const sc = (i) => T.scenes[i - 1];
+      const sent = (i, k) => sc(i).sentences[k];
+      function panel(svg, side, id) {
+        const P = L.panels[side];
+        return G(G(svg, null, `translate(${P[0]} ${P[1]}) scale(${P[2]})`), id);
+      }
+      function labels(svg, n) {
+        ["easy", "hard"].forEach((side, i) => {
+          const P = L.panels[i], g = G(svg, `s${n}-lab-${side}`, `translate(${P[0] + L.labelDx} ${P[1] + L.labelDy * P[2]})`);
+          el(g, "rect", { x: -120, y: -42, width: 240, height: 76, rx: 38, fill: i ? HARD : EASY });
+          txt(g, 0, 14, i ? "HARDER" : "EASIER", 40, "#fff");
+        });
+      }
+      function title(svg, n, s) { txt(svg, L.title[0], L.title[1], s, L.titleFs, INK, "middle", `s${n}-title`); }
+
+      // scene 2: backpack
+      { const svg = document.getElementById("svg2");
+        backpackFig(panel(svg, 0, "s2-p0"), false, "s2a"); backpackFig(panel(svg, 1, "s2-p1"), true, "s2b"); labels(svg, 2); }
+      // scene 3: definition close-up (forearm angle animates)
+      { const svg = document.getElementById("svg3");
+        const g = G(svg, "s3-g", `translate(${L.def[0]} ${L.def[1]}) scale(${L.def[2]})`);
+        const sh = [0, -470], elb = [0, -250];
+        line(g, [0, -560], sh, { "stroke-width": 10 });
+        line(g, sh, elb, { "stroke-width": 10 });
+        const fore = el(g, "line", { x1: elb[0], y1: elb[1], stroke: INK, "stroke-width": 10, "stroke-linecap": "round", id: "s3-fore" });
+        const db = G(g, "s3-db");
+        dumbbell(db, [0, 0], 1.4);
+        const pull = G(g, "s3-pull");
+        const pl = el(pull, "line", { stroke: PULL, "stroke-width": 6, "stroke-dasharray": "16 12", id: "s3-pl" });
+        const ph = el(pull, "path", { fill: PULL, id: "s3-ph" });
+        const dl = el(g, "line", { stroke: DIST, "stroke-width": 14, "stroke-linecap": "round", id: "s3-dl" });
+        el(g, "circle", { cx: elb[0], cy: elb[1], r: 18, fill: JOINT, stroke: "#fff", "stroke-width": 5, id: "s3-j" });
+        const lj = txt(g, -40, elb[1] + 10, "joint", 44, JOINT, "end", "s3-lj");
+        const lp = txt(g, 0, 0, "the weight's pull", 40, PULL, "start", "s3-lp");
+        const ld = txt(g, 0, 0, "distance", 44, DIST, "start", "s3-ld");
+        window.__s3 = (deg) => {
+          const a = (deg * Math.PI) / 180, fl = 270;
+          const hand = [elb[0] + fl * Math.sin(a), elb[1] + fl * Math.cos(a)];
+          fore.setAttribute("x2", hand[0]); fore.setAttribute("y2", hand[1]);
+          db.setAttribute("transform", `translate(${hand[0]} ${hand[1]})`);
+          const top = elb[1] - 14, bot = Math.max(elb[1], hand[1]) + 100;
+          pl.setAttribute("x1", hand[0]); pl.setAttribute("x2", hand[0]); pl.setAttribute("y1", top); pl.setAttribute("y2", bot - 20);
+          ph.setAttribute("d", `M ${hand[0] - 18} ${bot - 30} L ${hand[0]} ${bot} L ${hand[0] + 18} ${bot - 30} Z`);
+          dl.setAttribute("x1", elb[0]); dl.setAttribute("y1", elb[1]); dl.setAttribute("x2", hand[0]); dl.setAttribute("y2", elb[1]);
+          lp.setAttribute("x", hand[0] + 26); lp.setAttribute("y", bot - 40);
+          ld.setAttribute("x", elb[0] + 18); ld.setAttribute("y", elb[1] - 34);
+        };
+        window.__s3(28);
+      }
+      // scenes 4-6: exercise pairs
+      { const svg = document.getElementById("svg4"); title(svg, 4, "BICEPS CURL");
+        curlFig(panel(svg, 0, "s4-p0"), 26, "s4a"); curlFig(panel(svg, 1, "s4-p1"), 90, "s4b"); labels(svg, 4); }
+      { const svg = document.getElementById("svg5"); title(svg, 5, "SIDE RAISE");
+        raiseFig(panel(svg, 0, "s5-p0"), true, "s5a"); raiseFig(panel(svg, 1, "s5-p1"), false, "s5b"); labels(svg, 5); }
+      { const svg = document.getElementById("svg6"); title(svg, 6, "SQUAT");
+        squatFig(panel(svg, 0, "s6-p0"), false, "s6a"); squatFig(panel(svg, 1, "s6-p1"), true, "s6b"); labels(svg, 6); }
+      // scene 7: takeaway + end card
+      { const svg = document.getElementById("svg7");
+        const g = G(svg, "s7-rule", `translate(${L.rule[0]} ${L.rule[1]})`);
+        const r1 = G(g, "s7-r1"); el(r1, "rect", { x: -L.ruleW / 2, y: -70, width: L.ruleW, height: 110, rx: 30, fill: "#fdecec" });
+        txt(r1, 0, 6, "Longer distance = harder", L.ruleFs, HARD);
+        const r2 = G(G(g, null, "translate(0 150)"), "s7-r2"); el(r2, "rect", { x: -L.ruleW / 2, y: -70, width: L.ruleW, height: 110, rx: 30, fill: "#e8f6ee" });
+        txt(r2, 0, 6, "Shorter distance = easier", L.ruleFs, EASY);
+        const r3 = G(G(g, null, "translate(0 330)"), "s7-brand");
+        txt(r3, 0, 0, "Local Tutors", L.ruleFs + 18, JOINT);
+        txt(r3, 0, 56, "Learn with us!", 40, INK);
+      }
+      host(document.getElementById("hostsvg"));
+
+      // captions
+      const capsEl = document.getElementById("caps");
+      CAPS.forEach((c, i) => { const d = document.createElement("div"); d.className = "cap"; d.id = "cap" + i; d.textContent = c.text; capsEl.appendChild(d); });
+
+      // ---------- timeline ----------
+      const tl = gsap.timeline({ paused: true });
+      const pose = (name, at) => ["think", "point", "tired", "happy"].forEach((k) => tl.set("#pose-" + k, { opacity: k === name ? 1 : 0 }, at));
+      const drawDist = (id, at) => { tl.to(`#${id}-dl`, { attr: { "stroke-dashoffset": 0 }, duration: 0.6, ease: "power2.out" }, at); tl.to(`#${id}-sq`, { opacity: 1, duration: 0.2 }, at + 0.55); };
+      const showPull = (id, at) => tl.fromTo(`#${id}-pull`, { opacity: 0 }, { opacity: 1, duration: 0.35 }, at);
+      const pop = (sel, at) => tl.fromTo(sel, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.4, ease: "back.out(2.4)" }, at);
+      const slideIn = (sel, at, dx) => tl.fromTo(sel, { x: dx, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, at);
+      const pulse = (sel, at) => tl.to(sel, { scale: 1.12, transformOrigin: "50% 50%", duration: 0.2, yoyo: true, repeat: 1, ease: "sine.inOut" }, at);
+
+      CAPS.forEach((c, i) => { tl.fromTo("#cap" + i, { opacity: 0 }, { opacity: 1, duration: 0.12 }, c.start); tl.to("#cap" + i, { opacity: 0, duration: 0.1 }, c.end - 0.1); });
+      for (let i = 2; i <= 7; i++) tl.fromTo("#scene" + i + " svg", { opacity: 0 }, { opacity: 1, duration: 0.35 }, sc(i).start - 0.25);
+
+      // host: slide in, idle bob, poses on cues
+      tl.set("#host", { x: L.host[0] + L.hostIn, y: L.host[1], scale: L.host[2], svgOrigin: "0 0" }, 0);
+      tl.to("#host", { x: L.host[0], duration: 0.8, ease: "power3.out" }, 0.2);
+      tl.fromTo("#host-in", { y: 0 }, { y: -10, duration: 1.0, ease: "sine.inOut", yoyo: true, repeat: Math.floor((T.total - 1) / 1.0) - 1 }, 1.0);
+      tl.fromTo("#host-q", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, ease: "back.out(2)" }, sent(1, 1).start);
+      tl.to("#host-q", { opacity: 0, duration: 0.2 }, sc(1).end - 0.3);
+      tl.to("#host", { x: L.hostSide[0], y: L.hostSide[1], scale: L.hostSide[2], duration: 0.6, ease: "power2.inOut" }, sc(2).start - 0.3);
+
+      // scene 2 backpack
+      slideIn("#s2-p0", sent(2, 0).start, -60); showPull("s2a", sent(2, 0).start + 0.6); drawDist("s2a", sent(2, 0).start + 1.0);
+      pop("#s2-lab-easy", sent(2, 1).start);
+      slideIn("#s2-p1", sent(2, 2).start, 60); showPull("s2b", sent(2, 2).start + 0.6); drawDist("s2b", sent(2, 2).start + 1.0);
+      pop("#s2-lab-hard", sent(2, 3).start); pose("tired", sent(2, 3).start);
+      pose("point", sent(2, 5).start); pulse("#s2a-dist", sent(2, 5).start + 0.1); pulse("#s2b-dist", sent(2, 5).start + 0.3);
+
+      // scene 3 definition
+      pose("happy", sc(3).start);
+      tl.fromTo("#s3-g", { opacity: 0 }, { opacity: 1, duration: 0.4 }, sc(3).start);
+      ["#s3-lj", "#s3-lp", "#s3-ld", "#s3-pull", "#s3-dl"].forEach((s) => tl.set(s, { opacity: 0 }, 0));
+      tl.to("#s3-lj", { opacity: 1, duration: 0.3 }, sent(3, 1).start + 0.6);
+      tl.to(["#s3-pull", "#s3-lp"], { opacity: 1, duration: 0.3 }, sent(3, 1).start + 2.0);
+      tl.to(["#s3-dl", "#s3-ld"], { opacity: 1, duration: 0.3 }, sent(3, 2).start + 0.4);
+      pulse("#s3-ld", sent(3, 2).start + 1.4);
+      const ang = { a: 28 };
+      tl.to(ang, { a: 90, duration: 1.1, ease: "power2.inOut", onUpdate: () => window.__s3(ang.a) }, sent(3, 3).start);
+      tl.to(ang, { a: 28, duration: 1.1, ease: "power2.inOut", onUpdate: () => window.__s3(ang.a) }, sent(3, 4).start);
+      pose("point", sent(3, 3).start);
+
+      // scenes 4-6: same choreography per exercise
+      function pair(n, a, b, cues) {
+        tl.fromTo(`#s${n}-title`, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.4 }, sc(n).start);
+        pose("think", sc(n).start);
+        tl.fromTo([`#${a}-j`, `#${b}-j`], { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.35, ease: "back.out(3)" }, cues.joint);
+        pulse([`#${a}-j`, `#${b}-j`], cues.joint + 0.5);
+        slideIn(`#s${n}-p0`, sc(n).start + 0.15, -60); showPull(a, cues.easyFig); drawDist(a, cues.easyDist);
+        pop(`#s${n}-lab-easy`, cues.easyLab); pose("happy", cues.easyLab);
+        slideIn(`#s${n}-p1`, sc(n).start + 0.35, 60); showPull(b, cues.hardFig); drawDist(b, cues.hardDist);
+        pop(`#s${n}-lab-hard`, cues.hardLab); pose("tired", cues.hardLab);
+      }
+      // sentences: 0 title, 1 joint, 2 easy setup, 3 easy distance, 4 Easier, 5 hard setup, 6 hard distance, 7 Harder
+      [4, 5, 6].forEach((n) => {
+        const ab = { 4: ["s4a", "s4b"], 5: ["s5a", "s5b"], 6: ["s6a", "s6b"] }[n];
+        const S = sc(n).sentences;
+        // squat lines are "Stand tall, and the weight stays close." (setup+distance in one sentence)
+        const cues = n === 6
+          ? { joint: S[1].start, easyFig: S[1].end, easyDist: S[2].start + 0.6, easyLab: S[3].start, hardFig: S[3].end, hardDist: S[4].start + 0.9, hardLab: S[5].start }
+          : { joint: S[1].start, easyFig: S[2].start, easyDist: S[3].start, easyLab: S[4].start, hardFig: S[5].start, hardDist: S[6].start, hardLab: S[7].start };
+        pair(n, ab[0], ab[1], cues);
+      });
+      // hide overlay pieces before they are revealed
+      ["s2a", "s2b", "s4a", "s4b", "s5a", "s5b", "s6a", "s6b"].forEach((id) => { tl.set(`#${id}-pull`, { opacity: 0 }, 0); tl.set(`#${id}-sq`, { opacity: 0 }, 0); });
+      ["#s2-p0", "#s2-p1", "#s4-p0", "#s4-p1", "#s5-p0", "#s5-p1", "#s6-p0", "#s6-p1", "#s4-title", "#s5-title", "#s6-title"].forEach((s) => tl.set(s, { opacity: 0 }, 0));
+      ["s4a", "s4b", "s5a", "s5b", "s6a", "s6b"].forEach((id) => tl.set(`#${id}-j`, { scale: 0, transformOrigin: "50% 50%" }, 0));
+      [2, 4, 5, 6].forEach((n) => tl.set([`#s${n}-lab-easy`, `#s${n}-lab-hard`], { scale: 0, transformOrigin: "50% 50%" }, 0));
+
+      // scene 7
+      tl.to("#host", { x: L.hostEnd[0], y: L.hostEnd[1], scale: L.hostEnd[2], duration: 0.6, ease: "power2.inOut" }, sc(7).start - 0.3);
+      pose("point", sc(7).start);
+      ["#s7-r1", "#s7-r2", "#s7-brand"].forEach((s) => tl.set(s, { opacity: 0 }, 0));
+      tl.fromTo("#s7-r1", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.4 }, sent(7, 0).start + 0.8);
+      tl.fromTo("#s7-r2", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.4 }, sent(7, 0).start + 2.4);
+      tl.fromTo("#s7-brand", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, sent(7, 1).start);
+      pose("happy", sent(7, 2).start);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

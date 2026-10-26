@@ -2,7 +2,7 @@
 
 - Length target: 60 to 90 seconds (about 180 words at a slow, warm pace).
 - Reading level: third grade (short sentences, everyday words).
-- Host: the reference stick-figure character in every scene.
+- Host: an original stick-figure host drawn in the same simple style as the reference images (same drawing in every scene; poses swap). The watermarked reference images are not used.
 - Look: white background, black line art (matching the host), one accent colour for the distance line, one font throughout.
 - Drawing rule for every exercise: a dot on the joint, a dashed line straight down from the weight (the weight's pull), and a thick coloured line from the joint across to that dashed line. That coloured line is the distance. It is clearly longer in "Harder" and shorter in "Easier."
 - Captions match the voiceover word for word.

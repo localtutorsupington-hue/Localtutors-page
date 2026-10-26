@@ -1,2 +1,8 @@
 # Reference character images are watermarked stock previews (unlicensed); keep them out of git
 assets/character/
+tts/
+audio/voiceover_raw.wav
+video/assets/audio/
+video-vertical/assets/audio/
+video*/snapshots/
+video*/renders/
