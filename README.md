@@ -14,7 +14,6 @@ If saving ever fails, WhatsApp still opens. You never lose the chat.
 | --- | --- |
 | `site/index.html` | The landing page. This is the only file you upload to Netlify. |
 | `apps-script/Code.gs` | The small script that puts each lead into your Google Sheet. |
-| `math-error-assessors.html` | The original design draft. Leave it as it is. |
 
 You do the setup once. It takes about 15 minutes. A computer is easiest for setup.
 After that you can watch new leads arrive in the Google Sheets app on your phone.
@@ -121,7 +120,7 @@ If someone opens the page without a label, those columns are simply empty.
 | timestamp | Date and time of the request, South African time |
 | first_name | Parent's first name |
 | surname | Parent's surname |
-| grade | The grade they picked (Grade 4 to 10) |
+| grade | The grade they picked, as a number from 4 to 10 |
 | language | Afrikaans or English |
 | lead_magnet | Always "20 Min Math Error Assessors" |
 | utm_source | Where they came from, for example facebook |

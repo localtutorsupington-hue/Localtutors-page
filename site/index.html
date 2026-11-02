@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>20 Min Math Error Assessors</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Free access to every LocalTutors 20 minute maths quiz for Grade 4 to 10. See exactly which mistakes cost your child marks.">
+<meta property="og:title" content="20 Min Math Error Assessors by LocalTutors">
+<meta property="og:description" content="Find the maths mistakes costing your child marks, before the exam does.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -7 64 64'%3E%3Cstyle%3E.a%7Bfill:%23101938%7D.b%7Bfill:%231E3465%7D@media (prefers-color-scheme:dark)%7B.a%7Bfill:%238CC8E8%7D.b%7Bfill:%23F2F0EB%7D%7D%3C/style%3E%3Cpath class='a' d='M30 8C22 2 10 1 2 3v40c8-2 20-1 28 5Z'/%3E%3Cpath class='b' d='M34 8c8-6 20-7 28-5v40c-8-2-20-1-28 5Z'/%3E%3C/svg%3E">
+<style>
+/* Layout: one centred opt in column. Callout, headline, subhead, product image, one action, three bullets. */
+:root{
+  --bg:#F2F0EB; --card:#FFFFFF; --soft:#F2F5F7;
+  --fg:#111111; --fg-2:#1F2933; --muted:#46515D; --line:#E1E5EA;
+  --blue:#2563A6; --btn:#2563A6; --btn-hover:#1D5290; --on-btn:#FFFFFF;
+  --sky-soft:#E4F2FA; --mark:#C2362F; --mark-soft:#FBEAE8; --ok:#1E7A4C; --ok-soft:#E3F3EA;
+  --logo-a:#101938; --logo-b:#1E3465;
+  --grad-a:#000000; --grad-b:#666666;
+  --shadow:0 1px 2px rgba(17,17,17,.04),0 12px 32px rgba(17,17,17,.08);
+  --font:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#181818; --card:#1F1F1F; --soft:#272727;
+  --fg:#F2F0EB; --fg-2:#E1E4E8; --muted:#BAC1C9; --line:#313131;
+  --blue:#8CC8E8; --btn:#2563A6; --btn-hover:#2E6FB8; --on-btn:#FFFFFF;
+  --sky-soft:#1D2A32; --mark:#F2847B; --mark-soft:#3A2220; --ok:#6CCF9A; --ok-soft:#1C3127;
+  --logo-a:#8CC8E8; --logo-b:#F2F0EB;
+  --grad-a:#FFFFFF; --grad-b:#9B9B9B;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.4);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#181818; --card:#1F1F1F; --soft:#272727;
+  --fg:#F2F0EB; --fg-2:#E1E4E8; --muted:#BAC1C9; --line:#313131;
+  --blue:#8CC8E8; --btn:#2563A6; --btn-hover:#2E6FB8; --on-btn:#FFFFFF;
+  --sky-soft:#1D2A32; --mark:#F2847B; --mark-soft:#3A2220; --ok:#6CCF9A; --ok-soft:#1C3127;
+  --logo-a:#8CC8E8; --logo-b:#F2F0EB;
+  --grad-a:#FFFFFF; --grad-b:#9B9B9B;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.4);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:1rem;line-height:1.5;font-weight:500;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+p,h1{margin:0;text-wrap:pretty}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.page{max-width:480px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 48px;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+.logo{display:flex;align-items:center;gap:8px;color:var(--fg);text-decoration:none}
+.logo svg{width:28px;height:22px}
+.logo b{font-size:18px;line-height:28px;font-weight:700;letter-spacing:-0.03em}
+
+/* 1. Attention callout */
+.attn{margin-top:32px;font-size:0.875rem;line-height:1.4;font-weight:700;color:var(--blue);background:var(--sky-soft);border-radius:9999px;padding:4px 12px}
+
+/* 2. Headline + subhead */
+h1{margin-top:16px;font-size:2.125rem;line-height:1.15;font-weight:700;letter-spacing:-0.02em;text-wrap:balance;color:var(--fg)}
+.sub{margin-top:16px;max-width:36ch;font-size:1.125rem;line-height:1.55;color:var(--fg-2);text-wrap:balance}
+
+/* 3. Product image */
+.shot{margin-top:32px;width:100%;max-width:320px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);text-align:left;overflow:hidden}
+.shot-top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.shot-top b{font-size:0.9375rem;line-height:1.4}
+.shot-top span{font-size:0.8125rem;line-height:1.4;font-weight:600;color:var(--muted)}
+.shot-body{padding:12px;display:grid;gap:4px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;font-size:0.9375rem;line-height:1.4;font-weight:600}
+.row small{font-size:0.8125rem;line-height:1.4;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bad{background:var(--mark-soft);color:var(--mark)}
+.good{background:var(--ok-soft);color:var(--ok)}
+.todo{background:var(--soft);color:var(--fg-2)}
+
+/* 4. The one action */
+.form{margin-top:32px;width:100%;display:grid;gap:16px;text-align:start}
+.label{font-size:0.9375rem;line-height:1.4;gap:8px;flex-wrap:wrap;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.lang{display:inline-flex;gap:2px;padding:2px;border-radius:9999px;background:var(--soft)}
+.lang button{font:600 0.875rem/1.4 var(--font);border:0;background:transparent;color:var(--muted);padding:4px 12px;min-height:32px;border-radius:9999px;cursor:pointer;transition:background-color 200ms ease,color 200ms ease}
+.lang button[aria-pressed="true"]{background:var(--card);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field{display:grid;gap:8px;min-width:0;align-content:start}
+.field > label,.label label{font-size:0.9375rem;line-height:1.4;font-weight:700}
+.input{font:500 1rem/1.5 var(--font);width:100%;min-height:48px;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);transition:border-color 200ms ease,box-shadow 200ms ease}
+.input::placeholder{color:var(--muted)}
+.input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--sky-soft)}
+.input[aria-invalid="true"]{border-color:var(--mark)}
+.sel{position:relative}
+.sel select{appearance:none;-webkit-appearance:none;padding-right:48px;cursor:pointer}
+.sel select:invalid,.sel select.empty{color:var(--muted)}
+.sel svg{position:absolute;right:16px;top:50%;width:20px;height:20px;margin-top:-10px;color:var(--muted);pointer-events:none}
+.ferr{font-size:0.875rem;line-height:1.4;font-weight:600;color:var(--mark)}
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;padding:8px 12px;border:0;border-radius:9999px;background:var(--btn);color:var(--on-btn);font:700 1.0625rem/1.4 var(--font);cursor:pointer;text-decoration:none;transition:transform 160ms var(--ease-out),background-color 200ms ease}
+.cta:active{transform:scale(0.97)}
+.cta svg{width:20px;height:20px;flex:none}
+.cta .t{transition:filter 200ms ease,opacity 200ms ease}
+.cta .t.blur{filter:blur(2px);opacity:.6}
+@media (hover:hover) and (pointer:fine){.cta:hover{background:var(--btn-hover)}}
+.msg{font-size:0.9375rem;line-height:1.5;text-align:center;color:var(--fg-2);text-wrap:pretty}
+.msg.err{color:var(--mark);font-weight:600}
+.msg b{color:var(--fg)}
+
+/* 5. Bullets */
+.bullets{margin:40px 0 0;padding:0;list-style:none;display:grid;gap:12px;text-align:left;width:100%}
+.bullets li{display:flex;gap:12px;align-items:flex-start;font-size:1.0625rem;line-height:1.5;color:var(--fg-2);text-wrap:pretty}
+.bullets svg{flex:none;width:24px;height:24px;color:var(--ok)}
+.bullets b{color:var(--fg)}
+
+.foot{margin-top:48px;font-size:0.875rem;line-height:1.5;color:var(--muted);display:grid;gap:4px;text-wrap:pretty}
+.foot b{font-size:1rem;line-height:1.5;color:var(--fg)}
+
+@media (min-width:640px){.page{padding-block:48px 64px}h1{font-size:2.75rem;line-height:1.1}}
+@media (max-width:360px){.two{grid-template-columns:1fr}h1{font-size:1.875rem;line-height:1.15}}
+@media (prefers-reduced-motion:reduce){.cta,.input,.cta .t{transition:none}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-book" viewBox="0 0 64 50"><path d="M30 8C22 2 10 1 2 3v40c8-2 20-1 28 5Z" fill="var(--logo-a)"/><path d="M34 8c8-6 20-7 28-5v40c-8-2-20-1-28 5Z" fill="var(--logo-b)"/></symbol>
+  <symbol id="i-check" viewBox="0 0 256 256"><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-width="16"/><path d="m88 136 24 24 56-56" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 256 256"><path d="M128 32a96 96 0 0 0-84 142l-12 50 50-12A96 96 0 1 0 128 32Z" fill="none" stroke="currentColor" stroke-width="18" stroke-linejoin="round"/></symbol>
+</svg>
+
+<main class="page">
+  <a class="logo" href="#" aria-label="LocalTutors"><svg aria-hidden="true"><use href="#i-book"/></svg><b>localtutors</b></a>
+
+  <p class="attn">Attention: parents of Grade 4 to 10 learners</p>
+
+  <h1>Find the maths mistakes costing your child marks, before the exam does.</h1>
+  <p class="sub">Get free access to all our 20 minute maths quizzes for your child's grade. Each one shows exactly which errors keep coming back. In Afrikaans or English.</p>
+
+  <div class="shot" aria-label="Example results page">
+    <div class="shot-top"><b>Grade 7 quiz library</b><span>All unlocked</span></div>
+    <div class="shot-body">
+      <div class="row good">Integers <small>6 of 6</small></div>
+      <div class="row bad">Exponents <small>4 of 5 wrong</small></div>
+      <div class="row bad">Order of operations <small>3 of 4 wrong</small></div>
+      <div class="row todo">Algebraic expressions <small>Start</small></div>
+      <div class="row todo">Equations <small>Start</small></div>
+    </div>
+  </div>
+
+  <form class="form" id="form" novalidate>
+    <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label for="website">Website</label><input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></div>
+    <div class="two">
+      <div class="field">
+        <label for="fname">Your name</label>
+        <input class="input" id="fname" autocomplete="given-name" placeholder="Name" aria-describedby="fname-err">
+        <span class="ferr" id="fname-err" hidden>Enter your name</span>
+      </div>
+      <div class="field">
+        <label for="lname">Your surname</label>
+        <input class="input" id="lname" autocomplete="family-name" placeholder="Surname" aria-describedby="lname-err">
+        <span class="ferr" id="lname-err" hidden>Enter your surname</span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="label"><label for="grade">Your child's grade</label>
+        <span class="lang" role="group" aria-label="Language">
+          <button type="button" data-lang="Afrikaans" aria-pressed="true">Afrikaans</button>
+          <button type="button" data-lang="English" aria-pressed="false">English</button>
+        </span>
+      </div>
+      <div class="sel">
+        <select class="input" id="grade" aria-describedby="grade-err">
+          <option value="" selected disabled>Select grade</option>
+          <option value="4">Grade 4</option><option value="5">Grade 5</option><option value="6">Grade 6</option><option value="7">Grade 7</option><option value="8">Grade 8</option><option value="9">Grade 9</option><option value="10">Grade 10</option>
+        </select>
+        <svg aria-hidden="true" viewBox="0 0 256 256"><path d="m64 96 64 64 64-64" fill="none" stroke="currentColor" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="ferr" id="grade-err" hidden>Select your child's grade</span>
+    </div>
+    <a class="cta" id="cta" href="https://wa.me/27697346705" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-chat"/></svg><span class="t" id="ctaText">Get free access to all quizzes</span></a>
+    <p class="msg" id="msg" aria-live="polite">Opens WhatsApp. We reply with your access link.</p>
+  </form>
+
+  <ul class="bullets">
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Every quiz for their grade</b>, one per topic, so you can check the whole year's work before the exam.</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Results after each quiz</b> with the topics costing marks and every wrong answer next to the right working.</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><b>Free, on any phone.</b> No payment and nothing to install.</span></li>
+  </ul>
+
+  <div class="foot">
+    <b>Een kind op 'n slag.</b>
+    <span>LocalTutors Upington · <span style="font-variant-numeric:tabular-nums;white-space:nowrap">069 734 6705</span></span>
+    <span>Your number is used only to send your quizzes, in line with POPIA.</span>
+  </div>
+</main>
+
+<script>
+/* Paste the Apps Script Web app URL here (see README.md). */
+const LEADS_ENDPOINT = "PASTE_APPS_SCRIPT_URL_HERE";
+
+(function(){
+  var WA="27697346705", lang="Afrikaans";
+  var $=function(id){return document.getElementById(id)};
+  var fname=$("fname"), lname=$("lname"), gradeSel=$("grade"), cta=$("cta"), ctaText=$("ctaText"), msg=$("msg");
+  var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  gradeSel.classList.add("empty");
+
+  /* Lead capture: one record per valid tap, sent in the background so WhatsApp never waits. */
+  var honey=$("website"), lastSubmit=0;
+  function stamp(){
+    /* Africa/Johannesburg is UTC+2 all year (no daylight saving). */
+    return new Date(Date.now()+7200000).toISOString().slice(0,19).replace("T"," ");
+  }
+  function buildLead(){
+    var q=new URLSearchParams(location.search);
+    return {
+      timestamp:stamp(),
+      first_name:fname.value.trim(),
+      surname:lname.value.trim(),
+      grade:gradeSel.value,
+      language:lang,
+      lead_magnet:"20 Min Math Error Assessors",
+      utm_source:q.get("utm_source")||"",
+      utm_medium:q.get("utm_medium")||"",
+      utm_campaign:q.get("utm_campaign")||"",
+      referrer:document.referrer||"",
+      page_url:location.href,
+      status:"New"
+    };
+  }
+  function saveLead(){
+    try{
+      if(honey&&honey.value)return;
+      if(!/^https?:\/\//.test(LEADS_ENDPOINT)){
+        console.warn("Lead not saved: LEADS_ENDPOINT is not set. Paste your Apps Script Web app URL into LEADS_ENDPOINT.");
+        return;
+      }
+      /* JSON as text/plain: a simple request, so there is no CORS preflight. */
+      var body=JSON.stringify(buildLead()), sent=false;
+      try{sent=!!(navigator.sendBeacon&&navigator.sendBeacon(LEADS_ENDPOINT,new Blob([body],{type:"text/plain;charset=UTF-8"})))}catch(err){}
+      if(!sent&&window.fetch){
+        fetch(LEADS_ENDPOINT,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=UTF-8"},body:body}).catch(function(){});
+      }
+    }catch(err){}
+  }
+
+  function setLabel(t){
+    if(reduce||ctaText.textContent===t){ctaText.textContent=t;return}
+    ctaText.classList.add("blur");
+    setTimeout(function(){ctaText.textContent=t;ctaText.classList.remove("blur")},120);
+  }
+  function update(){
+    var g=gradeSel.value, n=fname.value.trim(), sn=lname.value.trim();
+    setLabel(g?(lang==="Afrikaans"?"Kry al die Graad "+g+" toetse gratis":"Get all the Grade "+g+" quizzes free"):"Get free access to all quizzes");
+    if(!g||!n||!sn)return;
+    var text=lang==="Afrikaans"
+      ?"Hallo LocalTutors, ek wil graag gratis toegang tot al die Graad "+g+" 20 Min Math Error Assessors in Afrikaans h\u00EA. My naam is "+n+" "+sn+"."
+      :"Hi LocalTutors, I'd like free access to all the Grade "+g+" 20 Min Math Error Assessors in English. My name is "+n+" "+sn+".";
+    cta.href="https://wa.me/"+WA+"?text="+encodeURIComponent(text);
+  }
+  function clear(el,err){el.removeAttribute("aria-invalid");$(err).hidden=true;msg.className="msg";msg.textContent="Opens WhatsApp. We reply with your access link."}
+  fname.addEventListener("input",function(){if(fname.value.trim())clear(fname,"fname-err");update()});
+  lname.addEventListener("input",function(){if(lname.value.trim())clear(lname,"lname-err");update()});
+  gradeSel.addEventListener("change",function(){gradeSel.classList.toggle("empty",!gradeSel.value);clear(gradeSel,"grade-err");update()});
+  document.querySelectorAll(".lang button").forEach(function(b){
+    b.addEventListener("click",function(){
+      lang=b.dataset.lang;
+      document.querySelectorAll(".lang button").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false")});
+      update();
+    });
+  });
+  $("form").addEventListener("submit",function(e){e.preventDefault();cta.click()});
+
+  cta.addEventListener("click",function(e){
+    if(Date.now()-lastSubmit<3000){e.preventDefault();return}
+    var bad=[];
+    if(!fname.value.trim())bad.push([fname,"fname-err"]);
+    if(!lname.value.trim())bad.push([lname,"lname-err"]);
+    if(!gradeSel.value)bad.push([gradeSel,"grade-err"]);
+    if(bad.length){
+      e.preventDefault();
+      bad.forEach(function(x){x[0].setAttribute("aria-invalid","true");$(x[1]).hidden=false});
+      bad[0][0].focus(); return;
+    }
+    update();
+    lastSubmit=Date.now();
+    saveLead();
+    msg.className="msg";
+    msg.innerHTML="Send the message in WhatsApp and we reply with the link. If it did not open, WhatsApp <b class=\"mono\">069 734 6705</b>.";
+  });
+})();
+</script>
+</body>
+</html>
