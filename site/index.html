@@ -194,8 +194,13 @@ h1{margin-top:16px;font-size:2.125rem;line-height:1.15;font-weight:700;letter-sp
 </main>
 
 <script>
-/* Paste the Apps Script Web app URL here (see README.md). */
-const LEADS_ENDPOINT = "PASTE_APPS_SCRIPT_URL_HERE";
+/* Where each lead goes (see README.md). Set a value to "" to switch that destination off.
+   LEADS_EMAIL: FormSubmit emails every lead here. After activating, you can swap in FormSubmit's random alias.
+   SUPABASE_URL / SUPABASE_KEY: the LocalTutors Supabase project and its publishable key.
+   The key is safe in the page: the table only accepts new rows. */
+const LEADS_EMAIL = "localtutors.upington@gmail.com";
+const SUPABASE_URL = "https://xlcssifyiokxkznawghw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ulFIG27OqaIR-2ytBb6ROQ_gPFv_iOG";
 
 (function(){
   var WA="27697346705", lang="Afrikaans";
@@ -204,42 +209,64 @@ const LEADS_ENDPOINT = "PASTE_APPS_SCRIPT_URL_HERE";
   var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
   gradeSel.classList.add("empty");
 
-  /* Lead capture: one record per valid tap, sent in the background so WhatsApp never waits. */
-  var honey=$("website"), lastSubmit=0;
+  /* Lead capture: on a valid tap, email the lead and save it to Supabase in the background. WhatsApp never waits. */
+  var FORMSUBMIT="https://formsubmit.co/ajax/", honey=$("website"), lastSubmit=0;
+  function noop(){}
   function stamp(){
     /* Africa/Johannesburg is UTC+2 all year (no daylight saving). */
     return new Date(Date.now()+7200000).toISOString().slice(0,19).replace("T"," ");
   }
+  function cap(v,n){return String(v||"").trim().slice(0,n||100)}
   function buildLead(){
     var q=new URLSearchParams(location.search);
     return {
       timestamp:stamp(),
-      first_name:fname.value.trim(),
-      surname:lname.value.trim(),
+      first_name:cap(fname.value),
+      surname:cap(lname.value),
       grade:gradeSel.value,
       language:lang,
       lead_magnet:"20 Min Math Error Assessors",
-      utm_source:q.get("utm_source")||"",
-      utm_medium:q.get("utm_medium")||"",
-      utm_campaign:q.get("utm_campaign")||"",
-      referrer:document.referrer||"",
-      page_url:location.href,
+      utm_source:cap(q.get("utm_source")),
+      utm_medium:cap(q.get("utm_medium")),
+      utm_campaign:cap(q.get("utm_campaign")),
+      referrer:cap(document.referrer,500),
+      page_url:cap(location.href,500),
       status:"New"
     };
+  }
+  /* FormData is a simple request: no CORS preflight, and sendBeacon still sends it if the page goes to the background. */
+  function emailLead(l){
+    if(!LEADS_EMAIL){console.warn("Lead not emailed: LEADS_EMAIL is empty.");return}
+    var url=FORMSUBMIT+LEADS_EMAIL, f=new FormData(), sent=false;
+    f.append("_subject","New lead: "+l.first_name+" "+l.surname+", Grade "+l.grade+" ("+l.language+")");
+    f.append("_template","table");
+    f.append("_captcha","false");
+    [["Time (SAST)",l.timestamp],["Name",l.first_name],["Surname",l.surname],["Grade",l.grade],["Language",l.language],
+     ["Lead magnet",l.lead_magnet],["UTM source",l.utm_source],["UTM medium",l.utm_medium],["UTM campaign",l.utm_campaign],
+     ["Referrer",l.referrer],["Page",l.page_url],["Status",l.status]].forEach(function(p){f.append(p[0],p[1])});
+    try{sent=!!(navigator.sendBeacon&&navigator.sendBeacon(url,f))}catch(err){}
+    if(!sent&&window.fetch)fetch(url,{method:"POST",mode:"no-cors",keepalive:true,body:f}).catch(noop);
+  }
+  /* Supabase sets the id, created_at, sast_time and status itself. */
+  function saveToSupabase(l){
+    if(!SUPABASE_URL||!SUPABASE_KEY){console.warn("Lead not saved to Supabase: SUPABASE_URL or SUPABASE_KEY is empty.");return}
+    if(!window.fetch)return;
+    var url=SUPABASE_URL.replace(/\/$/,"")+"/rest/v1/error_assessor_leads",
+        headers={"Content-Type":"application/json",apikey:SUPABASE_KEY,Prefer:"return=minimal"},
+        body=JSON.stringify({first_name:l.first_name,surname:l.surname,grade:Number(l.grade),language:l.language,lead_magnet:l.lead_magnet,
+          utm_source:l.utm_source,utm_medium:l.utm_medium,utm_campaign:l.utm_campaign,referrer:l.referrer,page_url:l.page_url});
+    if(SUPABASE_KEY.indexOf("eyJ")===0)headers.Authorization="Bearer "+SUPABASE_KEY;
+    /* keepalive lets the save finish while WhatsApp takes over. A browser that refuses keepalive here gets a plain retry. */
+    fetch(url,{method:"POST",headers:headers,body:body,keepalive:true})
+      .catch(function(){return fetch(url,{method:"POST",headers:headers,body:body})})
+      .catch(noop);
   }
   function saveLead(){
     try{
       if(honey&&honey.value)return;
-      if(!/^https?:\/\//.test(LEADS_ENDPOINT)){
-        console.warn("Lead not saved: LEADS_ENDPOINT is not set. Paste your Apps Script Web app URL into LEADS_ENDPOINT.");
-        return;
-      }
-      /* JSON as text/plain: a simple request, so there is no CORS preflight. */
-      var body=JSON.stringify(buildLead()), sent=false;
-      try{sent=!!(navigator.sendBeacon&&navigator.sendBeacon(LEADS_ENDPOINT,new Blob([body],{type:"text/plain;charset=UTF-8"})))}catch(err){}
-      if(!sent&&window.fetch){
-        fetch(LEADS_ENDPOINT,{method:"POST",mode:"no-cors",keepalive:true,headers:{"Content-Type":"text/plain;charset=UTF-8"},body:body}).catch(function(){});
-      }
+      var l=buildLead();
+      try{emailLead(l)}catch(err){}
+      try{saveToSupabase(l)}catch(err){}
     }catch(err){}
   }
 
