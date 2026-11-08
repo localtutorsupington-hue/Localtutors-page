@@ -1,9 +1,10 @@
 # 20 Min Math Error Assessors: landing page with lead saving
 
 This page lets a parent ask for free access to all our maths quizzes for one grade.
-When a parent taps the button, three things happen at once:
+The parent fills in their name, surname, WhatsApp number and grade, and picks Afrikaans or English.
+When they tap the button, three things happen at once:
 
-1. The lead is **emailed** to localtutors.upington@gmail.com (through a free service called FormSubmit).
+1. The lead is **emailed** to you by Netlify, the website host, with the parent's WhatsApp number as a tap-to-chat link.
 2. The lead is **saved in Supabase**, in a table called `error_assessor_leads`.
 3. **WhatsApp opens** with the message ready to send, just like before.
 
@@ -53,25 +54,20 @@ The public key is safe in the page: it can only **add** leads. Nobody can read, 
 
 ## Step 4: Switch on the emails (once only)
 
-FormSubmit must check that the email address really is yours before it sends leads to it.
+Netlify sends the emails itself. You switch this on once in your Netlify site.
+Netlify sometimes renames its menus: if you see **Project configuration** instead of **Site configuration**, it's the same place.
 
-1. Open your new Netlify address and send yourself a **test lead**: fill in a name, surname, grade and language, then tap the button.
-2. Check the inbox of localtutors.upington@gmail.com (and the spam folder) for an email from FormSubmit. Tap **Activate Form**.
-3. Send a **second test lead**. This one arrives as an email with the subject "New lead: ...". The first test lead is not emailed; it only switched the form on.
-4. In Supabase, open **Table Editor** and then **error_assessor_leads**. Your test leads are there. You can delete them.
+1. In Netlify, open your site (math-assessor).
+2. Go to **Site configuration**, then **Forms**. If you see **Enable form detection**, click it.
+3. Upload the `site` folder again (see "To update the page later" above). Netlify only finds the form when the page is uploaded after detection is on.
+4. Go to **Site configuration**, then **Notifications**, then **Emails and webhooks**.
+   Under **Form submission notifications**, click **Add notification**, then **Email notification**.
+   Type localtutors.upington@gmail.com, choose the form **error-assessor-leads**, and save.
+5. Send yourself a **test lead** from the live page. Within a minute you get an email with the subject "New lead: ...".
+   Check the spam folder the first time, and mark it "Not spam".
+6. You can also see every lead in Netlify under **Forms**. Your test lead is there, and in Supabase too. You can delete it in both.
 
-**Optional, recommended:** the activation email also gives you a random code that looks like `a1b2c3d4e5...`.
-Using it hides your email address from spammers who read web pages:
-
-1. Open `site/index.html` in a plain text editor (Notepad on Windows, TextEdit on Mac).
-2. Near the top of the script, find this line:
-
-   ```js
-   const LEADS_EMAIL = "localtutors.upington@gmail.com";
-   ```
-
-3. Replace only the email address with the code. Keep the quote marks.
-4. Save, then drag the `site` folder onto Netlify again.
+The free Netlify plan includes 100 form leads a month. If you go over, Netlify asks you to upgrade. Supabase keeps saving every lead either way.
 
 ## Step 5: Track your Facebook ads with a UTM link
 
@@ -104,20 +100,23 @@ If someone opens the page without a label, those parts are simply empty.
 
 | In Supabase | In the email | What it holds |
 | --- | --- | --- |
-| sast_time | Time (SAST) | Date and time of the request, South African time |
-| first_name | Name | Parent's first name |
-| surname | Surname | Parent's surname |
-| grade | Grade | The grade they picked, as a number from 4 to 10 |
-| language | Language | Afrikaans or English |
-| lead_magnet | Lead magnet | Always "20 Min Math Error Assessors" |
-| utm_source | UTM source | Where they came from, for example facebook |
-| utm_medium | UTM medium | The kind of link, for example paid |
-| utm_campaign | UTM campaign | Your campaign name, for example error-assessors |
-| referrer | Referrer | The website they were on before, if the browser shares it |
-| page_url | Page | The exact page address they used |
-| status | Status | Starts as "New". In Supabase you can change it, for example to "Contacted" or "Signed up" |
+| sast_time | time_sast | Date and time of the request, South African time |
+| first_name | name | Parent's first name |
+| surname | surname | Parent's surname |
+| whatsapp | whatsapp | Parent's WhatsApp number, like +27821234567 |
+| (not saved) | whatsapp_link | Tap it to open a WhatsApp chat with the parent |
+| grade | grade | The grade they picked, as a number from 4 to 10 |
+| language | language | Afrikaans or English |
+| lead_magnet | lead_magnet | Always "20 Min Math Error Assessors" |
+| utm_source | utm_source | Where they came from, for example facebook |
+| utm_medium | utm_medium | The kind of link, for example paid |
+| utm_campaign | utm_campaign | Your campaign name, for example error-assessors |
+| referrer | referrer | The website they were on before, if the browser shares it |
+| page_url | page_url | The exact page address they used |
+| status | (not sent) | Starts as "New". In Supabase you can change it, for example to "Contacted" or "Signed up" |
 
 Supabase also adds `id` and `created_at` (the same time, in world time) to every row.
+Leads from before 8 November 2026 have no number, because the form didn't ask for one yet. Their numbers are in your WhatsApp chats if they sent the message.
 
 **Seeing leads on your phone:** the emails are the easiest. For the full list, open
 [supabase.com/dashboard](https://supabase.com/dashboard) in your phone's browser, then
@@ -125,7 +124,8 @@ Supabase also adds `id` and `created_at` (the same time, in world time) to every
 
 ## If something goes wrong
 
-- **No emails:** check the spam folder, and check that you clicked **Activate Form** (Step 4).
+- **No emails:** check the spam folder. In Netlify, check that **Forms** lists **error-assessor-leads** and that the email notification is set up (Step 4).
+  If Forms is empty, turn on form detection and upload the `site` folder again.
 - **No rows in Supabase:** check that the project is not paused (Step 1) and that you ran the SQL (Step 2).
 - **You changed `site/index.html`:** drag the `site` folder onto Netlify again, or the live page stays the same.
 - **A lead with a strange name arrives:** the public key lets anyone add rows, and the page has a hidden trap that stops most robots.

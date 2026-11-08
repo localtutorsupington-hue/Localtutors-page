@@ -10,6 +10,7 @@ create table if not exists public.error_assessor_leads (
   sast_time     text not null default to_char(now() at time zone 'Africa/Johannesburg', 'YYYY-MM-DD HH24:MI'),
   first_name    text not null check (char_length(first_name) between 1 and 100),
   surname       text not null check (char_length(surname) between 1 and 100),
+  whatsapp      text not null default '' check (char_length(whatsapp) <= 20),
   grade         smallint not null check (grade between 4 and 10),
   language      text not null check (language in ('Afrikaans', 'English')),
   lead_magnet   text not null default '20 Min Math Error Assessors' check (char_length(lead_magnet) <= 100),
@@ -29,8 +30,13 @@ alter table public.error_assessor_leads enable row level security;
 -- Insert only, and only the columns the page fills in. The id, times and status are set here, not by the page.
 -- No select, update or delete grant or policy exists, so the public key cannot read anything back.
 revoke all on public.error_assessor_leads from anon, authenticated;
-grant insert (first_name, surname, grade, language, lead_magnet, utm_source, utm_medium, utm_campaign, referrer, page_url)
+grant insert (first_name, surname, whatsapp, grade, language, lead_magnet, utm_source, utm_medium, utm_campaign, referrer, page_url)
   on public.error_assessor_leads to anon;
 
 drop policy if exists "page can add leads" on public.error_assessor_leads;
 create policy "page can add leads" on public.error_assessor_leads for insert to anon with check (true);
+
+-- Added 2026-11-08 for tables created before the WhatsApp number field existed. Safe to run again.
+alter table public.error_assessor_leads
+  add column if not exists whatsapp text not null default '' check (char_length(whatsapp) <= 20);
+grant insert (whatsapp) on public.error_assessor_leads to anon;

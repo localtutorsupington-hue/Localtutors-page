@@ -161,6 +161,11 @@ h1{margin-top:16px;font-size:2.125rem;line-height:1.15;font-weight:700;letter-sp
       </div>
     </div>
     <div class="field">
+      <label for="phone">Your WhatsApp number</label>
+      <input class="input" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="082 123 4567" aria-describedby="phone-err">
+      <span class="ferr" id="phone-err" hidden>Enter your WhatsApp number, like 082 123 4567</span>
+    </div>
+    <div class="field">
       <div class="label"><label for="grade">Your child's grade</label>
         <span class="lang" role="group" aria-label="Language">
           <button type="button" data-lang="Afrikaans" aria-pressed="true">Afrikaans</button>
@@ -193,36 +198,58 @@ h1{margin-top:16px;font-size:2.125rem;line-height:1.15;font-weight:700;letter-sp
   </div>
 </main>
 
+<!-- Netlify Forms reads this hidden form when the site is uploaded, so it knows the fields. The script below fills it in. -->
+<form name="error-assessor-leads" data-netlify="true" netlify-honeypot="website" hidden>
+  <input name="subject"><input name="name"><input name="surname"><input name="whatsapp"><input name="whatsapp_link">
+  <input name="grade"><input name="language"><input name="time_sast"><input name="lead_magnet"><input name="utm_source">
+  <input name="utm_medium"><input name="utm_campaign"><input name="referrer"><input name="page_url"><input name="website">
+</form>
+
 <script>
 /* Where each lead goes (see README.md). Set a value to "" to switch that destination off.
-   LEADS_EMAIL: FormSubmit emails every lead here. After activating, you can swap in FormSubmit's random alias.
+   NETLIFY_FORM: the Netlify form that emails you every lead (turn on form detection and an email notification in Netlify).
    SUPABASE_URL / SUPABASE_KEY: the LocalTutors Supabase project and its publishable key.
    The key is safe in the page: the table only accepts new rows. */
-const LEADS_EMAIL = "localtutors.upington@gmail.com";
+const NETLIFY_FORM = "error-assessor-leads";
 const SUPABASE_URL = "https://xlcssifyiokxkznawghw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ulFIG27OqaIR-2ytBb6ROQ_gPFv_iOG";
 
 (function(){
   var WA="27697346705", lang="Afrikaans";
   var $=function(id){return document.getElementById(id)};
-  var fname=$("fname"), lname=$("lname"), gradeSel=$("grade"), cta=$("cta"), ctaText=$("ctaText"), msg=$("msg");
+  var fname=$("fname"), lname=$("lname"), phone=$("phone"), gradeSel=$("grade"), cta=$("cta"), ctaText=$("ctaText"), msg=$("msg");
   var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
   gradeSel.classList.add("empty");
 
-  /* Lead capture: on a valid tap, email the lead and save it to Supabase in the background. WhatsApp never waits. */
-  var FORMSUBMIT="https://formsubmit.co/ajax/", honey=$("website"), lastSubmit=0;
+  /* Lead capture: on a valid tap, email the lead (Netlify Forms) and save it to Supabase in the background. WhatsApp never waits. */
+  var honey=$("website"), lastSubmit=0;
   function noop(){}
   function stamp(){
     /* Africa/Johannesburg is UTC+2 all year (no daylight saving). */
     return new Date(Date.now()+7200000).toISOString().slice(0,19).replace("T"," ");
   }
   function cap(v,n){return String(v||"").trim().slice(0,n||100)}
+  /* Any common way of typing the number becomes +27..., or "" if it can't be a phone number. */
+  function phoneE164(v){
+    var s=String(v||"").trim(), d=s.replace(/\D/g,"");
+    if(/^(\+|00)/.test(s)){
+      d=d.replace(/^00/,"");
+      if(d.length===12&&d.indexOf("270")===0)d="27"+d.slice(3);
+      return d.length>=8&&d.length<=15?"+"+d:"";
+    }
+    if(d.length===10&&d.charAt(0)==="0")return "+27"+d.slice(1);
+    if(d.length===11&&d.indexOf("27")===0)return "+"+d;
+    if(d.length===12&&d.indexOf("270")===0)return "+27"+d.slice(3);
+    if(d.length===9&&d.charAt(0)!=="0")return "+27"+d;
+    return "";
+  }
   function buildLead(){
     var q=new URLSearchParams(location.search);
     return {
       timestamp:stamp(),
       first_name:cap(fname.value),
       surname:cap(lname.value),
+      whatsapp:phoneE164(phone.value),
       grade:gradeSel.value,
       language:lang,
       lead_magnet:"20 Min Math Error Assessors",
@@ -234,18 +261,18 @@ const SUPABASE_KEY = "sb_publishable_ulFIG27OqaIR-2ytBb6ROQ_gPFv_iOG";
       status:"New"
     };
   }
-  /* FormData is a simple request: no CORS preflight, and sendBeacon still sends it if the page goes to the background. */
+  /* Netlify Forms on this same site: a form post, so sendBeacon still sends it if the page goes to the background. */
   function emailLead(l){
-    if(!LEADS_EMAIL){console.warn("Lead not emailed: LEADS_EMAIL is empty.");return}
-    var url=FORMSUBMIT+LEADS_EMAIL, f=new FormData(), sent=false;
-    f.append("_subject","New lead: "+l.first_name+" "+l.surname+", Grade "+l.grade+" ("+l.language+")");
-    f.append("_template","table");
-    f.append("_captcha","false");
-    [["Time (SAST)",l.timestamp],["Name",l.first_name],["Surname",l.surname],["Grade",l.grade],["Language",l.language],
-     ["Lead magnet",l.lead_magnet],["UTM source",l.utm_source],["UTM medium",l.utm_medium],["UTM campaign",l.utm_campaign],
-     ["Referrer",l.referrer],["Page",l.page_url],["Status",l.status]].forEach(function(p){f.append(p[0],p[1])});
-    try{sent=!!(navigator.sendBeacon&&navigator.sendBeacon(url,f))}catch(err){}
-    if(!sent&&window.fetch)fetch(url,{method:"POST",mode:"no-cors",keepalive:true,body:f}).catch(noop);
+    if(!NETLIFY_FORM){console.warn("Lead not emailed: NETLIFY_FORM is empty.");return}
+    var f=new URLSearchParams(), sent=false;
+    [["form-name",NETLIFY_FORM],
+     ["subject","New lead: "+l.first_name+" "+l.surname+", Grade "+l.grade+" ("+l.language+") "+l.whatsapp],
+     ["name",l.first_name],["surname",l.surname],["whatsapp",l.whatsapp],["whatsapp_link","https://wa.me/"+l.whatsapp.replace("+","")],
+     ["grade",l.grade],["language",l.language],["time_sast",l.timestamp],["lead_magnet",l.lead_magnet],
+     ["utm_source",l.utm_source],["utm_medium",l.utm_medium],["utm_campaign",l.utm_campaign],
+     ["referrer",l.referrer],["page_url",l.page_url]].forEach(function(p){f.append(p[0],p[1])});
+    try{sent=!!(navigator.sendBeacon&&navigator.sendBeacon("/",f))}catch(err){}
+    if(!sent&&window.fetch)fetch("/",{method:"POST",keepalive:true,headers:{"Content-Type":"application/x-www-form-urlencoded"},body:f.toString()}).catch(noop);
   }
   /* Supabase sets the id, created_at, sast_time and status itself. */
   function saveToSupabase(l){
@@ -253,7 +280,7 @@ const SUPABASE_KEY = "sb_publishable_ulFIG27OqaIR-2ytBb6ROQ_gPFv_iOG";
     if(!window.fetch)return;
     var url=SUPABASE_URL.replace(/\/$/,"")+"/rest/v1/error_assessor_leads",
         headers={"Content-Type":"application/json",apikey:SUPABASE_KEY,Prefer:"return=minimal"},
-        body=JSON.stringify({first_name:l.first_name,surname:l.surname,grade:Number(l.grade),language:l.language,lead_magnet:l.lead_magnet,
+        body=JSON.stringify({first_name:l.first_name,surname:l.surname,whatsapp:l.whatsapp,grade:Number(l.grade),language:l.language,lead_magnet:l.lead_magnet,
           utm_source:l.utm_source,utm_medium:l.utm_medium,utm_campaign:l.utm_campaign,referrer:l.referrer,page_url:l.page_url});
     if(SUPABASE_KEY.indexOf("eyJ")===0)headers.Authorization="Bearer "+SUPABASE_KEY;
     /* keepalive lets the save finish while WhatsApp takes over. A browser that refuses keepalive here gets a plain retry. */
@@ -287,6 +314,7 @@ const SUPABASE_KEY = "sb_publishable_ulFIG27OqaIR-2ytBb6ROQ_gPFv_iOG";
   function clear(el,err){el.removeAttribute("aria-invalid");$(err).hidden=true;msg.className="msg";msg.textContent="Opens WhatsApp. We reply with your access link."}
   fname.addEventListener("input",function(){if(fname.value.trim())clear(fname,"fname-err");update()});
   lname.addEventListener("input",function(){if(lname.value.trim())clear(lname,"lname-err");update()});
+  phone.addEventListener("input",function(){if(phoneE164(phone.value))clear(phone,"phone-err")});
   gradeSel.addEventListener("change",function(){gradeSel.classList.toggle("empty",!gradeSel.value);clear(gradeSel,"grade-err");update()});
   document.querySelectorAll(".lang button").forEach(function(b){
     b.addEventListener("click",function(){
@@ -302,6 +330,7 @@ const SUPABASE_KEY = "sb_publishable_ulFIG27OqaIR-2ytBb6ROQ_gPFv_iOG";
     var bad=[];
     if(!fname.value.trim())bad.push([fname,"fname-err"]);
     if(!lname.value.trim())bad.push([lname,"lname-err"]);
+    if(!phoneE164(phone.value))bad.push([phone,"phone-err"]);
     if(!gradeSel.value)bad.push([gradeSel,"grade-err"]);
     if(bad.length){
       e.preventDefault();
