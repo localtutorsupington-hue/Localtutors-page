@@ -1,0 +1,101 @@
+---
+import "../styles/global.css";
+import { DISCLAIMER, FACEBOOK_URL, PRAKTISYN_URL, WHATSAPP_DISPLAY, kontroleLink, chatLink } from "../config";
+import { KATEGORIEE, KATEGORIE_ORDE, type Kategorie } from "../lib/kategorie";
+
+interface Props {
+  titel: string;
+  beskrywing: string;
+  bron: string;
+  aktief?: Kategorie | "artikels" | "";
+  ogTipe?: "website" | "article";
+}
+const { titel, beskrywing, bron, aktief = "", ogTipe = "website" } = Astro.props;
+const volleTitel = titel === "Oase" ? "Oase: 'n Plek om asem te skep" : `${titel} | Oase`;
+const kanoniek = new URL(Astro.url.pathname, Astro.site);
+const jaar = new Date().getFullYear();
+---
+<!doctype html>
+<html lang="af">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{volleTitel}</title>
+    <meta name="description" content={beskrywing} />
+    <link rel="canonical" href={kanoniek} />
+    <meta name="theme-color" content="#FBF8F3" />
+    <meta property="og:type" content={ogTipe} />
+    <meta property="og:site_name" content="Oase" />
+    <meta property="og:locale" content="af_ZA" />
+    <meta property="og:title" content={volleTitel} />
+    <meta property="og:description" content={beskrywing} />
+    <meta property="og:url" content={kanoniek} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>document.documentElement.classList.add("js");</script>
+    <slot name="kop" />
+  </head>
+  <body>
+    <a class="slaan-oor" href="#inhoud">Slaan oor na die inhoud</a>
+    <header class="kop" data-kop>
+      <div class="houer kop-ry">
+        <a class="logo" href="/" aria-label="Oase, tuisblad">Oase<span class="logo-punt" aria-hidden="true"></span></a>
+        <nav class="kop-nav" aria-label="Hoofnavigasie">
+          <ul>
+            {KATEGORIE_ORDE.map((k) => (
+              <li><a href={`/${k}/`} aria-current={aktief === k ? "page" : undefined}><span class={`stip stip--${k}`}></span>{KATEGORIEE[k].naam}</a></li>
+            ))}
+            <li><a href="/artikels/" aria-current={aktief === "artikels" ? "page" : undefined}>Alle artikels</a></li>
+          </ul>
+        </nav>
+        <a class="knoppie knoppie--primer kop-aksie" href={kontroleLink(bron)} data-kontrole={bron}>Gratis kontrole</a>
+      </div>
+    </header>
+    <nav class="pilaar-ry" aria-label="Kategorieë">
+        <ul class="houer">
+          {KATEGORIE_ORDE.map((k) => (
+            <li><a href={`/${k}/`} aria-current={aktief === k ? "page" : undefined}><span class={`stip stip--${k}`}></span>{KATEGORIEE[k].naam}</a></li>
+          ))}
+          <li><a href="/artikels/" aria-current={aktief === "artikels" ? "page" : undefined}>Alle artikels</a></li>
+        </ul>
+    </nav>
+
+    <main id="inhoud">
+      <slot />
+    </main>
+
+    <footer class="voet op-donker">
+      <div class="houer">
+        <div class="voet-rooster">
+          <div>
+            <a class="logo" href="/">Oase<span class="logo-punt" aria-hidden="true"></span></a>
+            <p class="voet-leuse">'n Plek om asem te skep.</p>
+          </div>
+          <nav aria-labelledby="voet-lees">
+            <h2 id="voet-lees">Lees</h2>
+            <ul>
+              {KATEGORIE_ORDE.map((k) => <li><a href={`/${k}/`}>{KATEGORIEE[k].naam}</a></li>)}
+              <li><a href="/artikels/">Alle artikels</a></li>
+            </ul>
+          </nav>
+          <div>
+            <h2>Praat met ons</h2>
+            <ul>
+              <li><a href={kontroleLink(bron)} data-kontrole={bron}>Bespreek 'n gratis kontrole</a></li>
+              <li><a href={chatLink(bron)}>WhatsApp: {WHATSAPP_DISPLAY}</a></li>
+              {FACEBOOK_URL && <li><a href={FACEBOOK_URL}>Facebook</a></li>}
+              {PRAKTISYN_URL && <li><a href={PRAKTISYN_URL}>Vir gesondheidswerkers</a></li>}
+              <li><a href="/privaatheid/">Privaatheid</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="vrywaring-voet"><strong>Let wel:</strong> <span>{DISCLAIMER}</span></p>
+        <div class="voet-onder">
+          <p>© {jaar} Oase</p>
+          <p>Gemaak met sorg in Upington.</p>
+        </div>
+      </div>
+    </footer>
+    <slot name="onder" />
+    <script src="../scripts/oase.ts"></script>
+  </body>
+</html>

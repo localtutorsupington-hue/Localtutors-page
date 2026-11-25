@@ -1,0 +1,152 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import Basis from "../../layouts/Basis.astro";
+import Omslag from "../../components/Omslag.astro";
+import Kaart from "../../components/Kaart.astro";
+import Titel from "../../components/Titel.astro";
+import Pyl from "../../components/Pyl.astro";
+import { KATEGORIEE } from "../../lib/kategorie";
+import { datum, leestyd, skoonTitel } from "../../lib/titel";
+import { DISCLAIMER, KONTROLE_URL, kontroleLink, chatLink } from "../../config";
+
+export async function getStaticPaths() {
+  const artikels = await getCollection("artikels");
+  return artikels.map((artikel) => ({ params: { slug: artikel.id }, props: { artikel, almal: artikels } }));
+}
+
+interface Props { artikel: CollectionEntry<"artikels">; almal: CollectionEntry<"artikels">[] }
+const { artikel, almal } = Astro.props;
+const d = artikel.data;
+const { Content, headings } = await render(artikel);
+const h2s = headings.filter((h) => h.depth === 2);
+const wysInhoud = h2s.length >= 4;
+const bron = artikel.id;
+const kat = KATEGORIEE[d.category];
+const minute = leestyd(artikel.body, d.leestyd);
+const woord = d.omslag ?? skoonTitel(d.title).split(" ").pop() ?? "";
+
+const verwant = [
+  ...almal.filter((a) => a.id !== artikel.id && a.data.category === d.category),
+  ...almal.filter((a) => a.id !== artikel.id && a.data.category !== d.category).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+].slice(0, 3);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: skoonTitel(d.title),
+  description: d.summary,
+  datePublished: d.date.toISOString(),
+  dateModified: (d.nagegaan ?? d.date).toISOString(),
+  inLanguage: "af",
+  publisher: { "@type": "Organization", name: "Oase" },
+  citation: d.bronne.map((b) => b.url),
+};
+---
+<Basis titel={skoonTitel(d.title)} beskrywing={d.summary} bron={bron} aktief={d.category} ogTipe="article">
+  <script slot="kop" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <article>
+    <header class="houer artikel-kop" data-inleiding>
+      <nav class="broodkrummels" aria-label="Broodkrummels">
+        <ol>
+          <li><a href="/">Tuis</a></li>
+          <li><a href={`/${d.category}/`}>{kat.naam}</a></li>
+          <li><span aria-current="page">{woord}</span></li>
+        </ol>
+      </nav>
+      <div class="artikel-meta">
+        <a class="etiket" href={`/${d.category}/`}><span class={`stip stip--${d.category}`}></span>{kat.naam}</a>
+        <span>{minute} min lees</span>
+        <time datetime={d.date.toISOString()}>{datum(d.date)}</time>
+      </div>
+      <h1 class="artikel-titel"><Titel teks={d.title} /></h1>
+      <p class="artikel-lede">{d.summary}</p>
+    </header>
+
+    <div class="houer artikel-omslag">
+      <Omslag kategorie={d.category} woord={woord} image={d.image} imageAlt={d.imageAlt} grootte="groot" laai="eager" />
+    </div>
+
+    <div class="houer artikel-uitleg">
+      {wysInhoud ? (
+        <aside class="inhoud-sy" aria-labelledby="inhoud-sy-titel">
+          <p class="inhoud-titel" id="inhoud-sy-titel">Op hierdie bladsy</p>
+          <ol>
+            {h2s.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+            <li><a href="#bronne">Bronne</a></li>
+          </ol>
+        </aside>
+      ) : <div aria-hidden="true"></div>}
+
+      <div>
+        {wysInhoud && (
+          <details class="inhoud-mobiel" style="margin-bottom:32px">
+            <summary>Op hierdie bladsy</summary>
+            <ol>
+              {h2s.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+              <li><a href="#bronne">Bronne</a></li>
+            </ol>
+          </details>
+        )}
+
+        {d.kortliks.length > 0 && (
+          <section class="kortliks" aria-labelledby="kortliks-titel">
+            <h2 id="kortliks-titel">Kortliks</h2>
+            <ul>{d.kortliks.map((k) => <li>{k}</li>)}</ul>
+          </section>
+        )}
+
+        <div class="prosa">
+          <Content />
+        </div>
+
+        <p class="vrywaring" role="note">
+          <span class="vrywaring-ikoon" aria-hidden="true">!</span>
+          <span>{DISCLAIMER} As iets jou bekommer, praat met 'n dokter of verpleegster.</span>
+        </p>
+
+        <section class="bronne" id="bronne" aria-labelledby="bronne-titel">
+          <h2 id="bronne-titel">Bronne</h2>
+          <ol>
+            {d.bronne.map((b) => <li><a href={b.url} rel="noopener">{b.titel}</a></li>)}
+          </ol>
+          <p class="bronne-nota">
+            Gepubliseer op {datum(d.date)}{d.nagegaan && <>. Bronne laas nagegaan op {datum(d.nagegaan)}</>}. Die bronne is in Engels.
+          </p>
+        </section>
+
+        <section class="eind-cta op-donker" aria-labelledby="eind-titel" data-eind-cta>
+          <p class="oogrand" style="color:inherit;opacity:.85">Jy hoef dit nie alleen uit te pluis nie</p>
+          <h2 id="eind-titel"><Titel teks="Kom praat, dit kos *niks*" pillKleur="goud" /></h2>
+          <p>Bespreek 'n gratis kontrole by 'n gesondheidswerker naby jou. Of stuur vir ons 'n WhatsApp as jy eers 'n vraag het.</p>
+          <div class="eind-cta-aksies">
+            <a class="knoppie knoppie--lig" href={kontroleLink(bron)} data-kontrole={bron}>Bespreek my gratis kontrole <Pyl /></a>
+            <a class="knoppie knoppie--omlyn-lig" href={chatLink(bron)}>Stuur 'n WhatsApp</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </article>
+
+  {verwant.length > 0 && (
+    <section class="seksie verwante" aria-labelledby="verwant-titel">
+      <div class="houer">
+        <div class="seksie-kop onthul">
+          <div>
+            <p class="oogrand">Lees ook</p>
+            <h2 class="seksie-titel" id="verwant-titel" style="margin-top:12px"><Titel teks="Meer vir *jou*" pillKleur="surface" /></h2>
+          </div>
+          <a class="teks-skakel" href="/artikels/">Alle artikels <Pyl /></a>
+        </div>
+        <div class="rooster">
+          {verwant.map((a, i) => <Kaart artikel={a} vertraag={i * 90} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <div slot="onder" class="vaste-balk" data-vaste-balk inert>
+    <p>Gratis kontrole,<br />naby jou.</p>
+    <a class="knoppie knoppie--lig" href={kontroleLink(bron)} data-kontrole={bron}>{KONTROLE_URL.trim() ? "Bespreek nou" : "Bespreek op WhatsApp"}</a>
+  </div>
+</Basis>

@@ -1,0 +1,38 @@
+---
+import { getCollection } from "astro:content";
+import Basis from "../../layouts/Basis.astro";
+import Kaart from "../../components/Kaart.astro";
+import Titel from "../../components/Titel.astro";
+import { KATEGORIEE, KATEGORIE_ORDE } from "../../lib/kategorie";
+
+const artikels = (await getCollection("artikels")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Basis titel="Alle artikels" beskrywing="Soek deur al die Oase-artikels oor rus, liefde, beweeg en gesondheid." bron="alle-artikels" aktief="artikels">
+  <section class="seksie" style="padding-top:48px" aria-labelledby="alle-titel">
+    <div class="houer">
+      <p class="oogrand">Biblioteek</p>
+      <h1 class="seksie-titel" id="alle-titel" style="margin:12px 0 32px;font-size:clamp(3rem,10vw,6rem)"><Titel teks="Alle *artikels*" /></h1>
+
+      <form class="soek" role="search" data-soekvorm hidden>
+        <label for="soek-invoer">Waaroor wil jy lees?</label>
+        <div class="soek-veld">
+          <svg class="soek-ikoon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="soek-invoer" type="search" name="q" placeholder="Byvoorbeeld slaap of stres" autocomplete="off" />
+        </div>
+        <p class="soek-uitslag" data-soek-uitslag aria-live="polite"></p>
+      </form>
+
+      <div class="filters" data-filters role="group" aria-label="Filter volgens pilaar" hidden>
+        <button type="button" data-filter="alles" aria-pressed="true">Alles</button>
+        {KATEGORIE_ORDE.map((k) => (
+          <button type="button" data-filter={k} aria-pressed="false"><span class={`stip stip--${k}`}></span>{KATEGORIEE[k].naam}</button>
+        ))}
+      </div>
+
+      <div class="rooster" data-soek-lys>
+        {artikels.map((a, i) => <Kaart artikel={a} vertraag={(i % 3) * 90} kop="h2" />)}
+      </div>
+      <p class="leeg" data-geen hidden style="margin-top:24px">Niks gevind nie. Probeer 'n ander woord, soos "slaap", "kos" of "stres".</p>
+    </div>
+  </section>
+</Basis>

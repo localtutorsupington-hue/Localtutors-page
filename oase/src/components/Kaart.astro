@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Omslag from "./Omslag.astro";
+import Titel from "./Titel.astro";
+import { KATEGORIEE } from "../lib/kategorie";
+import { leestyd, skoonTitel } from "../lib/titel";
+interface Props { artikel: CollectionEntry<"artikels">; vertraag?: number; kop?: "h2" | "h3" }
+const { artikel, vertraag = 0, kop = "h3" } = Astro.props;
+const d = artikel.data;
+const Kop = kop;
+const woord = d.omslag ?? (skoonTitel(d.title).split(" ").pop() ?? "");
+const soek = `${skoonTitel(d.title)} ${d.summary} ${KATEGORIEE[d.category].naam}`.toLowerCase();
+---
+<article class="kaart onthul" style={`--vertraag:${vertraag}ms`} data-soek={soek} data-kategorie={d.category}>
+  <Omslag kategorie={d.category} woord={woord} image={d.image} imageAlt={d.imageAlt} />
+  <div class="kaart-meta">
+    <a class="etiket" href={`/${d.category}/`}><span class={`stip stip--${d.category}`}></span>{KATEGORIEE[d.category].naam}</a>
+    <span>{leestyd(artikel.body, d.leestyd)} min lees</span>
+  </div>
+  <Kop class="kaart-titel"><a href={`/artikels/${artikel.id}/`}><Titel teks={d.title} /></a></Kop>
+  <p class="kaart-opsomming">{d.summary}</p>
+</article>

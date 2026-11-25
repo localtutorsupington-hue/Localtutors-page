@@ -1,0 +1,8 @@
+---
+import { titelStukke } from "../lib/titel";
+interface Props { teks: string; pillKleur?: "roos" | "goud" | "sand" | "surface" }
+const { teks, pillKleur = "roos" } = Astro.props;
+const stukke = titelStukke(teks);
+const klas = pillKleur === "roos" ? "pill" : `pill pill--${pillKleur}`;
+---
+{stukke.map((s) => (s.pill ? <em class={klas}>{s.teks}</em> : s.teks))}
