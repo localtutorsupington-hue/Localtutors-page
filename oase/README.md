@@ -53,7 +53,7 @@ Jou artikel begin hier.
 |---|---|---|
 | `KONTROLE_URL` | Waar die "gratis kontrole" knoppies heen gaan. Leeg = WhatsApp met 'n klaar-geskrewe boodskap. | leeg |
 | `WHATSAPP` | Jou WhatsApp-nommer in die formaat 27... | `27697635055` |
-| `FACEBOOK_URL` | Oase se Facebook-bladsy. Leeg = skakels word versteek. | leeg |
+| `FACEBOOK_URL` | Oase se Facebook-bladsy. Leeg = skakels word versteek. | ingevul |
 | `PRAKTISYN_URL` | Bladsy vir gesondheidswerkers wat wil aansluit (net in die voetskrif). Leeg = versteek. | leeg |
 | `NEWSLETTER_URL` | Waarheen die nuusbrief-vorm stuur. Leeg = Netlify Forms. | leeg |
 | `SITE_URL` | Jou webwerf se adres (vir deelskakels). | `https://oase-webwerf.netlify.app` |

@@ -7,7 +7,7 @@ import Titel from "../../components/Titel.astro";
 import Pyl from "../../components/Pyl.astro";
 import { KATEGORIEE } from "../../lib/kategorie";
 import { datum, leestyd, skoonTitel } from "../../lib/titel";
-import { DISCLAIMER, KONTROLE_URL, kontroleLink, chatLink } from "../../config";
+import { DISCLAIMER, FACEBOOK_URL, KONTROLE_URL, kontroleLink, chatLink } from "../../config";
 
 export async function getStaticPaths() {
   const artikels = await getCollection("artikels");
@@ -123,6 +123,7 @@ const jsonLd = {
             <a class="knoppie knoppie--lig" href={kontroleLink(bron)} data-kontrole={bron}>Bespreek my gratis kontrole <Pyl /></a>
             <a class="knoppie knoppie--omlyn-lig" href={chatLink(bron)}>Stuur 'n WhatsApp</a>
           </div>
+          {FACEBOOK_URL && <p class="eind-cta-fb">Of <a href={FACEBOOK_URL}>volg Oase op Facebook</a> vir nuwe artikels.</p>}
         </section>
       </div>
     </div>
