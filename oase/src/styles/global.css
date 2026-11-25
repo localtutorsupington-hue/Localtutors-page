@@ -354,6 +354,9 @@ a.etiket:hover { background: var(--hair); }
 .prosa strong { font-weight: 700; }
 .prosa blockquote { margin-inline: 0; padding: 4px 0 4px 20px; border-left: 3px solid var(--goud); font-family: var(--serif); font-size: 1.5rem; line-height: 1.3; }
 
+.artikel-beeld { margin-inline: 0; }
+.artikel-beeld img { width: 100%; max-width: 380px; height: auto; border-radius: var(--r); background: var(--sand); }
+
 .kontrole-kaart {
   margin-block: 2.2em !important; background: var(--roos); border-radius: var(--r); padding: 26px 24px;
   display: grid; gap: 10px; justify-items: start;
