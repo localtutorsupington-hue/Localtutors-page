@@ -380,6 +380,8 @@ a.etiket:hover { background: var(--hair); }
 @media (min-width: 768px) { .eind-cta { padding: 52px; } }
 .eind-cta h2 { font-size: clamp(2.2rem, 4vw + 1rem, 3.2rem); }
 .eind-cta p { opacity: 0.94; max-width: 46ch; }
+.eind-cta-fb { font-size: 0.95rem; }
+.eind-cta-fb a { color: var(--surface); }
 .eind-cta-aksies { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
 
 .verwante { background: var(--sand); }
