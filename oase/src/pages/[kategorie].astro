@@ -1,0 +1,58 @@
+---
+import { getCollection } from "astro:content";
+import Basis from "../layouts/Basis.astro";
+import Kaart from "../components/Kaart.astro";
+import Pyl from "../components/Pyl.astro";
+import Inskryf from "../components/Inskryf.astro";
+import { KATEGORIEE, KATEGORIE_ORDE, type Kategorie } from "../lib/kategorie";
+import { kontroleLink } from "../config";
+
+export function getStaticPaths() {
+  return KATEGORIE_ORDE.map((kategorie) => ({ params: { kategorie }, props: { kategorie } }));
+}
+const { kategorie } = Astro.props as { kategorie: Kategorie };
+const kat = KATEGORIEE[kategorie];
+const bron = `kategorie-${kategorie}`;
+const artikels = (await getCollection("artikels", (a) => a.data.category === kategorie)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+<Basis titel={kat.naam} beskrywing={`${kat.naam}: ${kat.lang}`} bron={bron} aktief={kategorie}>
+  <section class={`kat-held kat-held--${kategorie}`} aria-labelledby="kat-titel">
+    <div class="houer">
+      <nav class="broodkrummels" aria-label="Broodkrummels">
+        <ol><li><a href="/">Tuis</a></li><li><span aria-current="page">{kat.naam}</span></li></ol>
+      </nav>
+      <p class="oogrand" style="color:inherit;opacity:.85">Pilaar</p>
+      <h1 id="kat-titel" style="margin-top:8px"><em class={`pill ${kategorie === "liefde" ? "pill--surface" : "pill--sand"}`} style={kategorie === "liefde" ? "" : "color:var(--ink)"}>{kat.naam}</em></h1>
+      <p>{kat.lang}</p>
+    </div>
+  </section>
+
+  <section class="seksie" aria-labelledby="kat-lys-titel">
+    <div class="houer">
+      <div class="seksie-kop">
+        <h2 class="seksie-titel" id="kat-lys-titel" style="font-size:clamp(2rem,4vw + .6rem,3rem)">Lees oor {kat.naam.toLowerCase()}</h2>
+        <a class="teks-skakel" href="/artikels/">Alle artikels <Pyl /></a>
+      </div>
+      {artikels.length ? (
+        <div class="rooster">{artikels.map((a, i) => <Kaart artikel={a} vertraag={(i % 3) * 90} kop="h3" />)}</div>
+      ) : (
+        <div class="leeg">
+          <p>Hier kom binnekort artikels. Wil jy intussen met iemand praat?</p>
+          <p style="margin-top:16px"><a class="knoppie knoppie--primer" href={kontroleLink(bron)} data-kontrole={bron}>Bespreek 'n gratis kontrole</a></p>
+        </div>
+      )}
+      <div style="margin-top:64px">
+        <p class="oogrand" style="margin-bottom:12px">Ander pilare</p>
+        <div class="ander-pilare">
+          {KATEGORIE_ORDE.filter((k) => k !== kategorie).map((k) => (
+            <a class="etiket" style="padding:10px 16px;font-size:1rem" href={`/${k}/`}><span class={`stip stip--${k}`}></span>{KATEGORIEE[k].naam}</a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Inskryf bron={bron} />
+</Basis>

@@ -1,0 +1,47 @@
+---
+import { NEWSLETTER_URL, FACEBOOK_URL, chatLink } from "../config";
+import Titel from "./Titel.astro";
+interface Props { bron: string }
+const { bron } = Astro.props;
+const eksterne = NEWSLETTER_URL.trim() !== "";
+const id = `inskryf-${bron}`;
+---
+<section class="seksie" aria-labelledby={`${id}-titel`}>
+  <div class="houer">
+    <div class="inskryf op-donker onthul">
+      <div>
+        <p class="oogrand" style="color:inherit;opacity:.85">Bly in kontak</p>
+        <h2 id={`${id}-titel`} style="margin-top:12px"><Titel teks="Nuwe artikels, *sag* op jou WhatsApp" pillKleur="goud" /></h2>
+        <p class="inskryf-teks">Los jou naam en WhatsApp-nommer, dan stuur ons vir jou nuwe artikels en nuus. Ons vra nooit vir gesondheidsinligting nie.</p>
+        <p class="inskryf-ander" style="margin-top:16px">
+          Liewer self 'n boodskap stuur? <a href={chatLink(bron)}>Gesels met ons op WhatsApp</a>{FACEBOOK_URL && (<>, of <a href={FACEBOOK_URL}>volg ons op Facebook</a></>)}.
+        </p>
+      </div>
+      <form
+        class="vorm"
+        name="nuusbrief"
+        method="POST"
+        action={eksterne ? NEWSLETTER_URL : "/dankie/"}
+        {...(eksterne ? {} : { "data-netlify": "true", "netlify-honeypot": "bot-veld" })}
+      >
+        {!eksterne && <input type="hidden" name="form-name" value="nuusbrief" />}
+        <input type="hidden" name="bron" value={bron} />
+        <p class="sr-only"><label>Moenie hierdie invul nie <input name="bot-veld" tabindex="-1" autocomplete="off" /></label></p>
+        <div class="veld">
+          <label for={`${id}-naam`}>Jou naam</label>
+          <input id={`${id}-naam`} name="naam" type="text" autocomplete="given-name" required maxlength="60" />
+        </div>
+        <div class="veld">
+          <label for={`${id}-nommer`}>WhatsApp-nommer</label>
+          <input id={`${id}-nommer`} name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required pattern="[0-9 +()\-]{9,16}" aria-describedby={`${id}-nommer-hulp`} />
+          <span class="veld-hulp" id={`${id}-nommer-hulp`}>Byvoorbeeld 082 123 4567</span>
+        </div>
+        <label class="toestemming">
+          <input type="checkbox" name="toestemming" value="ja" required />
+          <span>Ek stem in dat Oase my naam en WhatsApp-nommer gebruik om vir my artikels en nuus te stuur. Ek kan enige tyd "STOP" stuur. Lees die <a href="/privaatheid/">privaatheidsbeleid</a>.</span>
+        </label>
+        <button class="knoppie knoppie--lig" type="submit">Teken in</button>
+      </form>
+    </div>
+  </div>
+</section>

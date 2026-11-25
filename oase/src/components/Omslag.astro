@@ -1,0 +1,24 @@
+---
+import { KATEGORIEE, type Kategorie } from "../lib/kategorie";
+interface Props {
+  kategorie: Kategorie;
+  woord: string;
+  image?: string;
+  imageAlt?: string;
+  grootte?: "kaart" | "groot" | "held";
+  laai?: "lazy" | "eager";
+}
+const { kategorie, woord, image = "", imageAlt = "", grootte = "kaart", laai = "lazy" } = Astro.props;
+const groot = grootte === "groot" ? " omslag--groot" : grootte === "held" ? " omslag--held" : "";
+---
+{image ? (
+  <div class={`omslag omslag--foto${groot}`}>
+    <img src={image} alt={imageAlt} loading={laai} decoding="async" width="1200" height="900" />
+  </div>
+) : (
+  <div class={`omslag omslag--${kategorie}${groot}`} aria-hidden="true">
+    <span class="omslag-sirkel"></span>
+    <span class="omslag-kat">Oase · {KATEGORIEE[kategorie].naam}</span>
+    <span class="omslag-woord">{woord}</span>
+  </div>
+)}

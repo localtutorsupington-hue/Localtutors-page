@@ -1,0 +1,142 @@
+---
+import { getCollection } from "astro:content";
+import Basis from "../layouts/Basis.astro";
+import Kaart from "../components/Kaart.astro";
+import Omslag from "../components/Omslag.astro";
+import Pyl from "../components/Pyl.astro";
+import Titel from "../components/Titel.astro";
+import Inskryf from "../components/Inskryf.astro";
+import { KATEGORIEE, KATEGORIE_ORDE } from "../lib/kategorie";
+import { skoonTitel } from "../lib/titel";
+import { KONTROLE_URL, kontroleLink, chatLink } from "../config";
+
+const bron = "tuisblad";
+const artikels = (await getCollection("artikels")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const nuutste = artikels[0];
+const tel = (k: string) => artikels.filter((a) => a.data.category === k).length;
+const woordVan = (a: (typeof artikels)[number]) => a.data.omslag ?? skoonTitel(a.data.title).split(" ").pop() ?? "";
+
+// Hero-titel, woord vir woord. Die woord tussen * word die pill.
+const heldWoorde = "'n Plek om *asem* te skep.".split(" ");
+---
+<Basis titel="Oase" beskrywing="Eerlike, rustige gesondheidsinligting vir vroue, in Afrikaans. Lees oor slaap, stres, energie en die middeljare, en bespreek 'n gratis kontrole." bron={bron}>
+  <section class="held" aria-labelledby="held-titel">
+    <div class="houer held-rooster">
+      <div>
+        <p class="oogrand held-inkom" style="margin-bottom:20px">Vir vroue wat vir almal sorg</p>
+        <h1 class="held-titel" id="held-titel">
+          <span class="sr-only">'n Plek om asem te skep.</span>
+          <span aria-hidden="true">
+            {heldWoorde.map((w, i) => (
+              <>
+                <span class="woord" style={`--i:${i}`}>
+                  {w.startsWith("*") ? <em class="pill">{w.replace(/\*/g, "")}</em> : w}
+                </span>{" "}
+              </>
+            ))}
+          </span>
+        </h1>
+        <p class="held-teks held-inkom">Eerlike, rustige gesondheidsinligting in Afrikaans. En as jy met iemand wil praat, bespreek jy 'n gratis kontrole naby jou.</p>
+        <div class="held-aksies held-inkom-2">
+          <a class="knoppie knoppie--primer" href={kontroleLink(bron)} data-kontrole={bron}>Bespreek jou gratis kontrole <Pyl /></a>
+          <a class="knoppie knoppie--omlyn" href={chatLink(bron)}>Gesels op WhatsApp</a>
+        </div>
+        {!KONTROLE_URL.trim() && <p class="held-nota held-inkom-2">Albei knoppies maak WhatsApp oop.</p>}
+      </div>
+      {nuutste && (
+        <div class="held-beeld held-inkom-2">
+          <a href={`/artikels/${nuutste.id}/`} class="kaart" style="text-decoration:none;color:inherit">
+            <div class="held-stapel"><Omslag kategorie={nuutste.data.category} woord={woordVan(nuutste)} image={nuutste.data.image} imageAlt={nuutste.data.imageAlt} grootte="held" laai="eager" /></div>
+            <span class="held-onderskrif"><span><small>Nuutste artikel</small>{skoonTitel(nuutste.data.title)}</span><Pyl /></span>
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="seksie" style="padding-top:24px" aria-labelledby="nuut-titel">
+    <div class="houer">
+      <div class="seksie-kop onthul">
+        <div>
+          <p class="oogrand">Nuutste artikels</p>
+          <h2 class="seksie-titel" id="nuut-titel" style="margin-top:12px"><Titel teks="Iets om *vandag* te lees" /></h2>
+        </div>
+        <a class="teks-skakel" href="/artikels/">Sien alle artikels <Pyl /></a>
+      </div>
+      <div class="rooster">
+        {artikels.slice(0, 6).map((a, i) => <Kaart artikel={a} vertraag={(i % 3) * 90} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="seksie" style="background:var(--sand)" aria-labelledby="pilare-titel">
+    <div class="houer">
+      <div class="seksie-kop onthul">
+        <div>
+          <p class="oogrand">Vier plekke om te begin</p>
+          <h2 class="seksie-titel" id="pilare-titel" style="margin-top:12px"><Titel teks="Kies wat jy *nou* nodig het" pillKleur="surface" /></h2>
+        </div>
+        <p class="seksie-inleiding">Oase is gebou op vier pilare. Begin by die een wat vandag die naaste aan jou hart is.</p>
+      </div>
+      <div class="pilare">
+        {KATEGORIE_ORDE.map((k, i) => (
+          <a class={`pilaar pilaar--${k} onthul`} style={`--vertraag:${i * 80}ms`} href={`/${k}/`}>
+            <div>
+              <h3 class="pilaar-naam">{KATEGORIEE[k].naam}</h3>
+              <p class="pilaar-beskrywing" style="margin-top:12px">{KATEGORIEE[k].beskrywing}</p>
+            </div>
+            <span class="pilaar-voet">
+              <span>{tel(k)} {tel(k) === 1 ? "artikel" : "artikels"}</span>
+              <span class="pilaar-pyl"><Pyl /></span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="seksie" aria-labelledby="skryf-titel">
+    <div class="houer">
+      <div class="seksie-kop onthul">
+        <div>
+          <p class="oogrand">Onderwerpe</p>
+          <h2 class="seksie-titel" id="skryf-titel" style="margin-top:12px"><Titel teks="Waaroor ons *skryf*" /></h2>
+        </div>
+        <p class="seksie-inleiding">Gewone vrae van gewone vroue. Tik op 'n onderwerp om te lees.</p>
+      </div>
+      <ul class="onderwerpe onthul">
+        {artikels.map((a, i) => (
+          <li>
+            <a class="onderwerp" href={`/artikels/${a.id}/`}>
+              <span class="onderwerp-nr">{String(i + 1).padStart(2, "0")}</span>
+              <span>
+                <span class="onderwerp-naam">{woordVan(a)}</span>
+                <span class="onderwerp-vraag">{skoonTitel(a.data.title)}</span>
+              </span>
+              <span class="onderwerp-pyl"><Pyl /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="seksie" style="padding-top:0" aria-labelledby="hoe-titel">
+    <div class="houer">
+      <div class="seksie-kop onthul">
+        <div>
+          <p class="oogrand">Die gratis kontrole</p>
+          <h2 class="seksie-titel" id="hoe-titel" style="margin-top:12px"><Titel teks="Hoe dit *werk*" pillKleur="goud" /></h2>
+        </div>
+        <a class="knoppie knoppie--primer" href={kontroleLink(bron + "-hoe-dit-werk")} data-kontrole={bron}>Bespreek jou gratis kontrole <Pyl /></a>
+      </div>
+      <ol class="stappe">
+        <li class="stap onthul"><h3>Tik op die knoppie</h3><p>Dit neem net 'n minuut. Jy hoef niks te betaal nie.</p></li>
+        <li class="stap onthul" style="--vertraag:90ms"><h3>Ons vra jou toestemming</h3><p>Ons deel jou naam en nommer net as jy ja sê.</p></li>
+        <li class="stap onthul" style="--vertraag:180ms"><h3>Iemand naby jou skakel</h3><p>'n Plaaslike gesondheidswerker kontak jou om 'n tyd te reël.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <Inskryf bron={bron} />
+</Basis>

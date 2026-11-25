@@ -1,0 +1,20 @@
+---
+import Basis from "../layouts/Basis.astro";
+import { WHATSAPP_DISPLAY, chatLink } from "../config";
+---
+<Basis titel="Privaatheid" beskrywing="Hoe Oase met jou naam en WhatsApp-nommer werk." bron="privaatheid">
+  <section class="eenvoudig houer">
+    <h1>Jou <em class="pill">privaatheid</em></h1>
+    <div class="prosa">
+      <p>Oase respekteer jou privaatheid en volg die Wet op Beskerming van Persoonlike Inligting (POPIA).</p>
+      <h2>Wat ons vra</h2>
+      <p>As jy vir ons nuusbrief inteken, vra ons net jou naam en WhatsApp-nommer. Ons vra nie vir enige gesondheidsinligting op hierdie webwerf nie.</p>
+      <h2>Waarvoor ons dit gebruik</h2>
+      <p>Ons gebruik jou naam en nommer net om vir jou artikels en nuus van Oase op WhatsApp te stuur. Ons verkoop dit nie.</p>
+      <h2>Die gratis kontrole</h2>
+      <p>As jy 'n gratis kontrole bespreek, vra ons eers jou toestemming voordat ons jou besonderhede met 'n plaaslike gesondheidswerker deel. Jy kan altyd nee sê.</p>
+      <h2>Jou keuses</h2>
+      <p>Stuur enige tyd "STOP" op WhatsApp en ons stuur niks meer nie. Wil jy hê ons moet jou besonderhede uitvee of wil jy sien wat ons van jou het? Stuur 'n boodskap na <a href={chatLink("privaatheid")}>{WHATSAPP_DISPLAY}</a>.</p>
+    </div>
+  </section>
+</Basis>
