@@ -9,7 +9,7 @@ export const FACEBOOK_URL = ""; // Skakel na die Oase Facebook-bladsy.
 export const PRAKTISYN_URL = ""; // Skakel vir gesondheidswerkers wat by Oase wil aansluit. Leeg = skakel word versteek.
 export const NEWSLETTER_URL = ""; // Waarheen die nuusbrief-vorm stuur. Leeg = Netlify Forms (werk vanself op Netlify).
 
-export const SITE_URL = "https://oase.netlify.app"; // Jou webwerf se adres. Verander as jy 'n eie domein kry.
+export const SITE_URL = "https://oase-webwerf.netlify.app"; // Jou webwerf se adres. Verander as jy 'n eie domein kry.
 
 /* Hieronder hoef jy niks te verander nie. */
 export const WHATSAPP_DISPLAY = "069 763 5055";

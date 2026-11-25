@@ -56,7 +56,7 @@ Jou artikel begin hier.
 | `FACEBOOK_URL` | Oase se Facebook-bladsy. Leeg = skakels word versteek. | leeg |
 | `PRAKTISYN_URL` | Bladsy vir gesondheidswerkers wat wil aansluit (net in die voetskrif). Leeg = versteek. | leeg |
 | `NEWSLETTER_URL` | Waarheen die nuusbrief-vorm stuur. Leeg = Netlify Forms. | leeg |
-| `SITE_URL` | Jou webwerf se adres (vir deelskakels). | `https://oase.netlify.app` |
+| `SITE_URL` | Jou webwerf se adres (vir deelskakels). | `https://oase-webwerf.netlify.app` |
 
 Elke kontrole-skakel kry `?bron=<waar-die-leser-was>` (byvoorbeeld `?bron=slaap` of `?bron=tuisblad`). As die skakel na WhatsApp gaan, staan die bron ook in die boodskap, sodat jy kan sien watter artikel mense na jou toe stuur.
 
