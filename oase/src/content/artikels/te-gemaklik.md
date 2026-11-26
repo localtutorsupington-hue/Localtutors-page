@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, vra asseblief 'n dokter of dieetkundige om na te gaan:
+# [LAAT DOKTER NAGAAN] Vra asseblief 'n dokter of dieetkundige om na te gaan:
 # 1. Die "2 kg-reël" (een keer per week weeg, 3 dae kos aanteken) is Oase se eie voorstel, nie 'n mediese riglyn nie.
 # 2. Die opsomming van die Psychology Today-artikel oor kos aanteken.
 # 3. Die lyn oor kos aanteken en angs: is dit genoeg vir lesers met 'n eetversteuring?
@@ -7,15 +7,17 @@ title: "Die gevaarlikste plek is nie onder nie. Dis *gemaklik*."
 slug: "te-gemaklik"
 category: "beweeg"
 date: 2026-11-26
-summary: "'n Fikse afrigter wat nou self sukkel met gewig. Haar storie wys hoe stadig dinge wegglip as ons ophou oplet, en hoe 'n eenvoudige 2 kg-reël help om vroeg te keer."
+summary: "Hoe om die eerste 2 kg te keer voor dit 15 word. Sonder 'n streng dieet, met een eenvoudige reël en net 3 dae se aandag."
 image: "/images/artikels/te-gemaklik-og.png"
 imageAlt: "Oase-kaart met die woorde: Die gevaarlikste plek is nie onder nie. Dis gemaklik."
 leestyd: 4
 omslag: "Gemaklik"
 kortliks:
-  - "Wat jy gebou het, verloor jy stadig as jy ophou oplet."
-  - "Om 2 kg te keer, vra klein veranderinge. Om 15 kg te verloor, vra baie meer."
-  - "Weeg een keer per week. Is jy 2 kg swaarder, kyk 3 dae lank na jou kos, stap en slaap."
+  - "Waarom selfs 'n vrou wat haar hele lewe lank sport doen, stadig gewig kan optel, en hoekom dit met enigiemand kan gebeur."
+  - "Die 5 vroeë tekens dat jy aan die glip is, lank voor die skaal jou laat skrik."
+  - "Die 2 kg-reël: een keer per week op die skaal, en 3 dae se aandag as die naald skuif."
+  - "Die eenvoudige gewoonte wat navorsing koppel aan meer sukses om gewig af te hou."
+  - "Waarom jy nie vir 'n probleem moet wag voor jy 'n kontrole bespreek nie."
 bronne:
   - titel: "Psychology Today: Why we forget what we eat (Kristen A. Carter, 2023)"
     url: "https://www.psychologytoday.com/za/blog/health-and-human-nature/202312/why-we-forget-what-we-eat"
@@ -28,13 +30,13 @@ bronne:
 nagegaan: 2026-11-26
 ---
 
-Kyle, wat Oase begin het, ken 'n persoonlike afrigter. Sy het jare lank sport gespeel. Sy was fiks en sterk, en haar werk was om ander mense in vorm te kry.
+Ons ken 'n vrou wat al haar hele lewe lank sport doen. Sy was nog altyd aktief. Sy was fiks en sterk, en beweeg was vir haar so natuurlik soos asemhaal.
 
-Toe raak die lewe besig. Werk, familie, die gewone dinge. Die gewig het stadig begin opkruip. Nie in een maand nie. Oor jare, elke jaar net 'n bietjie.
+Toe raak die werk besig. Lang dae, laat aande, min tyd vir haarself. Die gewig het stadig begin opkruip. Nie in een maand nie. Oor jare, elke jaar net 'n bietjie.
 
-Vandag sukkel sy om dit weer af te kry. Sy weet presies hoe oefening werk, en tog het sy dit nie sien kom nie.
+Vandag sukkel sy om dit weer af te kry. Sy weet hoe om te oefen, en tog het sy dit nie sien kom nie.
 
-Ons vertel haar storie nie om haar skaam te laat voel nie. Ons vertel dit omdat dit met enigiemand kan gebeur. As dit met 'n afrigter kan gebeur, kan dit met jou en my ook gebeur.
+Ons vertel haar storie nie om haar skaam te laat voel nie. Ons vertel dit omdat dit met enigiemand kan gebeur. As dit met iemand kan gebeur wat haar lewe lank aktief is, kan dit met jou en my ook gebeur.
 
 ## Wat ons hieruit kan leer
 
@@ -45,6 +47,8 @@ Die gevaar kom wanneer jy ophou oplet. Fiksheid, gewig en gesondheid is soos 'n 
 Dit is heeltemal menslik. Volgens 'n artikel op Psychology Today vergeet baie mense dele van wat hulle eet, sonder dat hulle dit probeer wegsteek. Dit is maklik om net deur die dag te gaan sonder om op te let.
 
 ### Waarom 2 kg makliker is om te keer as 15
+
+> Die eerste 2 kg is baie makliker om te keer as die volgende 15.
 
 Gewoontes kruip stadig in. 'n Ekstra koekie by die werk. Minder stap omdat dit koud is. Laat aande voor die TV. Een keer maak dit min saak. Elke dag, vir maande, tel dit op.
 

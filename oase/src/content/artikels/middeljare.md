@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, hierdie artikel is klinies. Vra asseblief 'n dokter of verpleegster om veral na te gaan:
+# [LAAT DOKTER NAGAAN] Hierdie artikel is klinies. Vra asseblief 'n dokter of verpleegster om veral na te gaan:
 # 1. Ouderdom van menopouse (45 tot 55) en die definisie van 12 maande sonder 'n maandstonde (WHO, NHS).
 # 2. "Simptome duur gewoonlik 7 tot 9 jaar" (NHS) en "1 uit 4 / 3 uit 4" syfers (Jean Hailes).
 # 3. Die raad oor swangerskap en voorbehoeding in die perimenopouse (WHO).

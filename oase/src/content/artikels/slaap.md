@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, vra asseblief 'n dokter of verpleegster om hierdie punte na te gaan:
+# [LAAT DOKTER NAGAAN] Vra asseblief 'n dokter of verpleegster om hierdie punte na te gaan:
 # 1. "Volwassenes het gemiddeld 7 tot 9 uur slaap nodig" (NHS Insomnia).
 # 2. Die lys van "Dinge om te vermy" (6 uur sonder kafeïen, 4 uur sonder oefening).
 # 3. Die afdeling "Wanneer moet jy hulp kry?"

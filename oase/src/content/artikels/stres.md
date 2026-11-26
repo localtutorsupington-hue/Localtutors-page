@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, vra asseblief 'n dokter, verpleegster of berader om hierdie punte na te gaan:
+# [LAAT DOKTER NAGAAN] Vra asseblief 'n dokter, verpleegster of berader om hierdie punte na te gaan:
 # 1. Die lys van tekens van stres (WHO).
 # 2. Die afdeling "Wanneer is dit meer as gewone stres?"
 title: "Stres: wees 'n bietjie *sagter* met jouself"

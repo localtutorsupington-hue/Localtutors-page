@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, vra asseblief 'n dokter of verpleegster om hierdie punte na te gaan:
+# [LAAT DOKTER NAGAAN] Vra asseblief 'n dokter of verpleegster om hierdie punte na te gaan:
 # 1. "Eet elke 3 tot 4 uur" en "kafeïen se effek hou tot 7 uur" (NHS).
 # 2. Die lys van toestande wat 'n dokter met bloedtoetse kan nagaan (bloedarmoede, diabetes, skildklier).
 # 3. Die afdeling "Wanneer moet jy 'n dokter sien?"

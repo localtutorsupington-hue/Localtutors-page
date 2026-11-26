@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, hierdie artikel kom van jou Facebook-pos. Vra asseblief 'n dokter, dieetkundige of biokinetikus om na te gaan:
+# [LAAT DOKTER NAGAAN] Hierdie artikel kom van jou Facebook-pos. Vra asseblief 'n dokter, dieetkundige of biokinetikus om na te gaan:
 # 1. "Ons verloor natuurlik spier soos ons ouer word" (Jean Hailes) en "meer spier, hoër metabolisme" (Healthline).
 # 2. "Spierwerk op minstens 2 dae per week" (NHS). Die Facebook-pos sê 2 tot 3 keer; die artikel volg die NHS.
 # 3. Die opsomming van die 2023-studie (Frontiers in Endocrinology, 101 studies, 5 697 vroue).
