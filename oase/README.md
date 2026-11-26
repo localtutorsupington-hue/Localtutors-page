@@ -45,6 +45,7 @@ Jou artikel begin hier.
 - Wil jy 'n foto gebruik? Laai dit op na `oase/public/beelde/` en skryf `image: "/beelde/jou-foto.jpg"` en 'n kort beskrywing by `imageAlt`.
 - Elke artikel **moet** ten minste een bron hê, anders bou die webwerf nie. Dit is met opset.
 - Die gratis-kontrole kaart, die vrywaring, die bronnelys en die eind-knoppie kom vanself by. Jy hoef niks te doen nie.
+- Wil jy eerder die gratis gewigsverlies-toets halfpad in die artikel wys? Voeg `cta: "toets"` by die frontmatter. Sonder dit kry die artikel die gratis-kontrole kaart.
 - Moenie 'n spesifieke dokter of praktyk in 'n artikel noem nie (HPCSA-reëls). Mense kom by verskaffers uit deur die kontrole-knoppie.
 
 ## Instellings (`src/config.ts`)
@@ -56,6 +57,7 @@ Jou artikel begin hier.
 | `FACEBOOK_URL` | Oase se Facebook-bladsy. Leeg = skakels word versteek. | ingevul |
 | `PRAKTISYN_URL` | Bladsy vir gesondheidswerkers wat wil aansluit (net in die voetskrif). Leeg = versteek. | leeg |
 | `NEWSLETTER_URL` | Waarheen die nuusbrief-vorm stuur. Leeg = Netlify Forms. | leeg |
+| `TOETS_URL` | Die gratis gewigsverlies-toets. Word gewys in artikels met `cta: "toets"`. | ingevul |
 | `SITE_URL` | Jou webwerf se adres (vir deelskakels). | `https://oase-webwerf.netlify.app` |
 
 Elke kontrole-skakel kry `?bron=<waar-die-leser-was>` (byvoorbeeld `?bron=slaap` of `?bron=tuisblad`). As die skakel na WhatsApp gaan, staan die bron ook in die boodskap, sodat jy kan sien watter artikel mense na jou toe stuur.

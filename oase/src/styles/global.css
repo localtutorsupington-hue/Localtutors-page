@@ -366,6 +366,7 @@ a.etiket:hover { background: var(--hair); }
 .kk-teks { font-size: 1.02rem; line-height: 1.55; }
 .kontrole-kaart .knoppie { margin-top: 6px; }
 .kk-nota { font-size: 0.88rem; color: var(--ink); }
+.toets-kaart { background: var(--goud); }
 
 .vrywaring {
   display: flex; gap: 12px; align-items: flex-start; margin-top: 48px; padding: 18px 20px;
