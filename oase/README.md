@@ -64,7 +64,7 @@ Elke kontrole-skakel kry `?bron=<waar-die-leser-was>` (byvoorbeeld `?bron=slaap`
 
 Die vorm vra net naam en WhatsApp-nommer, met 'n toestemmingsblokkie. As `NEWSLETTER_URL` leeg is, stoor Netlify die inskrywings: skakel **Forms > Enable form detection** aan in Netlify, en kyk dan onder **Forms > nuusbrief**. Die vorm belowe dat mense "STOP" kan stuur: hou by daardie belofte.
 
-## Vir Kyle: [LAAT DOKTER NAGAAN]
+## Om na te gaan: [LAAT DOKTER NAGAAN]
 
 Al ses artikels het bo-aan die lêer 'n `# [LAAT DOKTER NAGAAN]` lys met die presiese punte wat 'n dokter of verpleegster moet nagaan. Hierdie lyne wys nie op die webwerf nie. Vee hulle uit wanneer dit nagegaan is. Gaan ook die drie stappe in "Hoe dit werk" op die tuisblad na, sodat dit presies pas by hoe jou kontrole werk.
 

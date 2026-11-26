@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, hierdie artikel kom van jou Facebook-pos. Vra asseblief 'n dokter of verpleegster om na te gaan:
+# [LAAT DOKTER NAGAAN] Hierdie artikel kom van jou Facebook-pos. Vra asseblief 'n dokter of verpleegster om na te gaan:
 # 1. Die kafeïen-studie: 'n groot dosis (400 mg) selfs 6 uur voor slaaptyd het slaap versteur (Drake 2013). Die pos se "meer as 'n uur" en "hulle het dit nie agtergekom nie" kon nie in die opsomming bevestig word nie, en is uitgelaat.
 # 2. Die 56%-syfer vir vroue in die perimenopouse (CDC NCHS Data Brief 286, 2017).
 # 3. Die kiwi-studie (klein studie, 24 mense). Suurkersiesap en magnesium is doelbewus uitgelaat: te min bewyse, en aanvullings is mediese advies.

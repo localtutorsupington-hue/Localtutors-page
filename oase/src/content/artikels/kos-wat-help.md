@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, vra asseblief 'n dokter of dieetkundige om hierdie syfers na te gaan:
+# [LAAT DOKTER NAGAAN] Vra asseblief 'n dokter of dieetkundige om hierdie syfers na te gaan:
 # 1. "Minstens 400 g vrugte en groente per dag" en "25 g vesel" (WHO).
 # 2. "Minder as 50 g suiker, omtrent 12 gelyk teelepels" en "minder as 5 g sout per dag" (WHO).
 # 3. Die kos-raad vir vroue van 45 tot 60 (Discovery Vitality).

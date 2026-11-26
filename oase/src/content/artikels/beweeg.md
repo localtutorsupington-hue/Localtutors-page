@@ -1,5 +1,5 @@
 ---
-# [LAAT DOKTER NAGAAN] Kyle, vra asseblief 'n dokter of fisioterapeut om hierdie punte na te gaan:
+# [LAAT DOKTER NAGAAN] Vra asseblief 'n dokter of fisioterapeut om hierdie punte na te gaan:
 # 1. "150 minute matige of 75 minute strawwe beweging per week" en "spierwerk op 2 dae" (NHS).
 # 2. Die lys van voordele van beweging (WHO).
 # 3. Die raad om eers 'n dokter te sien as jy lanklaas geoefen het of 'n siekte het (NHS).
