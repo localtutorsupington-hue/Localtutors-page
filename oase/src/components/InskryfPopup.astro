@@ -1,0 +1,212 @@
+---
+// E-pos-inteken pop-up vir artikels ("Groot letters").
+// Wys elke keer as iemand 'n artikel oopmaak en 'n bietjie gelees het, totdat sy inteken.
+// Na inteken onthou die blaaier dit, en die pop-up wys nooit weer nie.
+// Sonder JavaScript wys dit nooit nie, en die artikel lees gewoon.
+import { SUPABASE_URL, SUPABASE_KEY } from "../config";
+interface Props { bron: string }
+const { bron } = Astro.props;
+const toestemming = "Ja, Oase mag my e-posse stuur. Ek kan enige tyd uitteken.";
+---
+<div class="ip" data-inskryf-popup data-bron={bron} data-url={SUPABASE_URL} data-sleutel={SUPABASE_KEY} hidden>
+  <div class="ip-dof" data-ip-toe></div>
+  <div class="ip-kaart" role="dialog" aria-modal="true" aria-labelledby="ip-titel" aria-describedby="ip-onder" tabindex="-1">
+    <button class="ip-x" type="button" aria-label="Maak toe" data-ip-toe>×</button>
+    <h2 class="ip-titel" id="ip-titel" aria-label="Asem in.">
+      <span aria-hidden="true" style="--i:0">Asem</span> <span aria-hidden="true" style="--i:1"><em class="ip-pill">in.</em></span>
+    </h2>
+    <hr />
+    <p class="ip-onder" id="ip-onder">Ons stuur dit direk na jou e-pos.</p>
+    <hr />
+    <ul class="ip-voordele">
+      <li>Nuwe artikels, eerste by jou</li>
+      <li>Jy hoor eerste van oefen- en spa-aanbiedinge, voor almal anders</li>
+      <li>Afslag wat net intekenaars kry</li>
+      <li>Gratis. Teken uit wanneer jy wil.</li>
+    </ul>
+    <form class="ip-vorm" data-ip-vorm novalidate>
+      <label class="sr-only" for="ip-naam">Jou naam</label>
+      <input id="ip-naam" name="naam" type="text" autocomplete="given-name" placeholder="Jou naam" maxlength="80" required />
+      <div class="ip-ry">
+        <label class="sr-only" for="ip-epos">E-posadres</label>
+        <input id="ip-epos" name="epos" type="email" autocomplete="email" inputmode="email" placeholder="E-posadres" maxlength="160" required />
+        <button type="submit" data-ip-stuur>Ek is in</button>
+      </div>
+      <label class="ip-ja">
+        <input type="checkbox" name="toestemming" required />
+        <span>{toestemming} <a href="/privaatheid/">Privaatheid</a></span>
+      </label>
+      <p class="ip-fout" data-ip-fout role="alert" hidden></p>
+    </form>
+    <div class="ip-dankie" data-ip-dankie hidden>
+      <p class="ip-dankie-titel" data-ip-dankie-titel>Dankie!</p>
+      <p>Jy is in. Kyk binnekort in jou e-pos vir ons eerste boodskap.</p>
+      <button type="button" class="ip-lees" data-ip-toe>Lees verder</button>
+    </div>
+    <button type="button" class="ip-nee" data-ip-toe data-ip-nee>Nie nou nie</button>
+  </div>
+</div>
+
+<style>
+  .ip { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; }
+  .ip[hidden] { display: none; }
+  .ip-dof { position: absolute; inset: 0; background: rgba(43, 33, 28, 0.5); }
+  .ip-kaart {
+    position: relative; width: min(440px, 100%); max-height: calc(100svh - 32px); overflow: auto;
+    background: #fff; color: var(--ink); text-align: center;
+    border: 4px solid var(--ink); box-shadow: inset 0 0 0 6px #fff, inset 0 0 0 7px var(--ink);
+    padding: 30px 22px 18px; display: grid; gap: 12px;
+  }
+  .ip-kaart:focus, .ip-kaart:focus-visible { outline: none; }
+  :global(html.ip-oop .vaste-balk) { visibility: hidden; }
+  .ip-x { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--surface); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
+  .ip-titel { font-family: var(--serif); font-weight: 400; font-size: clamp(3.4rem, 15vw, 4.6rem); line-height: 0.9; letter-spacing: -0.02em; margin: 6px 0 0; }
+  .ip-titel span { display: inline-block; }
+  .ip-pill { font-style: italic; background: var(--goud); border-radius: 999px; padding: 0 0.28em 0.04em; display: inline-block; line-height: 0.95; }
+  .ip-kaart hr { border: 0; border-top: 1.5px solid var(--ink); width: 82%; margin: 2px auto; }
+  .ip-onder { font-family: var(--serif); font-size: 1.6rem; line-height: 1.12; margin: 0; }
+  .ip-voordele { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; text-align: left; font-size: 0.98rem; line-height: 1.4; }
+  .ip-voordele li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+  .ip-voordele li::before { content: "✓"; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: var(--surface); font-size: 13px; display: grid; place-items: center; margin-top: 1px; }
+  .ip-vorm { display: grid; gap: 8px; margin-top: 4px; }
+  .ip-vorm input[type="text"], .ip-vorm input[type="email"] {
+    width: 100%; min-height: 50px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 12px; background: #fff; color: var(--ink); font: 400 16px var(--sans);
+  }
+  .ip-ry { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .ip-ry input[type="email"] { border-radius: 0; border-right: 0; }
+  .ip-ry button { border: 0; background: var(--ink); color: var(--surface); font: 500 16px var(--sans); padding: 0 18px; cursor: pointer; min-height: 50px; }
+  .ip-ry button:disabled { opacity: 0.6; cursor: progress; }
+  .ip-ja { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; text-align: left; font-size: 0.85rem; line-height: 1.4; }
+  .ip-ja input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--green); }
+  .ip-ja a { color: inherit; }
+  .ip-fout { margin: 0; color: var(--aarde); font-size: 0.9rem; font-weight: 500; text-align: left; }
+  .ip-nee { justify-self: center; border: 0; background: none; color: var(--muted); font: 400 0.92rem var(--sans); text-decoration: underline; text-underline-offset: 3px; min-height: 40px; padding: 0 10px; cursor: pointer; }
+  .ip-dankie { display: grid; gap: 8px; padding: 6px 0; }
+  .ip-dankie-titel { font-family: var(--serif); font-size: 2.2rem; line-height: 1; margin: 0; }
+  .ip-dankie p { margin: 0; }
+  .ip-lees { justify-self: center; margin-top: 6px; min-height: 48px; padding: 0 22px; border-radius: 999px; border: 0; background: var(--green); color: var(--surface); font: 500 16px var(--sans); cursor: pointer; }
+  .ip :focus-visible { outline: 3px solid var(--goud); outline-offset: 2px; }
+
+  @keyframes ip-dof { from { opacity: 0; } }
+  @keyframes ip-bons { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: none; } }
+  @keyframes ip-val { 0% { opacity: 0; transform: translateY(-120%) rotate(-6deg); } 70% { opacity: 1; transform: translateY(6%) rotate(1deg); } 100% { transform: none; } }
+  @keyframes ip-lyn { from { transform: scaleX(0); } }
+  @keyframes ip-rys { from { opacity: 0; transform: translateY(12px); } }
+  .ip.is-oop .ip-dof { animation: ip-dof 0.4s ease both; }
+  .ip.is-oop .ip-kaart { animation: ip-bons 0.5s cubic-bezier(0.34, 1.45, 0.5, 1) 0.1s both; }
+  .ip.is-oop .ip-titel span { animation: ip-val 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(0.4s + var(--i) * 120ms); }
+  .ip.is-oop hr { animation: ip-lyn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.8s both; }
+  .ip.is-oop .ip-voordele li { animation: ip-rys 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .ip.is-oop .ip-voordele li:nth-child(1) { animation-delay: 0.9s; }
+  .ip.is-oop .ip-voordele li:nth-child(2) { animation-delay: 1s; }
+  .ip.is-oop .ip-voordele li:nth-child(3) { animation-delay: 1.1s; }
+  .ip.is-oop .ip-voordele li:nth-child(4) { animation-delay: 1.2s; }
+  @media (prefers-reduced-motion: reduce) { .ip.is-oop * { animation: none !important; } }
+</style>
+
+<script>
+  const SLEUTEL_INGETEKEN = "oase-ingeteken";
+  const ip = document.querySelector<HTMLElement>("[data-inskryf-popup]");
+  const prosa = document.querySelector<HTMLElement>(".prosa");
+
+  const isIngeteken = () => {
+    try { return localStorage.getItem(SLEUTEL_INGETEKEN) === "ja"; } catch { return false; }
+  };
+
+  if (ip && prosa && !isIngeteken()) {
+    const kaart = ip.querySelector<HTMLElement>(".ip-kaart")!;
+    const vorm = ip.querySelector<HTMLFormElement>("[data-ip-vorm]")!;
+    const fout = ip.querySelector<HTMLElement>("[data-ip-fout]")!;
+    const stuur = ip.querySelector<HTMLButtonElement>("[data-ip-stuur]")!;
+    const dankie = ip.querySelector<HTMLElement>("[data-ip-dankie]")!;
+    const nee = ip.querySelector<HTMLElement>("[data-ip-nee]")!;
+    let reedsGewys = false;
+    let terug: HTMLElement | null = null;
+
+    const fokusbaar = () =>
+      Array.from(kaart.querySelectorAll<HTMLElement>("a[href], button, input")).filter((el) => !el.closest("[hidden]") && !el.hasAttribute("disabled"));
+
+    const maakOop = () => {
+      if (reedsGewys || isIngeteken()) return;
+      reedsGewys = true;
+      window.removeEventListener("scroll", kyk);
+      terug = document.activeElement as HTMLElement;
+      ip.hidden = false;
+      ip.classList.add("is-oop");
+      document.documentElement.style.overflow = "hidden";
+      document.documentElement.classList.add("ip-oop");
+      // Fokus op die kaart, nie die invoerveld nie, sodat die sleutelbord nie op 'n foon opspring nie.
+      kaart.focus({ preventScroll: true });
+    };
+
+    const maakToe = () => {
+      ip.hidden = true;
+      ip.classList.remove("is-oop");
+      document.documentElement.style.overflow = "";
+      document.documentElement.classList.remove("ip-oop");
+      terug?.focus?.({ preventScroll: true });
+    };
+
+    // Wys die pop-up wanneer die leser omtrent 40% van die artikel gelees het.
+    const kyk = () => {
+      const r = prosa.getBoundingClientRect();
+      const gelees = (window.innerHeight - r.top) / r.height;
+      if (gelees > 0.4) maakOop();
+    };
+    window.addEventListener("scroll", kyk, { passive: true });
+
+    ip.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("[data-ip-toe]")) maakToe();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (ip.hidden) return;
+      if (e.key === "Escape") maakToe();
+      if (e.key === "Tab") {
+        const f = fokusbaar();
+        if (!f.length) return;
+        const eerste = f[0], laaste = f[f.length - 1];
+        if (e.shiftKey && (document.activeElement === eerste || document.activeElement === kaart)) { e.preventDefault(); laaste.focus(); }
+        else if (!e.shiftKey && document.activeElement === laaste) { e.preventDefault(); eerste.focus(); }
+      }
+    });
+
+    vorm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      fout.hidden = true;
+      const data = new FormData(vorm);
+      const naam = String(data.get("naam") || "").trim();
+      const epos = String(data.get("epos") || "").trim();
+      const ja = data.get("toestemming") === "on";
+      const wys = (boodskap: string) => { fout.textContent = boodskap; fout.hidden = false; };
+      if (!naam) return wys("Skryf asseblief jou naam.");
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(epos)) return wys("Kyk asseblief weer na jou e-posadres.");
+      if (!ja) return wys("Merk asseblief die blokkie, dan mag ons vir jou e-pos.");
+      stuur.disabled = true;
+      stuur.textContent = "Een oomblik...";
+      try {
+        const antwoord = await fetch(`${ip.dataset.url}/rest/v1/rpc/oase_inteken`, {
+          method: "POST",
+          headers: { apikey: ip.dataset.sleutel!, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            p_naam: naam,
+            p_epos: epos,
+            p_bron: ip.dataset.bron,
+            p_toestemming: true,
+            p_toestemming_teks: "Ja, Oase mag my e-posse stuur. Ek kan enige tyd uitteken.",
+          }),
+        });
+        if (!antwoord.ok) throw new Error(String(antwoord.status));
+        try { localStorage.setItem(SLEUTEL_INGETEKEN, "ja"); } catch {}
+        vorm.hidden = true;
+        nee.hidden = true;
+        ip.querySelector("[data-ip-dankie-titel]")!.textContent = `Dankie, ${naam}!`;
+        dankie.hidden = false;
+        dankie.querySelector<HTMLElement>("button")?.focus();
+      } catch {
+        wys("Iets het skeefgeloop. Probeer asseblief weer.");
+        stuur.disabled = false;
+        stuur.textContent = "Ek is in";
+      }
+    });
+  }
+</script>

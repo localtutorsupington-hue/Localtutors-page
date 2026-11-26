@@ -11,6 +11,11 @@ export const NEWSLETTER_URL = ""; // Waarheen die nuusbrief-vorm stuur. Leeg = N
 
 export const TOETS_URL = "https://oase-gewigsverlies-toets.netlify.app/"; // Die gratis gewigsverlies-toets. Artikels met cta: "toets" wys hierdie kaart.
 
+// E-pos-intekenare (die pop-up op artikels) word in Supabase gestoor, in die tabel oase_intekenare.
+// Die sleutel hieronder is die publieke "publishable" sleutel: dit mag in die webwerf staan.
+export const SUPABASE_URL = "https://xlcssifyiokxkznawghw.supabase.co";
+export const SUPABASE_KEY = "sb_publishable_ulFIG27OqaIR-2ytBb6ROQ_gPFv_iOG";
+
 export const SITE_URL = "https://oase-webwerf.netlify.app"; // Jou webwerf se adres. Verander as jy 'n eie domein kry.
 
 /* Hieronder hoef jy niks te verander nie. */

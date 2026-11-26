@@ -5,6 +5,7 @@ import Omslag from "../../components/Omslag.astro";
 import Kaart from "../../components/Kaart.astro";
 import Titel from "../../components/Titel.astro";
 import Pyl from "../../components/Pyl.astro";
+import InskryfPopup from "../../components/InskryfPopup.astro";
 import { KATEGORIEE } from "../../lib/kategorie";
 import { datum, leestyd, skoonTitel } from "../../lib/titel";
 import { DISCLAIMER, FACEBOOK_URL, KONTROLE_URL, kontroleLink, chatLink } from "../../config";
@@ -145,6 +146,8 @@ const jsonLd = {
       </div>
     </section>
   )}
+
+  <InskryfPopup slot="onder" bron={bron} />
 
   <div slot="onder" class="vaste-balk" data-vaste-balk inert>
     <p>Gratis kontrole,<br />naby jou.</p>
