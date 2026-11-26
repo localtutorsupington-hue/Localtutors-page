@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="af">
+<head>
+<meta charset="utf-8">
+<title>Oase artikelbeeld: te-gemaklik</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  /* Die teks bly binne die middelste 464 x 400 px, sodat dit nie afgesny word
+     wanneer die webwerf die beeld as 4:5, 4:3 of 3:1 omslag sny nie. */
+  body { width: 1200px; height: 630px; }
+  .kaart { width: 1200px; height: 630px; align-items: center; justify-content: center; text-align: center; }
+  .kolom { width: 464px; height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+  .etiket { font-size: 20px; align-self: center; }
+  h1 { font-size: 50px; line-height: 1.04; }
+  .voet { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .merk { font-size: 46px; }
+  .leuse { font-size: 22px; }
+  .s1 { width: 420px; height: 420px; left: -150px; top: -120px; background: var(--roos); }
+  .s2 { width: 300px; height: 300px; right: -90px; bottom: -110px; background: var(--goud); }
+  .s3 { width: 46px; height: 46px; right: 210px; top: 96px; background: var(--green); }
+  .s4 { width: 26px; height: 26px; left: 230px; bottom: 120px; background: var(--aarde); }
+</style>
+</head>
+<body>
+  <div class="kaart">
+    <span class="sirkel s1"></span><span class="sirkel s2"></span><span class="sirkel s3"></span><span class="sirkel s4"></span>
+    <div class="kolom">
+      <span class="etiket"><i></i>Beweeg</span>
+      <h1>Die gevaarlikste plek is nie onder nie. Dis <span class="saam"><span class="pill">gemaklik</span>.</span></h1>
+      <div class="voet">
+        <span class="merk">Oase<i></i></span>
+        <span class="leuse">'n Plek om asem te skep.</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
