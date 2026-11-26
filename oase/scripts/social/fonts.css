@@ -1,0 +1,22 @@
+/* Self-gehuisvesde lettertipes uit node_modules (@fontsource). */
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; src: url("../../node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; src: url("../../node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "DM Sans"; font-style: normal; font-weight: 400; src: url("../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "DM Sans"; font-style: normal; font-weight: 500; src: url("../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2") format("woff2"); }
+
+:root {
+  --surface: #fbf8f3; --sand: #f1e7d8; --ink: #2b211c; --muted: #6b5a4f; --hair: #d9cdbb;
+  --green: #1e5b4d; --aarde: #b8502f; --goud: #f2b544; --roos: #f2d2c8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--sand); color: var(--ink); -webkit-font-smoothing: antialiased; }
+.kaart { position: relative; overflow: hidden; background: var(--sand); display: flex; flex-direction: column; }
+.etiket { display: inline-flex; align-items: center; gap: 0.45em; align-self: flex-start; background: var(--surface); color: var(--ink); border-radius: 999px; font: 500 1em/1 "DM Sans", sans-serif; padding: 0.55em 0.95em 0.6em; }
+.etiket i { width: 0.6em; height: 0.6em; border-radius: 50%; background: var(--goud); display: block; }
+h1 { font-family: "Instrument Serif", serif; font-weight: 400; color: var(--ink); letter-spacing: -0.015em; }
+.pill { font-style: italic; background: var(--goud); border-radius: 999px; padding: 0 0.3em 0.04em; display: inline-block; line-height: 0.95; }
+.merk { display: flex; align-items: baseline; gap: 0.12em; font-family: "Instrument Serif", serif; color: var(--green); line-height: 1; }
+.merk i { width: 0.3em; height: 0.3em; border-radius: 50%; background: var(--goud); display: inline-block; }
+.leuse { font-family: "Instrument Serif", serif; font-style: italic; color: var(--muted); line-height: 1.1; }
+.sirkel { position: absolute; border-radius: 50%; }
+.saam { white-space: nowrap; }
