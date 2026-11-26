@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="af">
+<head>
+<meta charset="utf-8">
+<title>Oase Facebook-kaart: middeljare</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  body { width: 1080px; height: 1350px; }
+  .kaart { width: 1080px; height: 1350px; padding: 104px 104px 96px; background: var(--aarde); color: var(--surface); }
+  .etiket { font-size: 34px; }
+  .etiket i { background: var(--aarde); }
+  .oproep { font: 500 40px/1.3 "DM Sans", sans-serif; margin-top: 76px; max-width: 760px; color: var(--surface); }
+  h1 { font-size: 132px; line-height: 1.02; margin-top: 34px; max-width: 800px; color: var(--surface); }
+  .simptome { font: 500 40px/1.3 "DM Sans", sans-serif; margin-top: 56px; color: var(--surface); display: grid; gap: 6px; }
+  .simptome span { display: flex; align-items: center; gap: 18px; }
+  .simptome span::before { content: ""; width: 16px; height: 16px; border-radius: 50%; background: var(--goud); flex: none; }
+  .pill { color: var(--ink); }
+  .voet { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; border-top: 2px solid rgba(251, 248, 243, 0.45); padding-top: 40px; }
+  .merk { font-size: 96px; color: var(--surface); }
+  .leuse { font-size: 44px; text-align: right; color: var(--surface); }
+  .s1 { width: 560px; height: 560px; right: -220px; top: -240px; background: var(--roos); opacity: 0.9; }
+  .s2 { width: 110px; height: 110px; right: 96px; top: 196px; background: var(--goud); }
+  .kaart > *:not(.sirkel) { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+  <div class="kaart">
+    <span class="sirkel s1"></span><span class="sirkel s2"></span>
+    <span class="etiket"><i></i>Gesondheid</span>
+    <p class="oproep">Vir vroue in hul veertigs en vyftigs</p>
+    <h1>Die middeljare: wat <span class="pill">gebeur</span> met my <span class="saam">liggaam?</span></h1>
+    <p class="simptome"><span>Warm gloede</span><span>Swak slaap</span><span>Buie wat wissel</span></p>
+    <div class="voet">
+      <span class="merk">Oase<i></i></span>
+      <span class="leuse">'n Plek om asem te skep.</span>
+    </div>
+  </div>
+</body>
+</html>

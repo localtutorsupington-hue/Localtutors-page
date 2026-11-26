@@ -1,5 +1,6 @@
 # Facebook: middeljare
 
+Beeld: `public/images/artikels/middeljare-fb.png` (1080x1350)
 Artikel: https://oase-webwerf.netlify.app/artikels/middeljare/
 Bronne vir die feite hieronder: WHO (menopouse tussen 45 en 55; baie vroue weet nie dat hul simptome by die menopouse hoort nie), NHS (simptome duur gewoonlik 7 tot 9 jaar), Jean Hailes (ongeveer 1 uit 4 vroue kry erge simptome). Almal staan in die artikel se bronnelys.
 
