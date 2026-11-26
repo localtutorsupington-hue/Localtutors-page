@@ -28,6 +28,7 @@ bronne:
   - titel: "Jean Hailes for Women's Health: Health checks for your age"
     url: "https://www.jeanhailes.org.au/look-after-yourself/health-checks-for-your-age/"
 nagegaan: 2026-11-26
+cta: "toets"
 ---
 
 Ons ken 'n vrou wat al haar hele lewe lank sport doen. Sy was nog altyd aktief. Sy was fiks en sterk, en beweeg was vir haar so natuurlik soos asemhaal.
@@ -94,6 +95,6 @@ Jean Hailes, 'n Australiese organisasie vir vrouegesondheid, sê gereelde gesond
 
 ## Begin vandag
 
-Jy hoef nie vandag alles te verander nie. Kies een ding: klim op die skaal, gaan vir 'n kort stappie, of bespreek jou kontrole.
+Jy hoef nie vandag alles te verander nie. Kies een ding: klim op die skaal, gaan vir 'n kort stappie, doen die gratis toets, of bespreek jou kontrole.
 
 Wat jy gebou het, is die moeite werd om op te pas. En as jy al iets verloor het, kan jy vandag weer klein begin.

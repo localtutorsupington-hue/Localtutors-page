@@ -9,6 +9,8 @@ export const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61596962033
 export const PRAKTISYN_URL = ""; // Skakel vir gesondheidswerkers wat by Oase wil aansluit. Leeg = skakel word versteek.
 export const NEWSLETTER_URL = ""; // Waarheen die nuusbrief-vorm stuur. Leeg = Netlify Forms (werk vanself op Netlify).
 
+export const TOETS_URL = "https://oase-gewigsverlies-toets.netlify.app/"; // Die gratis gewigsverlies-toets. Artikels met cta: "toets" wys hierdie kaart.
+
 export const SITE_URL = "https://oase-webwerf.netlify.app"; // Jou webwerf se adres. Verander as jy 'n eie domein kry.
 
 /* Hieronder hoef jy niks te verander nie. */
@@ -28,6 +30,12 @@ export function kontroleLink(bron: string): string {
   }
   const msg = `Hallo Oase, ek wil graag my gratis kontrole bespreek. (bron: ${bron})`;
   return `${whatsappLink(msg)}&bron=${b}`;
+}
+
+/** Skakel na die gratis toets, ook met ?bron=<bron>. */
+export function toetsLink(bron: string): string {
+  const sep = TOETS_URL.includes("?") ? "&" : "?";
+  return `${TOETS_URL.trim()}${sep}bron=${encodeURIComponent(bron)}`;
 }
 
 export function chatLink(bron: string): string {
