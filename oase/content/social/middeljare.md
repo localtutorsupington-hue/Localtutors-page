@@ -25,3 +25,18 @@ Jy is nie die enigste nie. Ongeveer 1 uit 4 vroue kry erge simptome in hierdie j
 Dit is dalk jou hormone wat verander. En jy hoef nie maar net deur te druk nie.
 In ons nuwe artikel lees jy wat in jou liggaam gebeur, wat jy self kan doen, en wanneer om hulp te vra.
 👉 Lees dit hier: https://oase-webwerf.netlify.app/artikels/middeljare/
+
+## Beeld-varianten (2160x2700, vir die toets)
+
+Alles in `content/social/beelde/`. Maak weer met `node scripts/social/render-varianten.mjs` (teks in `scripts/social/middeljare-varianten.html`).
+
+| Lêer | Oproep | Kleur |
+|---|---|---|
+| `middeljare-fb-v1-lys.png` | "As jy 'n vrou in jou 40's is, ken jy dalk hierdie:" + 5 tekens | Aarde |
+| `middeljare-fb-v2-vraag.png` | "Tussen 40 en 55?" + 7 tekens as etikette | Sand |
+| `middeljare-fb-v3-merk-af.png` | "Vrou in jou 40's? Merk wat jy ken." + afmerklys | Lig |
+| `middeljare-fb-v4-stem.png` | "Ek voel nie meer soos myself nie." | Groen |
+| `middeljare-fb-v5-drie-uur.png` | "03:00. Weer wakker. Weer nat gesweet." | Donker |
+| `middeljare-fb-v6-een-uit-vier.png` | "1 uit 4 vroue kry erge simptome rondom die menopouse." (Jean Hailes) | Roos |
+
+Wenk: plaas twee of drie met dieselfde teks (Version A of B) en kyk watter een die meeste klikke kry.
