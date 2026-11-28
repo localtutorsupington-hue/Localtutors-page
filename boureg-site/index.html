@@ -512,7 +512,7 @@
       <span class="logo__word">BOUREG</span>
       <span class="logo__sub" lang="af">ERVARE VAKMANNE</span>
     </a>
-    <a class="btn btn--primary btn--sm js-wa-direct" href="https://wa.me/27000000000" target="_blank" rel="noopener">
+    <a class="btn btn--primary btn--sm js-wa-direct" href="https://wa.me/" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 19.5l1.1-3.9A8 8 0 1 1 8.6 18.6z"/><path d="M9.2 8.6c.2-.5.5-.6.8-.6h.5c.2 0 .4.1.5.4l.6 1.5c.1.2 0 .5-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.5.6c.3.1.4.3.4.5v.5c0 .3-.1.6-.6.8-.5.3-1.4.4-2.4 0a8.3 8.3 0 0 1-4.6-4.6c-.4-1-.3-1.9 0-2.3z"/></svg>
       WhatsApp us
     </a>
@@ -888,9 +888,10 @@
 </script>
 
 <script>
-  // TODO: REPLACE with BouReg's real WhatsApp number before going live.
+  // TODO: Add BouReg's WhatsApp number before going live.
   // Format: country code + number, no "+", no spaces, no leading 0. Example: 27821234567
-  const WHATSAPP_NUMBER = "27000000000";
+  // While this is empty, WhatsApp opens with the message ready and the person picks who to send it to.
+  const WHATSAPP_NUMBER = "";
 
   (function () {
     "use strict";
@@ -908,7 +909,7 @@
     var quoteSection = document.getElementById("quote");
 
     function waLink(text) {
-      return "https://wa.me/" + WHATSAPP_NUMBER + (text ? "?text=" + encodeURIComponent(text) : "");
+      return "https://wa.me/" + WHATSAPP_NUMBER.replace(/\D/g, "") + (text ? "?text=" + encodeURIComponent(text) : "");
     }
 
     // Header "WhatsApp us" button
