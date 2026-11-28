@@ -146,6 +146,23 @@
   }
   .header.is-scrolled { border-bottom-color: var(--line); }
   .header__in { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); gap: 16px; }
+  .header__actions { display: flex; align-items: center; gap: 8px; }
+  .lang { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r-pill); background: #FFFFFF; }
+  .lang__btn {
+    min-width: 44px; min-height: 44px; padding: 0 8px;
+    border: 0; border-radius: var(--r-pill); background: transparent;
+    font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.04em; color: var(--muted);
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease, transform 160ms var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .lang__btn:active { transform: scale(0.97); }
+  .lang__btn[aria-pressed="true"] { background: var(--ink); color: var(--bone); }
+  /* Small phones: the WhatsApp button shows only its icon so the language switch fits */
+  @media (max-width: 399px) {
+    .js-wa-direct { width: 44px; padding: 0; }
+    .wa-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  }
   .scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; }
 
   /* Hero */
@@ -492,6 +509,7 @@
     .input:hover, .textarea:hover { border-color: var(--muted); }
     .consent:hover { background: var(--bone); }
     .flow__back:hover, .link-btn:hover { color: var(--rust-deep); }
+    .lang__btn:hover:not([aria-pressed="true"]) { color: var(--ink); }
     .faq summary:hover { color: var(--rust-deep); }
     .footer__pro:hover { color: var(--sun); }
   }
@@ -499,7 +517,7 @@
   /* Reduced motion: keep fades and colour changes, drop movement */
   @media (prefers-reduced-motion: reduce) {
     .js [data-reveal] { transform: none; transition: opacity 300ms ease; transition-delay: 0s; }
-    .btn:active:not([disabled]), .chip:active, .card:active, .flow__back:active { transform: none; }
+    .btn:active:not([disabled]), .chip:active, .card:active, .flow__back:active, .lang__btn:active { transform: none; }
     .card__arrow, .chip__dot svg { transform: none !important; }
     .faq summary svg { transition: none; }
     .mbar { transition: opacity 200ms ease, visibility 0s; }
@@ -577,10 +595,16 @@
       <span class="logo__word">BOUREG</span>
       <span class="logo__sub" lang="af">ERVARE VAKMANNE</span>
     </a>
+    <div class="header__actions">
+      <div class="lang" role="group" aria-label="Language / Taal">
+        <button type="button" class="lang__btn" data-lang="en" aria-pressed="true" lang="en" title="English">EN</button>
+        <button type="button" class="lang__btn" data-lang="af" aria-pressed="false" lang="af" title="Afrikaans">AF</button>
+      </div>
     <a class="btn btn--primary btn--sm js-wa-direct" href="https://wa.me/" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 19.5l1.1-3.9A8 8 0 1 1 8.6 18.6z"/><path d="M9.2 8.6c.2-.5.5-.6.8-.6h.5c.2 0 .4.1.5.4l.6 1.5c.1.2 0 .5-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.5.6c.3.1.4.3.4.5v.5c0 .3-.1.6-.6.8-.5.3-1.4.4-2.4 0a8.3 8.3 0 0 1-4.6-4.6c-.4-1-.3-1.9 0-2.3z"/></svg>
-      WhatsApp us
+      <span class="wa-label">WhatsApp us</span>
     </a>
+    </div>
   </div>
 </header>
 
@@ -951,6 +975,181 @@
   (function () {
     "use strict";
 
+
+    /* ---------- Language: English is in the HTML, Afrikaans swaps in ---------- */
+
+    var AF = {
+      "Skip to content": "Gaan na inhoud",
+      "BouReg, back to top": "BouReg, terug na bo",
+      "WhatsApp us": "WhatsApp ons",
+      "Built by pros with years of experience.": "Gebou deur vakmanne met jare se ondervinding.",
+      "Not someone trying it for the first time.": "Nie iemand wat dit vir die eerste keer probeer nie.",
+      "Cupboards, kitchens, backyard rooms, patios and bathrooms in Upington, Kimberley and Bloemfontein. One of our experienced pros calls you within 48 hours.": "Kaste, kombuise, buitekamers, patio's en badkamers in Upington, Kimberley en Bloemfontein. Een van ons ervare vakmanne bel jou binne 48 uur.",
+      "Free quote": "Gratis kwotasie",
+      "Back": "Terug",
+      "Get your free quote": "Kry jou gratis kwotasie",
+      "Your details first, then a few quick taps.": "Eers jou besonderhede, dan net 'n paar vinnige tikke.",
+      "Job:": "Werk:",
+      "Your name": "Jou naam",
+      "Cell number": "Selnommer",
+      "Our pro calls you on this number.": "Ons vakman bel jou op hierdie nommer.",
+      "Suburb": "Voorstad",
+      "So our pro knows where the job is.": "Sodat ons vakman weet waar die werk is.",
+      "Next: about the job": "Volgende: oor die werk",
+      "What do you want built?": "Wat wil jy laat bou?",
+      "Cupboards and built-ins": "Ingeboude kaste",
+      "Kitchen": "Kombuis",
+      "Backyard room or flatlet": "Buitekamer of woonstelletjie",
+      "Patio or lapa": "Patio of lapa",
+      "Bathroom": "Badkamer",
+      "Something else": "Iets anders",
+      "Next": "Volgende",
+      "Which town?": "Watter dorp?",
+      "Rough budget?": "Rowwe begroting?",
+      "A rough idea helps our pro plan the visit.": "'n Rowwe idee help ons vakman om die besoek te beplan.",
+      "Under R10k": "Onder R10k",
+      "R10k to R30k": "R10k tot R30k",
+      "R30k to R60k": "R30k tot R60k",
+      "R60k to R100k": "R60k tot R100k",
+      "When do you want it done?": "Wanneer wil jy dit klaar hê?",
+      "Optional. Skip if you are not sure yet.": "Opsioneel. Slaan oor as jy nog nie seker is nie.",
+      "This month": "Hierdie maand",
+      "In 1 to 3 months": "Oor 1 tot 3 maande",
+      "Later this year": "Later vanjaar",
+      "Just looking": "Kyk net rond",
+      "Skip this": "Slaan oor",
+      "Tell us a bit more": "Vertel ons 'n bietjie meer",
+      "Optional. English or Afrikaans is fine.": "Opsioneel. Afrikaans of Engels is reg.",
+      "For example: two bedroom cupboards, about 2.4m wide each": "Byvoorbeeld: twee slaapkamerkaste, elk omtrent 2,4 m breed",
+      "I agree that BouReg may contact me on WhatsApp about my job and share my details with the pro doing it.": "Ek stem in dat BouReg my op WhatsApp oor my werk mag kontak en my besonderhede mag deel met die vakman wat dit doen.",
+      "Send to BouReg on WhatsApp": "Stuur na BouReg op WhatsApp",
+      "Want to send photos? Add them in the WhatsApp chat.": "Wil jy foto's stuur? Voeg hulle in die gesprek op WhatsApp by.",
+      "Nearly done": "Amper klaar",
+      "WhatsApp is opening with your job details. Press send in the chat and BouReg has your job. One of our pros calls you within 48 hours.": "WhatsApp maak oop met die besonderhede van jou werk. Druk stuur in die gesprek en BouReg het jou werk. Een van ons vakmanne bel jou binne 48 uur.",
+      "Open WhatsApp again": "Maak WhatsApp weer oop",
+      "Change my answers": "Verander my antwoorde",
+      "How we check our pros": "Hoe ons ons vakmanne nagaan",
+      "3+ years experience": "3+ jaar ondervinding",
+      "Real job photos checked": "Foto's van regte werk nagegaan",
+      "Past clients phoned": "Vorige kliënte gebel",
+      "What we build": "Wat ons bou",
+      "Tap a job to start your free quote.": "Tik op 'n werk om jou gratis kwotasie te begin.",
+      "Most asked": "Meeste gevra",
+      "Cupboards and": "Ingeboude",
+      "built-ins": "kaste",
+      "Bedroom cupboards, wall units and storage, made to fit your space.": "Slaapkamerkaste, muureenhede en bergplek, gemaak om in jou spasie te pas.",
+      "Kitchens": "Kombuise",
+      "New kitchens and makeovers, with doors, tops and fitting done properly.": "Nuwe kombuise en opknappings, met deure, werkblaaie en installasie wat behoorlik gedoen word.",
+      "Backyard rooms and flatlets": "Buitekamers en woonstelletjies",
+      "An extra room or flatlet for family, guests or a tenant.": "'n Ekstra kamer of woonstelletjie vir familie, gaste of 'n huurder.",
+      "Patios and lapas": "Patio's en lapas",
+      "Covered outdoor space for the braai and long summer evenings.": "Oordekte buiteruimte vir die braai en lang somersaande.",
+      "Bathrooms": "Badkamers",
+      "A full bathroom redo, or a new shower, basin and tiles.": "'n Volledige badkameropknapping, of 'n nuwe stort, wasbak en teëls.",
+      "Why our pros are different": "Hoekom ons vakmanne anders is",
+      "No one gets a BouReg job on a promise. Every pro passes this check before they work for us.": "Niemand kry 'n BouReg werk op 'n belofte nie. Elke vakman slaag hierdie toets voordat hulle vir ons werk.",
+      "BOUREG PRO CHECK": "BOUREG VAKMANTOETS",
+      "Done before their first job": "Gedoen voor hul eerste werk",
+      "At least 3 years doing this exact work": "Minstens 3 jaar in presies hierdie werk",
+      "Not someone who does a bit of everything. Years on this kind of job.": "Nie iemand wat 'n bietjie van alles doen nie. Jare se ervaring met hierdie soort werk.",
+      "At least 6 photos of real jobs they finished": "Minstens 6 foto's van regte werk wat hulle klaargemaak het",
+      "Their own work, in real homes. Not pictures from the internet.": "Hul eie werk, in regte huise. Nie prente van die internet nie.",
+      "We phone 2 of their past clients": "Ons bel 2 van hul vorige kliënte",
+      "We ask if the work was good, on time and at the agreed price.": "Ons vra of die werk goed was, betyds klaar was en teen die afgespreekte prys.",
+      "Written quote before any work starts": "Skriftelike kwotasie voordat enige werk begin",
+      "You see the price and the materials on paper first.": "Jy sien eers die prys en die materiaal op papier.",
+      "Fair deposit, never the full amount upfront": "Billike deposito, nooit die volle bedrag vooraf nie",
+      "Your money is not all gone before the work begins.": "Jou geld is nie alles weg voordat die werk begin nie.",
+      "They call you within 24 to 48 hours": "Hulle bel jou binne 24 tot 48 uur",
+      "No chasing. No waiting weeks for someone to pitch up.": "Geen agternaloop nie. Geen weke wag vir iemand om op te daag nie.",
+      "Our 48 hour promise": "Ons 48 uur belofte",
+      "If our pro doesn't call you within 48 hours, we send another of our pros.": "As ons vakman jou nie binne 48 uur bel nie, stuur ons nog een van ons vakmanne.",
+      "Free.": "Gratis.",
+      "Free guide": "Gratis gids",
+      "7 checks before you pay any builder a deposit": "7 dinge om na te gaan voordat jy enige bouer 'n deposito betaal",
+      "Whoever you hire, do these first. Take a screenshot so you have it on your phone.": "Wie jy ook al aanstel, doen dit eers. Neem 'n skermskoot sodat jy dit op jou foon het.",
+      "Rather let our pros handle it": "Laat eerder ons vakmanne dit hanteer",
+      "See at least 6 photos of jobs they finished": "Sien minstens 6 foto's van werk wat hulle klaargemaak het",
+      "Phone 2 past clients yourself": "Bel self 2 vorige kliënte",
+      "Get the quote in writing, with materials named": "Kry die kwotasie op skrif, met die materiaal genoem",
+      "Never pay the full amount upfront": "Moet nooit die volle bedrag vooraf betaal nie",
+      "Agree on a start and finish date": "Spreek 'n begin en einddatum af",
+      "Ask who buys the materials and keeps the slips": "Vra wie die materiaal koop en die strokies hou",
+      "Check they have a real address and number": "Maak seker hulle het 'n regte adres en nommer",
+      "Good to know": "Goed om te weet",
+      "Is the quote free?": "Is die kwotasie gratis?",
+      "Yes. The quote costs you nothing, and you decide if you go ahead.": "Ja. Die kwotasie kos jou niks, en jy besluit of jy voortgaan.",
+      "Who are your pros?": "Wie is julle vakmanne?",
+      "Independent, experienced local pros. We check every one before they work with us: at least 3 years of experience, photos of real jobs and calls to past clients.": "Onafhanklike, ervare plaaslike vakmanne. Ons gaan elkeen na voordat hulle met ons werk: minstens 3 jaar ondervinding, foto's van regte werk en oproepe na vorige kliënte.",
+      "What if I'm not happy with the pro?": "Wat as ek nie tevrede is met die vakman nie?",
+      "Tell us on WhatsApp and we send another of our pros.": "Laat weet ons op WhatsApp en ons stuur nog een van ons vakmanne.",
+      "Which towns do you work in?": "In watter dorpe werk julle?",
+      "Upington, Kimberley and Bloemfontein for now.": "Vir nou Upington, Kimberley en Bloemfontein.",
+      "Do I pay BouReg?": "Betaal ek vir BouReg?",
+      "No. The quote is free for you.": "Nee. Die kwotasie is gratis vir jou.",
+      "Towns": "Dorpe",
+      "For pros": "Vir vakmanne",
+      "Are you a pro? Work with us": "Is jy 'n vakman? Werk saam met ons",
+      "Our pros are independent businesses checked by BouReg.": "Ons vakmanne is onafhanklike besighede wat deur BouReg nagegaan is.",
+      "Get my free quote": "Kry my gratis kwotasie",
+      // Set from the script
+      "Step {n} of {t}": "Stap {n} van {t}",
+      "Done": "Klaar",
+      "Add your name so our pro knows who to ask for.": "Gee jou naam sodat ons vakman weet na wie om te vra.",
+      "Add a 10 digit cell number, like 082 123 4567.": "Gee 'n selnommer met 10 syfers, soos 082 123 4567.",
+      "Add your suburb so our pro knows where the job is.": "Gee jou voorstad sodat ons vakman weet waar die werk is.",
+      "All set. Tap the button to open WhatsApp.": "Alles reg. Tik die knoppie om WhatsApp oop te maak.",
+      "Some answers are missing. Tap Back to check them.": "Party antwoorde ontbreek. Tik Terug om hulle na te gaan.",
+      "Tick the box so we can send your job.": "Merk die blokkie sodat ons jou werk kan stuur.",
+      "Hi BouReg, I'd like a free quote for a job at my home.": "Hallo BouReg, ek wil graag 'n gratis kwotasie hê vir werk by my huis."
+    };
+    var TITLE_AF = "BouReg | Ervare vakmanne vir jou huis in Upington, Kimberley en Bloemfontein";
+    var TITLE_EN = document.title;
+    var lang = "en";
+
+    function t(en) { return lang === "af" && AF[en] ? AF[en] : en; }
+
+    // Remember every English text and label on the page once, before the script changes anything
+    var textSlots = [];
+    var attrSlots = [];
+    (function capture() {
+      var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (node) {
+          var tag = node.parentNode && node.parentNode.nodeName;
+          if (tag === "SCRIPT" || tag === "STYLE") return NodeFilter.FILTER_REJECT;
+          return AF[node.nodeValue.trim()] ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+        }
+      });
+      var node;
+      while ((node = walker.nextNode())) {
+        var v = node.nodeValue;
+        textSlots.push({ node: node, en: v, af: v.replace(v.trim(), function () { return AF[v.trim()]; }) });
+      }
+      document.querySelectorAll("[placeholder], [aria-label]").forEach(function (el) {
+        ["placeholder", "aria-label"].forEach(function (name) {
+          var v = el.getAttribute(name);
+          if (v && AF[v]) attrSlots.push({ el: el, name: name, en: v });
+        });
+      });
+    })();
+
+    function paintLanguage() {
+      textSlots.forEach(function (s) { s.node.nodeValue = lang === "af" ? s.af : s.en; });
+      attrSlots.forEach(function (s) { s.el.setAttribute(s.name, t(s.en)); });
+      document.documentElement.lang = lang;
+      document.title = lang === "af" ? TITLE_AF : TITLE_EN;
+      document.querySelectorAll(".lang__btn").forEach(function (b) {
+        b.setAttribute("aria-pressed", b.getAttribute("data-lang") === lang ? "true" : "false");
+      });
+    }
+
+    function pickStartLanguage() {
+      var fromUrl = (location.search.match(/[?&]lang=(af|en)\b/) || [])[1];
+      if (fromUrl) return fromUrl;
+      try { var saved = localStorage.getItem("boureg-lang"); if (saved === "af" || saved === "en") return saved; } catch (err) {}
+      return /^af\b/i.test(navigator.language || "") ? "af" : "en";
+    }
+
     var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
     var TOTAL = 6;          // screens 0 to 5 are questions, 6 is "nearly done"
@@ -983,9 +1182,11 @@
       return "https://wa.me/" + WHATSAPP_NUMBER.replace(/\D/g, "") + (text ? "?text=" + encodeURIComponent(text) : "");
     }
 
-    document.querySelectorAll(".js-wa-direct").forEach(function (a) {
-      a.href = waLink("Hi BouReg, I'd like a free quote for a job at my home.");
-    });
+    function setHeaderLink() {
+      document.querySelectorAll(".js-wa-direct").forEach(function (a) {
+        a.href = waLink(t("Hi BouReg, I'd like a free quote for a job at my home."));
+      });
+    }
 
     /* ---------- Screen 1: details ---------- */
 
@@ -1006,7 +1207,7 @@
 
     function showError(check, on) {
       check.input.setAttribute("aria-invalid", on ? "true" : "false");
-      document.getElementById(check.input.id + "-err").textContent = on ? check.msg : "";
+      document.getElementById(check.input.id + "-err").textContent = on ? t(check.msg) : "";
     }
 
     checks.forEach(function (check) {
@@ -1058,7 +1259,7 @@
 
     function updateChrome() {
       backBtn.hidden = current === 0 || current === DONE;
-      countEl.textContent = current === DONE ? "Done" : "Step " + (current + 1) + " of " + TOTAL;
+      countEl.textContent = current === DONE ? t("Done") : t("Step {n} of {t}").replace("{n}", current + 1).replace("{t}", TOTAL);
       var progress = current === DONE ? 1 : (current + 1) / TOTAL;
       barEl.style.transform = "scaleX(" + progress + ")";
       // On phones the quiz takes over the top of the page, like a second page
@@ -1141,30 +1342,34 @@
         btn.hidden = !state[btn.getAttribute("data-field")];
       });
       pickedEl.hidden = !state.job;
-      pickedJob.textContent = state.job;
+      pickedJob.textContent = t(state.job);
 
       var ready = consentInput.checked && state.job && state.town && state.budget && !detailsValid(false);
       sendBtn.disabled = !ready;
       if (ready) {
-        statusEl.textContent = "All set. Tap the button to open WhatsApp.";
+        statusEl.textContent = t("All set. Tap the button to open WhatsApp.");
         statusEl.classList.add("is-ready");
       } else {
-        statusEl.textContent = consentInput.checked ? "Some answers are missing. Tap Back to check them." : "Tick the box so we can send your job.";
+        statusEl.textContent = t(consentInput.checked ? "Some answers are missing. Tap Back to check them." : "Tick the box so we can send your job.");
         statusEl.classList.remove("is-ready");
       }
     }
     consentInput.addEventListener("change", update);
 
+    // The message goes out in the language the person is reading
     function buildMessage() {
       var details = detailsInput.value.trim().replace(/\s+/g, " ");
-      return "Hi BouReg, I'm " + nameInput.value.trim().replace(/\s+/g, " ") +
-        ". Number: " + (cleanPhone(phoneInput.value) || phoneInput.value.trim()) +
-        ". Suburb: " + suburbInput.value.trim().replace(/\s+/g, " ") +
-        ". I want: " + state.job +
-        ". Town: " + state.town +
-        ". Budget: " + state.budget +
-        ". Timing: " + (state.timing || "Not sure yet") +
-        ". More: " + (details || "Nothing extra");
+      var L = lang === "af"
+        ? { hi: "Hallo BouReg, ek is ", num: "Nommer", sub: "Voorstad", want: "Ek wil hê", town: "Dorp", budget: "Begroting", timing: "Wanneer", more: "Meer", notSure: "Nog nie seker nie", nothing: "Niks ekstra nie" }
+        : { hi: "Hi BouReg, I'm ", num: "Number", sub: "Suburb", want: "I want", town: "Town", budget: "Budget", timing: "Timing", more: "More", notSure: "Not sure yet", nothing: "Nothing extra" };
+      return L.hi + nameInput.value.trim().replace(/\s+/g, " ") +
+        ". " + L.num + ": " + (cleanPhone(phoneInput.value) || phoneInput.value.trim()) +
+        ". " + L.sub + ": " + suburbInput.value.trim().replace(/\s+/g, " ") +
+        ". " + L.want + ": " + t(state.job) +
+        ". " + L.town + ": " + state.town +
+        ". " + L.budget + ": " + t(state.budget) +
+        ". " + L.timing + ": " + (state.timing ? t(state.timing) : L.notSure) +
+        ". " + L.more + ": " + (details || L.nothing);
     }
 
     function send() {
@@ -1233,8 +1438,22 @@
     // iPhone Safari only shows :active press styles when a touch listener exists
     document.addEventListener("touchstart", function () {}, { passive: true });
 
-    updateChrome();
-    update();
+    function setLanguage(next, save) {
+      lang = next;
+      paintLanguage();
+      setHeaderLink();
+      updateChrome();
+      update();
+      checks.forEach(function (check) {
+        if (check.input.getAttribute("aria-invalid") === "true") showError(check, true);
+      });
+      if (save) { try { localStorage.setItem("boureg-lang", lang); } catch (err) {} }
+    }
+    document.querySelectorAll(".lang__btn").forEach(function (b) {
+      b.addEventListener("click", function () { setLanguage(b.getAttribute("data-lang"), true); });
+    });
+
+    setLanguage(pickStartLanguage(), false);
 
     var yearEl = document.getElementById("year");
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
