@@ -36,7 +36,10 @@
 
     --font-head: "Archivo", "Arial Narrow", system-ui, sans-serif;
     --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+    /* Motion: ease-out for things entering or pressed, drawer curve for the bottom bar, plain ease for colour. */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
     --gutter: 16px;
     --header-h: 64px;
@@ -82,20 +85,8 @@
   .section--sand { background: var(--sand); }
   .section--ink { background: var(--ink); color: var(--bone); }
 
-  .eyebrow {
-    display: inline-block;
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--rust);
-    margin-bottom: 12px;
-  }
-  .section--ink .eyebrow { color: var(--sun); }
   .h2 { font-size: 24px; line-height: 32px; }
-  .lead { margin-top: 16px; color: var(--muted); font-size: 18px; line-height: 28px; max-width: 640px; }
+  .lead { margin-top: 12px; color: var(--muted); font-size: 18px; line-height: 28px; max-width: 640px; }
   .section--ink .lead { color: #D9D2C4; }
 
   .skip {
@@ -118,21 +109,18 @@
     font-size: 16px; line-height: 24px;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease), transform 200ms var(--ease);
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 160ms var(--ease-out);
     -webkit-tap-highlight-color: transparent;
   }
   .btn svg { width: 20px; height: 20px; flex: none; }
-  .btn:active { transform: translateY(1px); }
+  .btn:active:not([disabled]) { transform: scale(0.97); }
   .btn--primary { background: var(--rust); color: #FFFFFF; }
-  .btn--primary:hover { background: var(--rust-deep); }
   .btn--ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
-  .btn--ghost:hover { background: var(--ink); color: var(--bone); }
+  .btn--ghost:active { background: var(--ink); color: var(--bone); }
   .btn--sm { min-height: 44px; padding: 8px 12px; font-size: 14px; line-height: 20px; }
   .btn--sm svg { width: 18px; height: 18px; }
   .btn--block { width: 100%; }
-  .btn[disabled], .btn[aria-disabled="true"] {
-    background: var(--line); color: var(--muted); cursor: not-allowed; transform: none;
-  }
+  .btn[disabled] { background: var(--line); color: var(--muted); cursor: not-allowed; }
 
   /* Logo */
   .logo { display: inline-flex; flex-direction: column; text-decoration: none; color: var(--rust); line-height: 1; }
@@ -146,16 +134,14 @@
     font-size: 8px; line-height: 12px; letter-spacing: 0.34em;
     color: var(--ink);
   }
-  .logo--reversed { color: var(--rust); }
-  .logo--reversed .logo__sub { color: var(--bone); }
-  .logo--reversed .logo__word { color: var(--bone); }
+  .logo--reversed .logo__sub, .logo--reversed .logo__word { color: var(--bone); }
 
   /* Header */
   .header {
     position: sticky; top: 0; z-index: 50;
     background: var(--bone);
     border-bottom: 1px solid transparent;
-    transition: border-color 200ms var(--ease);
+    transition: border-color 150ms ease;
   }
   .header.is-scrolled { border-bottom-color: var(--line); }
   .header__in { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); gap: 16px; }
@@ -184,77 +170,85 @@
   .tagline-line { margin-top: 24px; font-size: 14px; line-height: 20px; color: var(--muted); }
   .tagline-line strong { color: var(--ink); font-weight: 600; }
 
-  /* Build cards */
-  .cards { display: grid; gap: 12px; margin-top: 32px; }
-  .card {
-    position: relative;
-    display: grid; grid-template-columns: 48px 1fr; gap: 4px 16px; align-items: start; align-content: start;
-    width: 100%;
-    text-align: left;
-    padding: 16px;
+  /* What we build: one grouped list on phones, separate cards from 600px */
+  .cards {
+    margin-top: 32px;
+    display: grid;
     background: var(--bone);
     border: 1px solid var(--line);
     border-radius: var(--r-card);
+    overflow: hidden;
+  }
+  .card {
+    position: relative;
+    display: grid; grid-template-columns: 32px 1fr 24px; gap: 16px; align-items: center;
+    width: 100%;
+    padding: 16px;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
     cursor: pointer;
-    transition: border-color 200ms var(--ease), transform 200ms var(--ease), background-color 200ms var(--ease);
+    transition: background-color 150ms ease, border-color 150ms ease, transform 160ms var(--ease-out);
     -webkit-tap-highlight-color: transparent;
   }
-  .card:hover { border-color: var(--rust); transform: translateY(-2px); }
-  .card:active { transform: translateY(0) scale(0.99); }
-  .card__icon {
-    grid-row: span 3;
-    width: 48px; height: 48px;
-    display: grid; place-items: center;
-    border-radius: var(--r-sm);
-    background: var(--sand);
-    color: var(--rust);
-  }
-  .card__icon svg { width: 28px; height: 28px; }
+  .card + .card { box-shadow: inset 0 1px 0 var(--line); }
+  .card:active { background: var(--sand); }
+  .card__icon { color: var(--rust); align-self: start; padding-top: 2px; }
+  .card__icon svg { width: 32px; height: 32px; }
+  .card__text { display: grid; gap: 4px; justify-items: start; }
   .card__name { font-family: var(--font-head); font-stretch: 112.5%; font-weight: 700; font-size: 18px; line-height: 28px; }
   .card__line { color: var(--muted); }
-  .card__go { margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--rust); font-weight: 600; font-size: 14px; line-height: 20px; }
-  .card__go svg { width: 16px; height: 16px; transition: transform 200ms var(--ease); }
-  .card:hover .card__go svg { transform: translateX(4px); }
+  .nowrap { white-space: nowrap; }
+  .card__arrow { width: 24px; height: 24px; color: var(--muted); transition: transform 160ms var(--ease-out), color 150ms ease; }
   .badge {
-    grid-column: 2; justify-self: start;
     padding: 2px 8px;
     border-radius: var(--r-pill);
     background: var(--sun); color: var(--ink);
     font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
   }
-  .card--top { border-color: var(--rust); border-width: 2px; padding: 15px; }
-  .card--top .card__icon { grid-row: span 4; }
 
-  /* Checks (why) */
-  .checks { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 12px; }
-  .check {
-    display: grid; grid-template-columns: 40px 1fr; gap: 4px 16px; align-content: start;
-    padding: 16px;
-    border: 1px solid #3A403B;
-    border-radius: var(--r-card);
-    background: #262B28;
-  }
-  .check__icon { grid-row: span 2; width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--r-sm); background: var(--olive); color: var(--bone); }
-  .check__icon svg { width: 22px; height: 22px; }
-  .check__title { font-weight: 600; font-size: 18px; line-height: 28px; color: var(--bone); }
-  .check__line { color: #D9D2C4; }
-  .promise {
+  /* Why: the pro check, laid out like a site inspection sheet */
+  .sheet {
     margin-top: 32px;
-    padding: 24px;
+    padding: 24px 16px;
     border-radius: var(--r-card);
     background: var(--bone);
     color: var(--ink);
-    display: grid; gap: 16px;
   }
-  .promise__tag {
-    justify-self: start;
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 4px 12px;
-    border-radius: var(--r-pill);
+  .sheet__head {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px;
+    padding-bottom: 12px;
+    box-shadow: inset 0 -2px 0 var(--ink);
+  }
+  .sheet__title { font-family: var(--font-head); font-stretch: 125%; font-weight: 800; font-size: 18px; line-height: 28px; letter-spacing: 0.02em; }
+  .sheet__meta { font-size: 14px; line-height: 20px; color: var(--muted); }
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; }
+  .check {
+    display: grid; grid-template-columns: 24px 1fr; gap: 4px 16px; align-content: start;
+    padding: 16px 0;
+    box-shadow: inset 0 -1px 0 var(--line);
+  }
+  .check__box {
+    grid-row: span 2;
+    margin-top: 2px;
+    width: 24px; height: 24px;
+    display: grid; place-items: center;
+    border-radius: 4px;
     background: var(--olive); color: var(--bone);
-    font-size: 14px; line-height: 20px; font-weight: 600;
   }
-  .promise__tag svg { width: 16px; height: 16px; }
+  .check__box svg { width: 16px; height: 16px; }
+  .check__title { font-weight: 600; font-size: 18px; line-height: 28px; }
+  .check__line { color: var(--muted); }
+  .promise { margin-top: 24px; display: grid; gap: 12px; justify-items: start; }
+  .promise__tag {
+    padding: 4px 8px;
+    border: 2px solid var(--olive);
+    border-radius: 4px;
+    color: var(--olive);
+    font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    transform: rotate(-2deg);
+  }
   .promise__text { font-family: var(--font-head); font-stretch: 112.5%; font-weight: 800; font-size: 24px; line-height: 32px; text-wrap: balance; }
   .promise__text em { font-style: normal; color: var(--rust); }
 
@@ -278,24 +272,37 @@
   .q__num { color: var(--rust); margin-right: 8px; }
   .opt { font-family: var(--font-body); font-weight: 400; font-size: 14px; color: var(--muted); }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* Chips keep the same width when chosen: the ring is always there and fills in. */
   .chip {
     display: inline-flex; align-items: center; gap: 8px;
     min-height: 44px;
-    padding: 8px 16px;
+    padding: 8px 16px 8px 12px;
     border: 1px solid var(--line);
     border-radius: var(--r-pill);
     background: #FFFFFF;
     color: var(--ink);
     font-size: 16px; line-height: 24px;
     cursor: pointer;
-    transition: background-color 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease), transform 200ms var(--ease);
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 160ms var(--ease-out);
     -webkit-tap-highlight-color: transparent;
   }
-  .chip:hover { border-color: var(--ink); }
-  .chip:active { transform: scale(0.98); }
-  .chip svg { width: 16px; height: 16px; display: none; flex: none; }
-  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bone); font-weight: 600; }
-  .chip[aria-pressed="true"] svg { display: block; color: var(--sun); }
+  .chip:active { transform: scale(0.97); }
+  .chip__dot {
+    width: 20px; height: 20px; flex: none;
+    display: grid; place-items: center;
+    border: 2px solid var(--line);
+    border-radius: var(--r-pill);
+    transition: background-color 150ms ease, border-color 150ms ease;
+  }
+  .chip__dot svg {
+    width: 12px; height: 12px;
+    color: var(--ink);
+    opacity: 0; transform: scale(0.6);
+    transition: opacity 150ms ease, transform 200ms var(--ease-out);
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bone); }
+  .chip[aria-pressed="true"] .chip__dot { background: var(--sun); border-color: var(--sun); }
+  .chip[aria-pressed="true"] .chip__dot svg { opacity: 1; transform: none; }
 
   .field { margin-bottom: 32px; }
   .hint { margin-top: 8px; font-size: 14px; line-height: 20px; color: var(--muted); }
@@ -309,10 +316,9 @@
     color: var(--ink);
     font-family: var(--font-body);
     font-size: 16px; line-height: 24px;
-    transition: border-color 200ms var(--ease);
+    transition: border-color 150ms ease;
   }
   .textarea { min-height: 112px; resize: vertical; }
-  .input:hover, .textarea:hover { border-color: var(--muted); }
   .input:focus-visible, .textarea:focus-visible { border-color: var(--ink); outline-offset: 0; }
 
   .consent {
@@ -321,8 +327,8 @@
     margin: 0 -12px 24px;
     border-radius: var(--r-sm);
     cursor: pointer;
+    transition: background-color 150ms ease;
   }
-  .consent:hover { background: var(--sand); }
   .consent span { text-wrap: pretty; }
   .consent input {
     appearance: none; -webkit-appearance: none;
@@ -332,7 +338,7 @@
     background: #FFFFFF;
     display: grid; place-items: center;
     cursor: pointer;
-    transition: background-color 200ms var(--ease), border-color 200ms var(--ease);
+    transition: background-color 150ms ease, border-color 150ms ease;
   }
   .consent input::after {
     content: "";
@@ -340,6 +346,7 @@
     border-left: 2.5px solid var(--bone); border-bottom: 2.5px solid var(--bone);
     transform: translateY(-2px) rotate(-45deg);
     opacity: 0;
+    transition: opacity 150ms ease;
   }
   .consent input:checked { background: var(--ink); border-color: var(--ink); }
   .consent input:checked::after { opacity: 1; }
@@ -358,16 +365,12 @@
   .sent.is-on { display: block; }
   .sent a { color: var(--rust-deep); font-weight: 600; }
 
-  .aside-list { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 16px; }
-  .aside-list li { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; }
-  .aside-list .n {
-    width: 32px; height: 32px; border-radius: var(--r-pill);
-    display: grid; place-items: center;
-    background: var(--rust); color: #FFFFFF;
-    font-family: var(--font-head); font-weight: 800; font-size: 14px; line-height: 20px;
-  }
-  .aside-list strong { display: block; font-weight: 600; }
-  .aside-list span { color: var(--muted); }
+  /* What happens next: same rust numerals as the 7 checks */
+  .next { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 16px; }
+  .next li { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; }
+  .next .n { font-family: var(--font-head); font-stretch: 125%; font-weight: 800; font-size: 24px; line-height: 28px; color: var(--rust); }
+  .next strong { display: block; font-weight: 600; }
+  .next span { color: var(--muted); }
 
   /* Guide */
   .guide {
@@ -377,15 +380,14 @@
     background: var(--bone);
   }
   .guide__tag {
-    display: inline-flex; align-items: center; gap: 8px;
+    display: inline-block;
     padding: 4px 12px;
     border-radius: var(--r-pill);
     background: var(--sand); color: var(--ink);
     font-size: 14px; line-height: 20px; font-weight: 600;
     margin-bottom: 16px;
   }
-  .guide__tag svg { width: 16px; height: 16px; color: var(--rust); }
-  .seven { list-style: none; counter-reset: seven; margin: 32px 0 0; padding: 0; display: grid; gap: 0; }
+  .seven { list-style: none; counter-reset: seven; margin: 32px 0 0; padding: 0; display: grid; }
   .seven li {
     counter-increment: seven;
     display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: center;
@@ -413,13 +415,13 @@
     padding: 16px 0;
     cursor: pointer;
     font-weight: 600; font-size: 18px; line-height: 28px;
+    transition: color 150ms ease;
   }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq summary:hover { color: var(--rust-deep); }
-  .faq summary svg { width: 24px; height: 24px; flex: none; color: var(--rust); transition: transform 300ms var(--ease); }
+  .faq summary svg { width: 24px; height: 24px; flex: none; color: var(--rust); transition: transform 200ms var(--ease-out); }
   .faq details[open] summary svg { transform: rotate(45deg); }
   .faq__a { padding: 0 48px 24px 0; color: var(--muted); }
-  .faq details[open] .faq__a { animation: fadeIn 300ms var(--ease); }
+  .faq details[open] .faq__a { animation: fadeIn 200ms var(--ease-out); }
 
   /* Footer */
   .footer { background: var(--ink); color: var(--bone); padding: 48px 0 112px; }
@@ -431,43 +433,77 @@
   .footer__pro {
     display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
     color: var(--bone); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--rust);
+    transition: color 150ms ease;
   }
-  .footer__pro:hover { color: var(--sun); }
   .footer__pro svg { width: 18px; height: 18px; }
   .footer__small { margin-top: 32px; padding-top: 24px; border-top: 1px solid #3A403B; font-size: 14px; line-height: 20px; color: #BDB5A6; display: grid; gap: 8px; }
 
-  /* Mobile sticky bar */
+  /* Mobile sticky bar: slides in over 300ms, gets out of the way in 200ms */
   .mbar {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
     padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
     background: var(--bone);
     border-top: 1px solid var(--line);
-    transition: transform 300ms var(--ease), opacity 300ms var(--ease);
+    transition: transform 300ms var(--ease-drawer), opacity 300ms ease;
   }
   .mbar .btn { width: 100%; }
-  .mbar.is-hidden { transform: translateY(100%); opacity: 0; pointer-events: none; }
+  .mbar.is-hidden { transform: translateY(100%); opacity: 0; pointer-events: none; transition-duration: 200ms; }
 
-  /* Reveal: small fade only */
-  .js [data-reveal] { opacity: 0; transform: translateY(8px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+  /* Reveal: small fade, staggered 50ms inside a group */
+  .js [data-reveal] {
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 50ms);
+  }
   .js [data-reveal].is-in { opacity: 1; transform: none; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+  /* Hover only for real mouse pointers, so taps on phones never leave a stuck hover */
+  @media (hover: hover) and (pointer: fine) {
+    .btn--primary:hover:not([disabled]) { background: var(--rust-deep); }
+    .btn--ghost:hover { background: var(--ink); color: var(--bone); }
+    .card:hover .card__arrow { transform: translateX(4px); color: var(--rust); }
+    .chip:hover:not([aria-pressed="true"]) { border-color: var(--ink); }
+    .input:hover, .textarea:hover { border-color: var(--muted); }
+    .consent:hover { background: var(--sand); }
+    .faq summary:hover { color: var(--rust-deep); }
+    .footer__pro:hover { color: var(--sun); }
+  }
+
+  /* Reduced motion: keep fades and colour changes, drop movement */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
-    .js [data-reveal] { opacity: 1; transform: none; }
+    .js [data-reveal] { transform: none; transition: opacity 300ms ease; transition-delay: 0s; }
+    .btn:active:not([disabled]), .chip:active, .card:active { transform: none; }
+    .card__arrow, .chip__dot svg { transform: none !important; }
+    .faq summary svg { transition: none; }
+    .mbar { transition: opacity 200ms ease, visibility 0s; }
+    .mbar.is-hidden { transform: none; visibility: hidden; transition: opacity 200ms ease, visibility 0s linear 200ms; }
   }
 
   /* 600px and up */
   @media (min-width: 600px) {
     .wrap { padding: 0 24px; }
     .hero__cta .btn, .guide__cta .btn { width: auto; }
-    .cards { grid-template-columns: 1fr 1fr; }
-    .card { display: flex; flex-direction: column; align-items: flex-start; padding: 24px; gap: 8px; }
-    .card--top { padding: 23px; }
-    .card__icon { margin-bottom: 8px; }
-    .badge { position: absolute; top: 16px; right: 16px; }
-    .checks { grid-template-columns: 1fr 1fr; }
+    .cards { grid-template-columns: 1fr 1fr; gap: 16px; background: none; border: 0; border-radius: 0; overflow: visible; }
+    .card {
+      grid-template-columns: 1fr; align-items: start; align-content: start; gap: 16px;
+      padding: 24px;
+      background: var(--bone);
+      border: 1px solid var(--line);
+      border-radius: var(--r-card);
+    }
+    .card + .card { box-shadow: none; }
+    .card:active { background: var(--bone); transform: scale(0.98); }
+    .card__arrow { position: absolute; top: 24px; right: 24px; }
+    .card--top { border: 2px solid var(--rust); padding: 23px; }
+    .card--top .card__arrow { top: 23px; right: 23px; }
+    .card--top .badge { position: absolute; top: 25px; right: 63px; }
+    .sheet { padding: 32px; }
     .form, .guide { padding: 32px; }
+  }
+
+  @media (min-width: 600px) and (hover: hover) and (pointer: fine) {
+    .card:hover { border-color: var(--rust); }
   }
 
   /* 900px and up */
@@ -479,11 +515,12 @@
     .hero__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; }
     .hero h1 { font-size: 48px; line-height: 52px; }
     .hero__art { display: block; }
-    .cards { grid-template-columns: repeat(6, 1fr); gap: 16px; }
+    .cards { grid-template-columns: repeat(6, 1fr); }
     .cards .card { grid-column: span 2; }
     .cards .card:nth-child(-n+2) { grid-column: span 3; }
-    .checks { grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .promise { grid-template-columns: auto 1fr; align-items: center; gap: 32px; padding: 32px; }
+    .sheet { padding: 40px; }
+    .checks { grid-template-columns: 1fr 1fr; column-gap: 48px; }
+    .promise { margin-top: 32px; grid-template-columns: auto 1fr; align-items: center; gap: 32px; }
     .promise__text { font-size: 30px; line-height: 36px; }
     .quote__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 64px; align-items: start; }
     .quote__aside { position: sticky; top: calc(var(--header-h) + 32px); }
@@ -591,50 +628,59 @@
   <!-- 3. What we build -->
   <section class="section section--sand" id="build" aria-labelledby="build-title">
     <div class="wrap">
-      <span class="eyebrow">What we build</span>
-      <h2 class="h2" id="build-title" data-reveal>Tell us what you need. Our pros build it.</h2>
+      <h2 class="h2" id="build-title" data-reveal>What we build</h2>
       <p class="lead" data-reveal>Tap a job to start your free quote.</p>
       <div class="cards">
         <button type="button" class="card card--top js-pick-job" data-job="Cupboards and built-ins" data-reveal>
-          <span class="badge">Most asked</span>
           <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="17" rx="1"/><path d="M12 3v17M10 10.5v2M14 10.5v2M6 20v1.5M18 20v1.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="17" rx="1"/><path d="M12 3v17M10 10.5v2M14 10.5v2M6 20v1.5M18 20v1.5"/></svg>
           </span>
-          <span class="card__name">Cupboards and built-ins</span>
-          <span class="card__line">Bedroom cupboards, wall units and storage, made to fit your space.</span>
-          <span class="card__go">Start my quote <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="card__text">
+            <span class="badge">Most asked</span>
+            <span class="card__name">Cupboards and <span class="nowrap">built-ins</span></span>
+            <span class="card__line">Bedroom cupboards, wall units and storage, made to fit your space.</span>
+          </span>
+          <svg class="card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <button type="button" class="card js-pick-job" data-job="Kitchen" data-reveal>
           <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="12" width="18" height="9" rx="1"/><path d="M12 12v9M3 15h18M8 17.5h1M15 17.5h1M7.5 5.5h1M15.5 5.5h1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="12" width="18" height="9" rx="1"/><path d="M12 12v9M3 15h18M8 17.5h1M15 17.5h1M7.5 5.5h1M15.5 5.5h1"/></svg>
           </span>
-          <span class="card__name">Kitchens</span>
-          <span class="card__line">New kitchens and makeovers, with doors, tops and fitting done properly.</span>
-          <span class="card__go">Start my quote <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="card__text">
+            <span class="card__name">Kitchens</span>
+            <span class="card__line">New kitchens and makeovers, with doors, tops and fitting done properly.</span>
+          </span>
+          <svg class="card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <button type="button" class="card js-pick-job" data-job="Backyard room or flatlet" data-reveal>
           <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 4l9 6.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/><rect x="15" y="11.5" width="2.5" height="2.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 4l9 6.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/><rect x="15" y="11.5" width="2.5" height="2.5"/></svg>
           </span>
-          <span class="card__name">Backyard rooms and flatlets</span>
-          <span class="card__line">An extra room or flatlet for family, guests or a tenant.</span>
-          <span class="card__go">Start my quote <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="card__text">
+            <span class="card__name">Backyard rooms and flatlets</span>
+            <span class="card__line">An extra room or flatlet for family, guests or a tenant.</span>
+          </span>
+          <svg class="card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <button type="button" class="card js-pick-job" data-job="Patio or lapa" data-reveal>
           <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11L12 4l10 7z"/><path d="M5 11v9M19 11v9M3 20h18"/><path d="M7 8.5l2 2.5M10 6.5l2.5 4.5M14 6.5l-2 4.5M17 8.5l-2 2.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11L12 4l10 7z"/><path d="M5 11v9M19 11v9M3 20h18"/><path d="M7 8.5l2 2.5M10 6.5l2.5 4.5M14 6.5l-2 4.5M17 8.5l-2 2.5"/></svg>
           </span>
-          <span class="card__name">Patios and lapas</span>
-          <span class="card__line">Covered outdoor space for the braai and long summer evenings.</span>
-          <span class="card__go">Start my quote <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="card__text">
+            <span class="card__name">Patios and lapas</span>
+            <span class="card__line">Covered outdoor space for the braai and long summer evenings.</span>
+          </span>
+          <svg class="card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <button type="button" class="card js-pick-job" data-job="Bathroom" data-reveal>
           <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18v2a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M6 12V5.5A2 2 0 0 1 8 3.5h.5A2 2 0 0 1 10.5 5.5"/><path d="M9 7.5h3M7 19l-1 2M17 19l1 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18v2a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M6 12V5.5A2 2 0 0 1 8 3.5h.5A2 2 0 0 1 10.5 5.5"/><path d="M9 7.5h3M7 19l-1 2M17 19l1 2"/></svg>
           </span>
-          <span class="card__name">Bathrooms</span>
-          <span class="card__line">A full bathroom redo, or a new shower, basin and tiles.</span>
-          <span class="card__go">Start my quote <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="card__text">
+            <span class="card__name">Bathrooms</span>
+            <span class="card__line">A full bathroom redo, or a new shower, basin and tiles.</span>
+          </span>
+          <svg class="card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
       </div>
     </div>
@@ -643,44 +689,25 @@
   <!-- 4. Why our pros are different -->
   <section class="section section--ink" id="why" aria-labelledby="why-title">
     <div class="wrap">
-      <span class="eyebrow">Why our pros are different</span>
-      <h2 class="h2" id="why-title" data-reveal>We check every pro before they work for us.</h2>
-      <p class="lead" data-reveal>No one gets a BouReg job on a promise. These are the checks every pro has to pass.</p>
-      <ul class="checks">
-        <li class="check" data-reveal>
-          <span class="check__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h2M14 14h2M8 17h2"/></svg></span>
-          <span class="check__title">At least 3 years doing this exact work</span>
-          <span class="check__line">Not someone who does a bit of everything. Years on this kind of job.</span>
-        </li>
-        <li class="check" data-reveal>
-          <span class="check__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15.5l-5-5L5 19.5"/></svg></span>
-          <span class="check__title">At least 6 photos of real jobs they finished</span>
-          <span class="check__line">Their own work, in real homes. Not pictures from the internet.</span>
-        </li>
-        <li class="check" data-reveal>
-          <span class="check__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h3.5l2 5-2.5 1.5a11 11 0 0 0 6 6l1.5-2.5 5 2V19a2 2 0 0 1-2 2A16.5 16.5 0 0 1 3 5.5a2 2 0 0 1 2-2z"/></svg></span>
-          <span class="check__title">We phone 2 of their past clients</span>
-          <span class="check__line">We ask if the work was good, on time and at the agreed price.</span>
-        </li>
-        <li class="check" data-reveal>
-          <span class="check__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6.5a1.5 1.5 0 0 0-1.5 1.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h4.5"/></svg></span>
-          <span class="check__title">Written quote before any work starts</span>
-          <span class="check__line">You see the price and the materials on paper first.</span>
-        </li>
-        <li class="check" data-reveal>
-          <span class="check__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5.5c0 4.6-3.3 8.3-8 9.5-4.7-1.2-8-4.9-8-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span>
-          <span class="check__title">Fair deposit, never the full amount upfront</span>
-          <span class="check__line">Your money is not all gone before the work begins.</span>
-        </li>
-        <li class="check" data-reveal>
-          <span class="check__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
-          <span class="check__title">They call you within 24 to 48 hours</span>
-          <span class="check__line">No chasing. No waiting weeks for someone to pitch up.</span>
-        </li>
-      </ul>
-      <div class="promise" data-reveal>
-        <span class="promise__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v5.5c0 4.6-3.3 8.3-8 9.5-4.7-1.2-8-4.9-8-9.5V6z"/></svg>Our 48 hour promise</span>
-        <p class="promise__text">If our pro doesn't call you within 48 hours, we send another of our pros. <em>Free.</em></p>
+      <h2 class="h2" id="why-title" data-reveal>Why our pros are different</h2>
+      <p class="lead" data-reveal>No one gets a BouReg job on a promise. Every pro passes this check before they work for us.</p>
+      <div class="sheet" data-reveal>
+        <div class="sheet__head">
+          <p class="sheet__title">BOUREG PRO CHECK</p>
+          <p class="sheet__meta">Done before their first job</p>
+        </div>
+        <ul class="checks">
+          <li class="check" data-reveal><span class="check__box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="check__title">At least 3 years doing this exact work</span><span class="check__line">Not someone who does a bit of everything. Years on this kind of job.</span></li>
+          <li class="check" data-reveal><span class="check__box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="check__title">At least 6 photos of real jobs they finished</span><span class="check__line">Their own work, in real homes. Not pictures from the internet.</span></li>
+          <li class="check" data-reveal><span class="check__box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="check__title">We phone 2 of their past clients</span><span class="check__line">We ask if the work was good, on time and at the agreed price.</span></li>
+          <li class="check" data-reveal><span class="check__box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="check__title">Written quote before any work starts</span><span class="check__line">You see the price and the materials on paper first.</span></li>
+          <li class="check" data-reveal><span class="check__box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="check__title">Fair deposit, never the full amount upfront</span><span class="check__line">Your money is not all gone before the work begins.</span></li>
+          <li class="check" data-reveal><span class="check__box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="check__title">They call you within 24 to 48 hours</span><span class="check__line">No chasing. No waiting weeks for someone to pitch up.</span></li>
+        </ul>
+        <div class="promise">
+          <span class="promise__tag">Our 48 hour promise</span>
+          <p class="promise__text">If our pro doesn't call you within 48 hours, we send another of our pros. <em>Free.</em></p>
+        </div>
       </div>
     </div>
   </section>
@@ -689,10 +716,9 @@
   <section class="section section--sand" id="quote" aria-labelledby="quote-title">
     <div class="wrap quote__grid">
       <div class="quote__aside">
-        <span class="eyebrow">Free quote</span>
         <h2 class="h2" id="quote-title">Get your free quote</h2>
         <p class="lead">Tap your answers. It takes about a minute.</p>
-        <ol class="aside-list">
+        <ol class="next">
           <li><span class="n" aria-hidden="true">1</span><p><strong>Tell us about the job</strong><span>Your answers go to BouReg on WhatsApp.</span></p></li>
           <li><span class="n" aria-hidden="true">2</span><p><strong>Our pro calls you</strong><span>Within 48 hours, to chat and set up a visit.</span></p></li>
           <li><span class="n" aria-hidden="true">3</span><p><strong>You get a written quote</strong><span>Free, and you decide if you go ahead.</span></p></li>
@@ -703,42 +729,42 @@
         <fieldset class="q">
           <legend id="q-job"><span class="q__num" aria-hidden="true">1</span>What do you want built?</legend>
           <div class="chips" data-field="job">
-            <button type="button" class="chip" aria-pressed="false" data-value="Cupboards and built-ins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Cupboards and built-ins</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Kitchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Kitchen</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Backyard room or flatlet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Backyard room or flatlet</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Patio or lapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Patio or lapa</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Bathroom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Bathroom</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Something else"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Something else</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Cupboards and built-ins"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Cupboards and built-ins</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Kitchen"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Kitchen</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Backyard room or flatlet"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Backyard room or flatlet</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Patio or lapa"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Patio or lapa</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Bathroom"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Bathroom</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Something else"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Something else</button>
           </div>
         </fieldset>
 
         <fieldset class="q">
           <legend><span class="q__num" aria-hidden="true">2</span>Which town?</legend>
           <div class="chips" data-field="town">
-            <button type="button" class="chip" aria-pressed="false" data-value="Upington"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Upington</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Kimberley"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Kimberley</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Bloemfontein"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Bloemfontein</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Upington"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Upington</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Kimberley"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Kimberley</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Bloemfontein"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Bloemfontein</button>
           </div>
         </fieldset>
 
         <fieldset class="q">
           <legend><span class="q__num" aria-hidden="true">3</span>Rough budget?</legend>
           <div class="chips" data-field="budget">
-            <button type="button" class="chip" aria-pressed="false" data-value="Under R10k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Under R10k</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="R10k to R30k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>R10k to R30k</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="R30k to R60k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>R30k to R60k</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="R60k to R100k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>R60k to R100k</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="R100k+"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>R100k+</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Under R10k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Under R10k</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="R10k to R30k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R10k to R30k</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="R30k to R60k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R30k to R60k</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="R60k to R100k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R60k to R100k</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="R100k+"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R100k+</button>
           </div>
         </fieldset>
 
         <fieldset class="q">
           <legend><span class="q__num" aria-hidden="true">4</span>When do you want it done? <span class="opt">(optional)</span></legend>
           <div class="chips" data-field="timing">
-            <button type="button" class="chip" aria-pressed="false" data-value="This month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>This month</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="In 1 to 3 months"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>In 1 to 3 months</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Later this year"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Later this year</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Just looking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Just looking</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="This month"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>This month</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="In 1 to 3 months"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>In 1 to 3 months</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Later this year"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Later this year</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="Just looking"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Just looking</button>
           </div>
         </fieldset>
 
@@ -779,7 +805,7 @@
     <div class="wrap">
       <div class="guide">
         <div>
-          <span class="guide__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Free guide</span>
+          <span class="guide__tag">Free guide</span>
           <h2 class="h2" id="checks-title" data-reveal>7 checks before you pay any builder a deposit</h2>
           <p class="lead" data-reveal>Whoever you hire, do these first. Take a screenshot so you have it on your phone.</p>
           <div class="guide__cta">
@@ -804,7 +830,6 @@
   <!-- 7. FAQ -->
   <section class="section section--sand" id="faq" aria-labelledby="faq-title">
     <div class="wrap">
-      <span class="eyebrow">Questions</span>
       <h2 class="h2" id="faq-title">Good to know</h2>
       <div class="faq">
         <details>
@@ -999,27 +1024,53 @@
     window.BouReg = { buildUrl: function () { return waLink(buildMessage()); } };
 
     // Smooth scroll to the form
-    function goToQuote(focusEl) {
+    function goToQuote() {
       quoteSection.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-      if (focusEl) {
-        setTimeout(function () { focusEl.focus({ preventScroll: true }); }, reduceMotion ? 0 : 500);
-      }
     }
 
     document.querySelectorAll(".js-to-quote").forEach(function (a) {
       a.addEventListener("click", function (e) {
         e.preventDefault();
-        goToQuote(null);
+        goToQuote();
       });
     });
 
-    // "What we build" cards pre select the job and scroll to the form
+    // "What we build" cards: scroll to the form, then fill in the chosen job as the person arrives,
+    // so they see exactly what their tap did.
+    function pickJobOnArrival(value) {
+      var chip = form.querySelector('.chips[data-field="job"] .chip[data-value="' + value + '"]');
+      if (!chip) return;
+      chip.focus({ preventScroll: true });
+
+      var target = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      var alreadyThere = Math.abs(quoteSection.getBoundingClientRect().top - target) < 4;
+      if (reduceMotion || alreadyThere) {
+        setChoice("job", value);
+        goToQuote();
+        return;
+      }
+
+      var done = false;
+      function apply() {
+        if (done) return;
+        done = true;
+        window.removeEventListener("scrollend", apply);
+        setChoice("job", value);
+      }
+      window.addEventListener("scrollend", apply);
+      // Backup for browsers without scrollend, or if the scroll is cut short
+      setTimeout(apply, "onscrollend" in window ? 1500 : 700);
+      goToQuote();
+    }
+
     document.querySelectorAll(".js-pick-job").forEach(function (card) {
       card.addEventListener("click", function () {
-        var chip = setChoice("job", card.getAttribute("data-job"));
-        goToQuote(chip);
+        pickJobOnArrival(card.getAttribute("data-job"));
       });
     });
+
+    // iPhone Safari only shows :active press styles when a touch listener exists
+    document.addEventListener("touchstart", function () {}, { passive: true });
 
     update();
 
@@ -1046,13 +1097,24 @@
       mbar.querySelector("a").tabIndex = onScreen ? -1 : 0;
     }, { threshold: 0, rootMargin: "0px 0px -80px 0px" }).observe(quoteSection);
 
-    // Small fade in as sections enter the screen
+    // Small fade in as sections enter the screen, 50ms apart inside a group
+    document.querySelectorAll(".cards, .checks").forEach(function (group) {
+      Array.prototype.forEach.call(group.children, function (el, i) { el.style.setProperty("--i", i); });
+    });
+    function settle(el) {
+      // Once faded in, drop the reveal styles so the element's own press and hover transitions apply
+      el.removeAttribute("data-reveal");
+      el.classList.remove("is-in");
+      el.style.removeProperty("--i");
+    }
     var revealer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-in");
-          revealer.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        el.classList.add("is-in");
+        revealer.unobserve(el);
+        var i = parseFloat(el.style.getPropertyValue("--i")) || 0;
+        setTimeout(function () { settle(el); }, 450 + i * 50);
       });
     }, { rootMargin: "0px 0px -40px 0px" });
     document.querySelectorAll("[data-reveal]").forEach(function (el) { revealer.observe(el); });
