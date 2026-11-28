@@ -46,6 +46,7 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + 16px); }
   body {
     margin: 0;
@@ -148,14 +149,17 @@
   .scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; }
 
   /* Hero */
-  .hero { padding: 40px 0 64px; }
-  .hero__grid { display: grid; gap: 48px; align-items: center; }
+  .hero { padding: 24px 0 64px; }
+  .hero__grid { display: grid; gap: 24px; grid-template-areas: "intro" "flow" "trust"; }
+  .hero__intro { grid-area: intro; }
+  .hero__trust { grid-area: trust; }
+  .hero.is-quiz { padding-top: 16px; }
+  .hero.is-quiz .hero__grid { grid-template-areas: "flow" "trust"; }
+  .hero.is-quiz .hero__intro { display: none; }
   .hero h1 { font-size: 30px; line-height: 36px; max-width: 680px; }
   .hero h1 .soft { color: var(--rust); display: block; margin-top: 8px; }
   .hero__sub { margin-top: 24px; font-size: 18px; line-height: 28px; color: var(--muted); max-width: 600px; }
-  .hero__cta { margin-top: 32px; }
-  .hero__cta .btn { width: 100%; }
-  .trust { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .trust { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
   .trust li {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 4px 12px 4px 8px;
@@ -166,7 +170,6 @@
     font-size: 14px; line-height: 20px; font-weight: 600;
   }
   .trust svg { width: 16px; height: 16px; flex: none; }
-  .hero__art { display: none; }
   .tagline-line { margin-top: 24px; font-size: 14px; line-height: 20px; color: var(--muted); }
   .tagline-line strong { color: var(--ink); font-weight: 600; }
 
@@ -252,24 +255,53 @@
   .promise__text { font-family: var(--font-head); font-stretch: 112.5%; font-weight: 800; font-size: 24px; line-height: 32px; text-wrap: balance; }
   .promise__text em { font-style: normal; color: var(--rust); }
 
-  /* Form */
-  .quote__grid { display: grid; gap: 32px; }
-  .form {
-    background: var(--bone);
-    border: 1px solid var(--line);
+  /* Quote flow: screen 1 is contact details, then one question per screen */
+  .flow {
+    grid-area: flow;
+    background: var(--sand);
     border-radius: var(--r-card);
-    padding: 24px 16px;
+    padding: 16px 16px 24px;
+    scroll-margin-top: calc(var(--header-h) + 16px);
   }
-  .q { border: 0; margin: 0 0 32px; padding: 0; min-width: 0; }
-  .q legend, .q__label {
-    display: block;
-    padding: 0;
-    margin-bottom: 12px;
-    font-family: var(--font-head); font-stretch: 112.5%; font-weight: 700;
-    font-size: 18px; line-height: 28px;
-    color: var(--ink);
+  .flow__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+  .flow__back {
+    display: inline-flex; align-items: center; gap: 4px;
+    min-height: 44px; padding: 8px 12px 8px 4px; margin-left: -4px;
+    background: none; border: 0; border-radius: var(--r-sm);
+    font-weight: 600; cursor: pointer;
+    transition: color 150ms ease, transform 160ms var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
   }
-  .q__num { color: var(--rust); margin-right: 8px; }
+  .flow__back svg { width: 20px; height: 20px; }
+  .flow__back:active { transform: scale(0.97); }
+  .flow__count { margin-left: auto; font-size: 14px; line-height: 20px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .flow__bar { height: 4px; margin: 8px 0 24px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
+  .flow__bar span { display: block; height: 100%; background: var(--rust); transform-origin: left center; transform: scaleX(0.1667); transition: transform 300ms var(--ease-out); }
+  .step__q { font-family: var(--font-head); font-stretch: 112.5%; font-weight: 800; font-size: 24px; line-height: 32px; text-wrap: balance; }
+  .step__q:focus { outline: none; }
+  .step__hint { margin-top: 8px; color: var(--muted); }
+  .step .chips, .step .fields, .step .details { margin-top: 24px; }
+  .step__foot { margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .link-btn {
+    min-height: 44px; padding: 8px 4px;
+    background: none; border: 0;
+    color: var(--muted); font-weight: 600; text-decoration: underline; text-underline-offset: 4px;
+    cursor: pointer; transition: color 150ms ease;
+  }
+  .picked {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 16px; padding: 4px 12px;
+    border-radius: var(--r-pill);
+    background: var(--bone);
+    font-size: 14px; line-height: 20px;
+  }
+  .picked svg { width: 16px; height: 16px; color: var(--olive); }
+  .fields { display: grid; gap: 16px; }
+  .label { display: block; margin-bottom: 8px; font-weight: 600; }
+  .field-err { margin-top: 8px; font-size: 14px; line-height: 20px; color: var(--rust-deep); font-weight: 600; }
+  .field-err:empty { display: none; }
+  .input[aria-invalid="true"] { border-color: var(--rust-deep); }
+  .done__again { margin-top: 24px; }
   .opt { font-family: var(--font-body); font-weight: 400; font-size: 14px; color: var(--muted); }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   /* Chips keep the same width when chosen: the ring is always there and fills in. */
@@ -365,13 +397,6 @@
   .sent.is-on { display: block; }
   .sent a { color: var(--rust-deep); font-weight: 600; }
 
-  /* What happens next: same rust numerals as the 7 checks */
-  .next { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 16px; }
-  .next li { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; }
-  .next .n { font-family: var(--font-head); font-stretch: 125%; font-weight: 800; font-size: 24px; line-height: 28px; color: var(--rust); }
-  .next strong { display: block; font-weight: 600; }
-  .next span { color: var(--muted); }
-
   /* Guide */
   .guide {
     border: 1px solid var(--line);
@@ -465,7 +490,8 @@
     .card:hover .card__arrow { transform: translateX(4px); color: var(--rust); }
     .chip:hover:not([aria-pressed="true"]) { border-color: var(--ink); }
     .input:hover, .textarea:hover { border-color: var(--muted); }
-    .consent:hover { background: var(--sand); }
+    .consent:hover { background: var(--bone); }
+    .flow__back:hover, .link-btn:hover { color: var(--rust-deep); }
     .faq summary:hover { color: var(--rust-deep); }
     .footer__pro:hover { color: var(--sun); }
   }
@@ -473,7 +499,7 @@
   /* Reduced motion: keep fades and colour changes, drop movement */
   @media (prefers-reduced-motion: reduce) {
     .js [data-reveal] { transform: none; transition: opacity 300ms ease; transition-delay: 0s; }
-    .btn:active:not([disabled]), .chip:active, .card:active { transform: none; }
+    .btn:active:not([disabled]), .chip:active, .card:active, .flow__back:active { transform: none; }
     .card__arrow, .chip__dot svg { transform: none !important; }
     .faq summary svg { transition: none; }
     .mbar { transition: opacity 200ms ease, visibility 0s; }
@@ -483,7 +509,8 @@
   /* 600px and up */
   @media (min-width: 600px) {
     .wrap { padding: 0 24px; }
-    .hero__cta .btn, .guide__cta .btn { width: auto; }
+    .guide__cta .btn { width: auto; }
+    .flow { padding: 24px 32px 32px; }
     .cards { grid-template-columns: 1fr 1fr; gap: 16px; background: none; border: 0; border-radius: 0; overflow: visible; }
     .card {
       grid-template-columns: 1fr; align-items: start; align-content: start; gap: 16px;
@@ -499,7 +526,7 @@
     .card--top .card__arrow { top: 23px; right: 23px; }
     .card--top .badge { position: absolute; top: 25px; right: 63px; }
     .sheet { padding: 32px; }
-    .form, .guide { padding: 32px; }
+    .guide { padding: 32px; }
   }
 
   @media (min-width: 600px) and (hover: hover) and (pointer: fine) {
@@ -512,9 +539,13 @@
     .section { padding: 96px 0; }
     .h2 { font-size: 36px; line-height: 40px; }
     .hero { padding: 64px 0 96px; }
-    .hero__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; }
+    .hero__grid { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); grid-template-areas: "intro flow" "trust flow"; grid-template-rows: auto 1fr; column-gap: 64px; row-gap: 32px; align-items: start; }
+    .hero.is-quiz { padding-top: 64px; }
+    .hero.is-quiz .hero__grid { grid-template-areas: "intro flow" "trust flow"; }
+    .hero.is-quiz .hero__intro { display: block; }
+    .flow { padding: 24px 40px 40px; }
+    .flow form { min-height: 456px; }
     .hero h1 { font-size: 48px; line-height: 52px; }
-    .hero__art { display: block; }
     .cards { grid-template-columns: repeat(6, 1fr); }
     .cards .card { grid-column: span 2; }
     .cards .card:nth-child(-n+2) { grid-column: span 3; }
@@ -522,9 +553,6 @@
     .checks { grid-template-columns: 1fr 1fr; column-gap: 48px; }
     .promise { margin-top: 32px; grid-template-columns: auto 1fr; align-items: center; gap: 32px; }
     .promise__text { font-size: 30px; line-height: 36px; }
-    .quote__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 64px; align-items: start; }
-    .quote__aside { position: sticky; top: calc(var(--header-h) + 32px); }
-    .form { padding: 40px; }
     .guide { padding: 48px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: start; }
     .seven { margin-top: 0; }
     .footer__grid { grid-template-columns: 2fr 1fr 1fr; }
@@ -558,69 +586,159 @@
 
 <main id="main">
 
-  <!-- 2. Hero -->
+  <!-- 2. Hero: screen 1 (details) then the quiz, in one card -->
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap hero__grid">
-      <div>
+      <div class="hero__intro">
         <h1 id="hero-title">Built by pros with years of experience. <span class="soft">Not someone trying it for the first time.</span></h1>
         <p class="hero__sub">Cupboards, kitchens, backyard rooms, patios and bathrooms in Upington, Kimberley and Bloemfontein. One of our experienced pros calls you within 48 hours.</p>
-        <div class="hero__cta">
-          <a class="btn btn--primary js-to-quote" href="#quote">
-            Get my free quote
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
+      </div>
+
+      <div class="flow" id="quote" role="region" aria-label="Free quote">
+        <div class="flow__top">
+          <button type="button" class="flow__back" id="flow-back" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Back
+          </button>
+          <p class="flow__count" id="flow-count" aria-live="polite">Step 1 of 6</p>
         </div>
+        <div class="flow__bar" aria-hidden="true"><span id="flow-bar"></span></div>
+
+        <form id="quote-form" novalidate>
+          <!-- Screen 1: who you are -->
+          <div class="step" data-step="0">
+            <h2 class="step__q" tabindex="-1">Get your free quote</h2>
+            <p class="step__hint">Your details first, then a few quick taps.</p>
+            <p class="picked" id="picked" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+              <span>Job: <strong id="picked-job"></strong></span>
+            </p>
+            <div class="fields">
+              <div>
+                <label class="label" for="name">Your name</label>
+                <input class="input" id="name" name="name" type="text" autocomplete="name" required aria-required="true" maxlength="80" aria-describedby="name-err">
+                <p class="field-err" id="name-err"></p>
+              </div>
+              <div>
+                <label class="label" for="phone">Cell number</label>
+                <input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-required="true" maxlength="20" placeholder="082 123 4567" aria-describedby="phone-hint phone-err">
+                <p class="hint" id="phone-hint">Our pro calls you on this number.</p>
+                <p class="field-err" id="phone-err"></p>
+              </div>
+              <div>
+                <label class="label" for="suburb">Suburb</label>
+                <input class="input" id="suburb" name="suburb" type="text" autocomplete="address-level3" required aria-required="true" maxlength="60" aria-describedby="suburb-hint suburb-err">
+                <p class="hint" id="suburb-hint">So our pro knows where the job is.</p>
+                <p class="field-err" id="suburb-err"></p>
+              </div>
+            </div>
+            <div class="step__foot">
+              <button type="button" class="btn btn--primary btn--block" id="next-0">
+                Next: about the job
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="step" data-step="1" hidden>
+            <h2 class="step__q" id="q-job" tabindex="-1">What do you want built?</h2>
+            <div class="chips" data-field="job" role="group" aria-labelledby="q-job">
+              <button type="button" class="chip" aria-pressed="false" data-value="Cupboards and built-ins"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Cupboards and built-ins</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Kitchen"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Kitchen</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Backyard room or flatlet"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Backyard room or flatlet</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Patio or lapa"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Patio or lapa</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Bathroom"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Bathroom</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Something else"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Something else</button>
+            </div>
+            <div class="step__foot">
+              <button type="button" class="btn btn--ghost js-step-next" data-field="job" data-next="2" hidden>Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            </div>
+          </div>
+
+          <div class="step" data-step="2" hidden>
+            <h2 class="step__q" id="q-town" tabindex="-1">Which town?</h2>
+            <div class="chips" data-field="town" role="group" aria-labelledby="q-town">
+              <button type="button" class="chip" aria-pressed="false" data-value="Upington"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Upington</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Kimberley"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Kimberley</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Bloemfontein"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Bloemfontein</button>
+            </div>
+            <div class="step__foot">
+              <button type="button" class="btn btn--ghost js-step-next" data-field="town" data-next="3" hidden>Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            </div>
+          </div>
+
+          <div class="step" data-step="3" hidden>
+            <h2 class="step__q" id="q-budget" tabindex="-1">Rough budget?</h2>
+            <p class="step__hint">A rough idea helps our pro plan the visit.</p>
+            <div class="chips" data-field="budget" role="group" aria-labelledby="q-budget">
+              <button type="button" class="chip" aria-pressed="false" data-value="Under R10k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Under R10k</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="R10k to R30k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R10k to R30k</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="R30k to R60k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R30k to R60k</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="R60k to R100k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R60k to R100k</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="R100k+"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R100k+</button>
+            </div>
+            <div class="step__foot">
+              <button type="button" class="btn btn--ghost js-step-next" data-field="budget" data-next="4" hidden>Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            </div>
+          </div>
+
+          <div class="step" data-step="4" hidden>
+            <h2 class="step__q" id="q-timing" tabindex="-1">When do you want it done?</h2>
+            <p class="step__hint">Optional. Skip if you are not sure yet.</p>
+            <div class="chips" data-field="timing" role="group" aria-labelledby="q-timing">
+              <button type="button" class="chip" aria-pressed="false" data-value="This month"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>This month</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="In 1 to 3 months"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>In 1 to 3 months</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Later this year"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Later this year</button>
+              <button type="button" class="chip" aria-pressed="false" data-value="Just looking"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Just looking</button>
+            </div>
+            <div class="step__foot">
+              <button type="button" class="btn btn--ghost js-step-next" data-field="timing" data-next="5" hidden>Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+              <button type="button" class="link-btn" data-next="5">Skip this</button>
+            </div>
+          </div>
+
+          <!-- Last question -->
+          <div class="step" data-step="5" hidden>
+            <h2 class="step__q" id="q-details" tabindex="-1">Tell us a bit more</h2>
+            <p class="step__hint">Optional. English or Afrikaans is fine.</p>
+            <div class="details">
+              <textarea class="textarea" id="details" name="details" maxlength="600" aria-labelledby="q-details" placeholder="For example: two bedroom cupboards, about 2.4m wide each"></textarea>
+            </div>
+            <label class="consent" for="consent" style="margin-top: 16px;">
+              <input type="checkbox" id="consent" name="consent" required aria-required="true">
+              <span>I agree that BouReg may contact me on WhatsApp about my job and share my details with the pro doing it.</span>
+            </label>
+            <button type="submit" class="btn btn--primary btn--block" id="send" disabled aria-describedby="send-status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 19.5l1.1-3.9A8 8 0 1 1 8.6 18.6z"/><path d="M9.2 8.6c.2-.5.5-.6.8-.6h.5c.2 0 .4.1.5.4l.6 1.5c.1.2 0 .5-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.5.6c.3.1.4.3.4.5v.5c0 .3-.1.6-.6.8-.5.3-1.4.4-2.4 0a8.3 8.3 0 0 1-4.6-4.6c-.4-1-.3-1.9 0-2.3z"/></svg>
+              Send to BouReg on WhatsApp
+            </button>
+            <p class="status" id="send-status" aria-live="polite"></p>
+            <p class="photos-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2.5h6L16.5 7h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.5" r="3.5"/></svg>
+              Want to send photos? Add them in the WhatsApp chat.
+            </p>
+          </div>
+
+          <!-- Done -->
+          <div class="step" data-step="6" hidden>
+            <h2 class="step__q" tabindex="-1">Nearly done</h2>
+            <p class="step__hint">WhatsApp is opening with your job details. Press send in the chat and BouReg has your job. One of our pros calls you within 48 hours.</p>
+            <div class="done__again">
+              <a class="btn btn--primary btn--block" id="sent-link" href="https://wa.me/" target="_blank" rel="noopener">Open WhatsApp again</a>
+            </div>
+            <div class="step__foot">
+              <button type="button" class="link-btn" id="change-answers">Change my answers</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="hero__trust">
         <ul class="trust" aria-label="How we check our pros">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>3+ years experience</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Real job photos checked</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Past clients phoned</li>
         </ul>
         <p class="tagline-line"><strong>Experienced pros. Built right.</strong> <span lang="af">Ervare vakmanne. Reg gebou.</span></p>
-      </div>
-
-      <!-- Decorative builder's drawing (desktop only) -->
-      <div class="hero__art" aria-hidden="true">
-        <svg viewBox="0 0 480 440" width="100%" fill="none">
-          <rect x="1" y="1" width="478" height="438" rx="14" fill="#F3EADC" stroke="#E0D3BF" stroke-width="2"/>
-          <g stroke="#E0D3BF" stroke-width="1">
-            <path d="M40 1v438M80 1v438M120 1v438M160 1v438M200 1v438M240 1v438M280 1v438M320 1v438M360 1v438M400 1v438M440 1v438"/>
-            <path d="M1 40h478M1 80h478M1 120h478M1 160h478M1 200h478M1 240h478M1 280h478M1 320h478M1 360h478M1 400h478"/>
-          </g>
-          <!-- dimension line, width -->
-          <g stroke="#5C5A52" stroke-width="1.5">
-            <path d="M100 62h280M100 54v16M380 54v16"/>
-          </g>
-          <rect x="208" y="52" width="64" height="20" fill="#F3EADC"/>
-          <text x="240" y="67" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="700" font-size="14" fill="#5C5A52">2 400</text>
-          <!-- dimension line, height -->
-          <g stroke="#5C5A52" stroke-width="1.5">
-            <path d="M412 90v280M404 90h16M404 370h16"/>
-          </g>
-          <rect x="400" y="218" width="24" height="24" fill="#F3EADC"/>
-          <text x="412" y="230" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 412 230)" font-family="Archivo, sans-serif" font-weight="700" font-size="14" fill="#5C5A52">2 100</text>
-          <!-- cupboard -->
-          <g stroke="#1E2320" stroke-width="3" stroke-linejoin="round">
-            <rect x="100" y="90" width="280" height="280" fill="#FFFBF4"/>
-            <path d="M193 90v280M287 90v280"/>
-            <path d="M287 210h93M287 263h93M287 316h93"/>
-            <path d="M100 90h280v-12H100z" fill="#1E2320"/>
-          </g>
-          <g stroke="#B4472A" stroke-width="3" stroke-linecap="round">
-            <path d="M180 214v32M206 214v32"/>
-            <path d="M320 236h26M320 289h26M320 342h26"/>
-          </g>
-          <g stroke="#1E2320" stroke-width="2" stroke-linecap="round">
-            <path d="M295 150h77"/>
-          </g>
-          <path d="M100 370h280" stroke="#1E2320" stroke-width="6"/>
-          <!-- stamp -->
-          <g transform="rotate(-8 136 384)">
-            <rect x="52" y="352" width="176" height="64" rx="8" fill="#FFFBF4" stroke="#55613F" stroke-width="3"/>
-            <rect x="58" y="358" width="164" height="52" rx="4" stroke="#55613F" stroke-width="1.5"/>
-            <text x="140" y="382" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="800" font-size="16" letter-spacing="2" fill="#55613F">CHECKED PRO</text>
-            <text x="140" y="400" text-anchor="middle" font-family="Public Sans, sans-serif" font-weight="600" font-size="12" letter-spacing="1" fill="#55613F">GEKEURDE VAKMAN</text>
-          </g>
-        </svg>
       </div>
     </div>
   </section>
@@ -709,94 +827,6 @@
           <p class="promise__text">If our pro doesn't call you within 48 hours, we send another of our pros. <em>Free.</em></p>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- 5. Quote form -->
-  <section class="section section--sand" id="quote" aria-labelledby="quote-title">
-    <div class="wrap quote__grid">
-      <div class="quote__aside">
-        <h2 class="h2" id="quote-title">Get your free quote</h2>
-        <p class="lead">Tap your answers. It takes about a minute.</p>
-        <ol class="next">
-          <li><span class="n" aria-hidden="true">1</span><p><strong>Tell us about the job</strong><span>Your answers go to BouReg on WhatsApp.</span></p></li>
-          <li><span class="n" aria-hidden="true">2</span><p><strong>Our pro calls you</strong><span>Within 48 hours, to chat and set up a visit.</span></p></li>
-          <li><span class="n" aria-hidden="true">3</span><p><strong>You get a written quote</strong><span>Free, and you decide if you go ahead.</span></p></li>
-        </ol>
-      </div>
-
-      <form class="form" id="quote-form" novalidate>
-        <fieldset class="q">
-          <legend id="q-job"><span class="q__num" aria-hidden="true">1</span>What do you want built?</legend>
-          <div class="chips" data-field="job">
-            <button type="button" class="chip" aria-pressed="false" data-value="Cupboards and built-ins"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Cupboards and built-ins</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Kitchen"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Kitchen</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Backyard room or flatlet"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Backyard room or flatlet</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Patio or lapa"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Patio or lapa</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Bathroom"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Bathroom</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Something else"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Something else</button>
-          </div>
-        </fieldset>
-
-        <fieldset class="q">
-          <legend><span class="q__num" aria-hidden="true">2</span>Which town?</legend>
-          <div class="chips" data-field="town">
-            <button type="button" class="chip" aria-pressed="false" data-value="Upington"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Upington</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Kimberley"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Kimberley</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Bloemfontein"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Bloemfontein</button>
-          </div>
-        </fieldset>
-
-        <fieldset class="q">
-          <legend><span class="q__num" aria-hidden="true">3</span>Rough budget?</legend>
-          <div class="chips" data-field="budget">
-            <button type="button" class="chip" aria-pressed="false" data-value="Under R10k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Under R10k</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="R10k to R30k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R10k to R30k</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="R30k to R60k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R30k to R60k</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="R60k to R100k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R60k to R100k</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="R100k+"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R100k+</button>
-          </div>
-        </fieldset>
-
-        <fieldset class="q">
-          <legend><span class="q__num" aria-hidden="true">4</span>When do you want it done? <span class="opt">(optional)</span></legend>
-          <div class="chips" data-field="timing">
-            <button type="button" class="chip" aria-pressed="false" data-value="This month"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>This month</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="In 1 to 3 months"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>In 1 to 3 months</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Later this year"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Later this year</button>
-            <button type="button" class="chip" aria-pressed="false" data-value="Just looking"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Just looking</button>
-          </div>
-        </fieldset>
-
-        <div class="field">
-          <label class="q__label" for="details"><span class="q__num" aria-hidden="true">5</span>Tell us a bit more <span class="opt">(optional)</span></label>
-          <textarea class="textarea" id="details" name="details" maxlength="600" placeholder="For example: two bedroom cupboards, about 2.4m wide each"></textarea>
-          <p class="hint">English or Afrikaans is fine.</p>
-        </div>
-
-        <div class="field">
-          <label class="q__label" for="name"><span class="q__num" aria-hidden="true">6</span>Your name</label>
-          <input class="input" id="name" name="name" type="text" autocomplete="name" required aria-required="true" maxlength="80">
-        </div>
-
-        <label class="consent" for="consent">
-          <input type="checkbox" id="consent" name="consent" required aria-required="true">
-          <span>I agree that BouReg may contact me on WhatsApp about my job and share my details with the pro doing it.</span>
-        </label>
-
-        <button type="submit" class="btn btn--primary btn--block" id="send" disabled aria-describedby="send-status">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 19.5l1.1-3.9A8 8 0 1 1 8.6 18.6z"/><path d="M9.2 8.6c.2-.5.5-.6.8-.6h.5c.2 0 .4.1.5.4l.6 1.5c.1.2 0 .5-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.5.6c.3.1.4.3.4.5v.5c0 .3-.1.6-.6.8-.5.3-1.4.4-2.4 0a8.3 8.3 0 0 1-4.6-4.6c-.4-1-.3-1.9 0-2.3z"/></svg>
-          Send to BouReg on WhatsApp
-        </button>
-        <p class="status" id="send-status" aria-live="polite"></p>
-        <p class="photos-note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2.5h6L16.5 7h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.5" r="3.5"/></svg>
-          Want to send photos? Add them in the WhatsApp chat.
-        </p>
-        <div class="sent" id="sent" role="status">
-          WhatsApp is opening with your message. Press send in the chat and BouReg has your job. If it did not open, <a id="sent-link" href="#" target="_blank" rel="noopener">tap here to open WhatsApp</a>.
-        </div>
-      </form>
     </div>
   </section>
 
@@ -922,83 +952,214 @@
     "use strict";
 
     var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+    var TOTAL = 6;          // screens 0 to 5 are questions, 6 is "nearly done"
+    var DONE = 6;
+
     var state = { job: "", town: "", budget: "", timing: "" };
+    var current = 0;
+    var animations = [];
+    var advanceTimer = null;
+
+    var hero = document.querySelector(".hero");
+    var flow = document.getElementById("quote");
     var form = document.getElementById("quote-form");
+    var steps = Array.prototype.slice.call(form.querySelectorAll(".step"));
+    var backBtn = document.getElementById("flow-back");
+    var countEl = document.getElementById("flow-count");
+    var barEl = document.getElementById("flow-bar");
     var nameInput = document.getElementById("name");
+    var phoneInput = document.getElementById("phone");
+    var suburbInput = document.getElementById("suburb");
     var detailsInput = document.getElementById("details");
     var consentInput = document.getElementById("consent");
     var sendBtn = document.getElementById("send");
     var statusEl = document.getElementById("send-status");
-    var sentEl = document.getElementById("sent");
     var sentLink = document.getElementById("sent-link");
-    var quoteSection = document.getElementById("quote");
+    var pickedEl = document.getElementById("picked");
+    var pickedJob = document.getElementById("picked-job");
 
     function waLink(text) {
       return "https://wa.me/" + WHATSAPP_NUMBER.replace(/\D/g, "") + (text ? "?text=" + encodeURIComponent(text) : "");
     }
 
-    // Header "WhatsApp us" button
     document.querySelectorAll(".js-wa-direct").forEach(function (a) {
       a.href = waLink("Hi BouReg, I'd like a free quote for a job at my home.");
     });
 
-    // Chips: single choice per group
+    /* ---------- Screen 1: details ---------- */
+
+    // South African numbers: 0821234567, 082 123 4567, +27 82 123 4567 or 27821234567
+    function cleanPhone(value) {
+      var d = value.replace(/\D/g, "");
+      if (/^27\d{9}$/.test(d)) d = "0" + d.slice(2);
+      if (!/^0\d{9}$/.test(d)) return "";
+      return d.slice(0, 3) + " " + d.slice(3, 6) + " " + d.slice(6);
+    }
+
+    var checks = [
+      { input: nameInput, test: function (v) { return v.trim().length > 1; }, msg: "Add your name so our pro knows who to ask for." },
+      { input: phoneInput, test: function (v) { return !!cleanPhone(v); }, msg: "Add a 10 digit cell number, like 082 123 4567." },
+      { input: suburbInput, test: function (v) { return v.trim().length > 1; }, msg: "Add your suburb so our pro knows where the job is." }
+    ];
+    var touched = {};
+
+    function showError(check, on) {
+      check.input.setAttribute("aria-invalid", on ? "true" : "false");
+      document.getElementById(check.input.id + "-err").textContent = on ? check.msg : "";
+    }
+
+    checks.forEach(function (check) {
+      // Errors appear after someone leaves a field, and clear as soon as it is fixed
+      check.input.addEventListener("blur", function () {
+        if (check.input.value.trim()) touched[check.input.id] = true;
+        if (touched[check.input.id]) showError(check, !check.test(check.input.value));
+      });
+      check.input.addEventListener("input", function () {
+        if (check.input.getAttribute("aria-invalid") === "true" && check.test(check.input.value)) showError(check, false);
+      });
+    });
+    phoneInput.addEventListener("blur", function () {
+      var tidy = cleanPhone(phoneInput.value);
+      if (tidy) phoneInput.value = tidy;
+    });
+
+    function detailsValid(showAll) {
+      var firstBad = null;
+      checks.forEach(function (check) {
+        var ok = check.test(check.input.value);
+        if (showAll) { touched[check.input.id] = true; showError(check, !ok); }
+        if (!ok && !firstBad) firstBad = check.input;
+      });
+      return firstBad;
+    }
+
+    function nextFromDetails() {
+      var bad = detailsValid(true);
+      if (bad) { bad.focus(); return; }
+      go(1);
+    }
+    document.getElementById("next-0").addEventListener("click", nextFromDetails);
+
+    /* ---------- Moving between screens ---------- */
+
+    function visibleStep() {
+      for (var i = 0; i < steps.length; i++) if (!steps[i].hidden) return steps[i];
+      return null;
+    }
+
+    function keepFlowInView() {
+      var top = flow.getBoundingClientRect().top;
+      var headerH = document.querySelector(".header").offsetHeight;
+      if (top < headerH || top > window.innerHeight * 0.4) {
+        flow.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      }
+    }
+
+    function updateChrome() {
+      backBtn.hidden = current === 0 || current === DONE;
+      countEl.textContent = current === DONE ? "Done" : "Step " + (current + 1) + " of " + TOTAL;
+      var progress = current === DONE ? 1 : (current + 1) / TOTAL;
+      barEl.style.transform = "scaleX(" + progress + ")";
+      // On phones the quiz takes over the top of the page, like a second page
+      hero.classList.toggle("is-quiz", current > 0);
+    }
+
+    function go(n) {
+      clearTimeout(advanceTimer);
+      if (n === current && visibleStep() === steps[n]) return;
+      var dir = n >= current ? 1 : -1;
+      animations.forEach(function (a) { a.cancel(); });
+      animations = [];
+
+      var from = visibleStep();
+      var to = steps[n];
+      current = n;
+      updateChrome();
+
+      // Forward slides left, back slides right. Leaving is quicker than arriving.
+      var shift = reduceMotion ? 0 : 16;
+      function enter() {
+        steps.forEach(function (s) { s.hidden = s !== to; });
+        keepFlowInView();
+        if (to.animate) {
+          animations.push(to.animate(
+            [{ opacity: 0, transform: "translateX(" + dir * shift + "px)" }, { opacity: 1, transform: "none" }],
+            { duration: reduceMotion ? 200 : 260, easing: EASE_OUT }
+          ));
+        }
+        var heading = to.querySelector(".step__q");
+        if (heading) heading.focus({ preventScroll: true });
+      }
+
+      if (!from || from === to || !from.animate) { enter(); return; }
+      var out = from.animate(
+        [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateX(" + -dir * shift + "px)" }],
+        { duration: 140, easing: "ease" }
+      );
+      animations.push(out);
+      out.onfinish = enter;
+    }
+
+    backBtn.addEventListener("click", function () { go(Math.max(0, current - 1)); });
+    document.getElementById("change-answers").addEventListener("click", function () { go(5); });
+
+    /* ---------- Quiz questions ---------- */
+
     function setChoice(field, value) {
       var group = form.querySelector('.chips[data-field="' + field + '"]');
-      if (!group) return null;
-      var picked = null;
+      if (!group) return;
       group.querySelectorAll(".chip").forEach(function (chip) {
-        var on = chip.getAttribute("data-value") === value;
-        chip.setAttribute("aria-pressed", on ? "true" : "false");
-        if (on) picked = chip;
+        chip.setAttribute("aria-pressed", chip.getAttribute("data-value") === value ? "true" : "false");
       });
-      state[field] = picked ? value : "";
+      state[field] = value;
       update();
-      return picked;
     }
 
     form.querySelectorAll(".chips").forEach(function (group) {
       var field = group.getAttribute("data-field");
+      var stepIndex = steps.indexOf(group.closest(".step"));
       group.addEventListener("click", function (e) {
         var chip = e.target.closest(".chip");
         if (!chip) return;
-        var value = chip.getAttribute("data-value");
-        // Tapping the chosen chip again clears it
-        setChoice(field, state[field] === value ? "" : value);
+        setChoice(field, chip.getAttribute("data-value"));
+        // Let the chip fill in before moving on, so the choice registers
+        clearTimeout(advanceTimer);
+        advanceTimer = setTimeout(function () {
+          if (current === stepIndex) go(stepIndex + 1);
+        }, reduceMotion ? 150 : 320);
       });
     });
 
-    // What's still missing
-    function missing() {
-      var m = [];
-      if (!state.job) m.push("what you want built");
-      if (!state.town) m.push("your town");
-      if (!state.budget) m.push("a budget");
-      if (!nameInput.value.trim()) m.push("your name");
-      if (!consentInput.checked) m.push("the tick box");
-      return m;
-    }
-
-    function joinList(items) {
-      if (items.length < 2) return items.join("");
-      return items.slice(0, -1).join(", ") + " and " + items[items.length - 1];
-    }
+    form.querySelectorAll("[data-next]").forEach(function (btn) {
+      btn.addEventListener("click", function () { go(Number(btn.getAttribute("data-next"))); });
+    });
 
     function update() {
-      var m = missing();
-      sendBtn.disabled = m.length > 0;
-      if (m.length) {
-        statusEl.textContent = "Still needed: " + joinList(m) + ".";
-        statusEl.classList.remove("is-ready");
-      } else {
+      // "Next" appears on a question once it has an answer, for people who come back with Back
+      form.querySelectorAll(".js-step-next").forEach(function (btn) {
+        btn.hidden = !state[btn.getAttribute("data-field")];
+      });
+      pickedEl.hidden = !state.job;
+      pickedJob.textContent = state.job;
+
+      var ready = consentInput.checked && state.job && state.town && state.budget && !detailsValid(false);
+      sendBtn.disabled = !ready;
+      if (ready) {
         statusEl.textContent = "All set. Tap the button to open WhatsApp.";
         statusEl.classList.add("is-ready");
+      } else {
+        statusEl.textContent = consentInput.checked ? "Some answers are missing. Tap Back to check them." : "Tick the box so we can send your job.";
+        statusEl.classList.remove("is-ready");
       }
     }
+    consentInput.addEventListener("change", update);
 
     function buildMessage() {
       var details = detailsInput.value.trim().replace(/\s+/g, " ");
       return "Hi BouReg, I'm " + nameInput.value.trim().replace(/\s+/g, " ") +
+        ". Number: " + (cleanPhone(phoneInput.value) || phoneInput.value.trim()) +
+        ". Suburb: " + suburbInput.value.trim().replace(/\s+/g, " ") +
         ". I want: " + state.job +
         ". Town: " + state.town +
         ". Budget: " + state.budget +
@@ -1006,72 +1167,73 @@
         ". More: " + (details || "Nothing extra");
     }
 
-    nameInput.addEventListener("input", update);
-    consentInput.addEventListener("change", update);
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (missing().length) { update(); return; }
+    function send() {
+      update();
+      if (sendBtn.disabled) return;
       var url = waLink(buildMessage());
       sentLink.href = url;
-      sentEl.classList.add("is-on");
+      go(DONE);
       var w = window.open(url, "_blank");
       if (w) { try { w.opener = null; } catch (err) {} }
       else { window.location.href = url; }
+    }
+
+    // Enter on screen 1 moves on; the submit button sends
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (current === 0) nextFromDetails();
+      else if (current === 5) send();
     });
 
-    // Expose for testing in the console: BouReg.buildUrl()
     window.BouReg = { buildUrl: function () { return waLink(buildMessage()); } };
 
-    // Smooth scroll to the form
+    /* ---------- Links into the flow ---------- */
+
     function goToQuote() {
-      quoteSection.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      flow.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    }
+
+    function onArrival(fn) {
+      var headerH = document.querySelector(".header").offsetHeight;
+      if (reduceMotion || Math.abs(flow.getBoundingClientRect().top - headerH - 16) < 4) { goToQuote(); fn(); return; }
+      var done = false;
+      function run() {
+        if (done) return;
+        done = true;
+        window.removeEventListener("scrollend", run);
+        fn();
+      }
+      window.addEventListener("scrollend", run);
+      setTimeout(run, "onscrollend" in window ? 1500 : 700);
+      goToQuote();
     }
 
     document.querySelectorAll(".js-to-quote").forEach(function (a) {
       a.addEventListener("click", function (e) {
         e.preventDefault();
-        goToQuote();
+        onArrival(function () {
+          var heading = visibleStep() && visibleStep().querySelector(".step__q");
+          if (heading) heading.focus({ preventScroll: true });
+        });
       });
     });
 
-    // "What we build" cards: scroll to the form, then fill in the chosen job as the person arrives,
-    // so they see exactly what their tap did.
-    function pickJobOnArrival(value) {
-      var chip = form.querySelector('.chips[data-field="job"] .chip[data-value="' + value + '"]');
-      if (!chip) return;
-      chip.focus({ preventScroll: true });
-
-      var target = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-      var alreadyThere = Math.abs(quoteSection.getBoundingClientRect().top - target) < 4;
-      if (reduceMotion || alreadyThere) {
-        setChoice("job", value);
-        goToQuote();
-        return;
-      }
-
-      var done = false;
-      function apply() {
-        if (done) return;
-        done = true;
-        window.removeEventListener("scrollend", apply);
-        setChoice("job", value);
-      }
-      window.addEventListener("scrollend", apply);
-      // Backup for browsers without scrollend, or if the scroll is cut short
-      setTimeout(apply, "onscrollend" in window ? 1500 : 700);
-      goToQuote();
-    }
-
+    // "What we build" cards: scroll up to the quote, then fill in the job as the person arrives
     document.querySelectorAll(".js-pick-job").forEach(function (card) {
       card.addEventListener("click", function () {
-        pickJobOnArrival(card.getAttribute("data-job"));
+        var value = card.getAttribute("data-job");
+        onArrival(function () {
+          setChoice("job", value);
+          if (current === 0) nameInput.focus({ preventScroll: true });
+          else if (current === 1) advanceTimer = setTimeout(function () { go(2); }, 400);
+        });
       });
     });
 
     // iPhone Safari only shows :active press styles when a touch listener exists
     document.addEventListener("touchstart", function () {}, { passive: true });
 
+    updateChrome();
     update();
 
     var yearEl = document.getElementById("year");
@@ -1088,21 +1250,20 @@
       header.classList.toggle("is-scrolled", !entries[0].isIntersecting);
     }).observe(document.querySelector(".scroll-sentinel"));
 
-    // Mobile sticky bar hides while the form is on screen
+    // Mobile sticky bar hides while the quote card is on screen
     var mbar = document.getElementById("mbar");
     new IntersectionObserver(function (entries) {
       var onScreen = entries[0].isIntersecting;
       mbar.classList.toggle("is-hidden", onScreen);
       mbar.setAttribute("aria-hidden", onScreen ? "true" : "false");
       mbar.querySelector("a").tabIndex = onScreen ? -1 : 0;
-    }, { threshold: 0, rootMargin: "0px 0px -80px 0px" }).observe(quoteSection);
+    }, { threshold: 0, rootMargin: "0px 0px -80px 0px" }).observe(flow);
 
     // Small fade in as sections enter the screen, 50ms apart inside a group
     document.querySelectorAll(".cards, .checks").forEach(function (group) {
       Array.prototype.forEach.call(group.children, function (el, i) { el.style.setProperty("--i", i); });
     });
     function settle(el) {
-      // Once faded in, drop the reveal styles so the element's own press and hover transitions apply
       el.removeAttribute("data-reveal");
       el.classList.remove("is-in");
       el.style.removeProperty("--i");
