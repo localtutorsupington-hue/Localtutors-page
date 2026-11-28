@@ -8,7 +8,8 @@ title: "Die middeljare: wat *gebeur* met my liggaam?"
 slug: "middeljare"
 category: "gesondheid"
 date: 2026-11-12
-summary: "Warm gloede, swak slaap, buie wat wissel. Hier is 'n eenvoudige gids tot die perimenopouse en menopouse, en wanneer om hulp te vra."
+summary: "As jy 'n vrou in jou veertigs of vyftigs is, en jy sukkel met warm gloede, swak slaap of buie wat wissel, is hierdie vir jou. Hier is wat in jou liggaam gebeur, en wanneer om hulp te vra."
+leesVerder: "Lees verder"
 image: ""
 leestyd: 4
 omslag: "Middeljare"

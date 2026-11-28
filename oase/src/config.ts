@@ -3,7 +3,7 @@
  * Verander net die waardes tussen die aanhalingstekens "...".
  * Laat 'n waarde leeg ("") as jy dit nog nie het nie.
  */
-export const KONTROLE_URL = ""; // Skakel na jou kontrole-bladsy, bv. "https://oase.co.za/kontrole". Leeg = WhatsApp word gebruik.
+export const KONTROLE_URL = "/kontrole/"; // Die gratis kontrole op die webwerf self. Leeg = WhatsApp word gebruik.
 export const WHATSAPP = "27697635055"; // Net syfers, met 27 voor, sonder 0 of +.
 export const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61596962033795"; // Skakel na die Oase Facebook-bladsy.
 export const PRAKTISYN_URL = ""; // Skakel vir gesondheidswerkers wat by Oase wil aansluit. Leeg = skakel word versteek.

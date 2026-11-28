@@ -20,6 +20,7 @@ const artikels = defineCollection({
       .min(1, "Elke artikel moet ten minste een bron hê."),
     nagegaan: z.coerce.date().optional(),
     cta: z.enum(["kontrole", "toets"]).optional().default("kontrole"),
+    leesVerder: z.string().optional(),
   }),
 });
 

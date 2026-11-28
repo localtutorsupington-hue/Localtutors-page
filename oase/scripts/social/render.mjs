@@ -10,6 +10,7 @@ const uit = path.resolve(hier, "../../public/images/artikels");
 const kaarte = [
   { html: "fb.html", png: "te-gemaklik-fb.png", width: 1080, height: 1350 },
   { html: "og.html", png: "te-gemaklik-og.png", width: 1200, height: 630 },
+  { html: "middeljare-fb.html", png: "middeljare-fb.png", width: 1080, height: 1350 },
 ];
 
 const browser = await chromium.launch();
@@ -21,7 +22,7 @@ for (const k of kaarte) {
   // Kyk of die teks binne die kaart pas.
   const oorloop = await page.evaluate(() => {
     const k = document.querySelector(".kaart").getBoundingClientRect();
-    return [...document.querySelectorAll("h1, .etiket, .merk, .leuse")].some((el) => {
+    return [...document.querySelectorAll("h1, .etiket, .merk, .leuse, .oproep, .simptome")].some((el) => {
       const r = el.getBoundingClientRect();
       return r.left < k.left || r.right > k.right || r.top < k.top || r.bottom > k.bottom || el.scrollWidth > el.clientWidth + 1;
     });
