@@ -1,0 +1,399 @@
+---
+// Gratis gesondheidskontrole (Oase). Eie volskerm-bladsy, sonder die webwerf se kop- en voetstuk.
+// Alle "Gratis kontrole"-knoppies op die webwerf wys hierheen met ?bron=<bladsy>.
+import "@fontsource/instrument-serif/latin-400.css";
+import "@fontsource/instrument-serif/latin-400-italic.css";
+import "@fontsource/dm-sans/latin-400.css";
+import "@fontsource/dm-sans/latin-500.css";
+import "@fontsource/dm-sans/latin-600.css";
+import { SITE_URL, WHATSAPP } from "../config";
+const kanoniek = new URL("/kontrole/", SITE_URL);
+---
+<!doctype html>
+<html lang="af">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FBF8F3">
+<title>Gratis gesondheidskontrole vir vroue · Oase</title>
+<meta name="description" content="Gratis 2-minuut kontrole. Sien watter gesondheidskontroles dalk tyd is en kry die vrae om by jou afspraak te vra.">
+<link rel="canonical" href={kanoniek}>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oase">
+<meta property="og:locale" content="af_ZA">
+<meta property="og:title" content="Wanneer was jou laaste kontrole?">
+<meta property="og:description" content="Gratis 2-minuut gesondheidskontrole vir vroue. Algemene inligting, nie mediese advies nie.">
+<meta property="og:url" content={kanoniek}>
+<style is:global>
+:root{
+  --surface:#FBF8F3;--sand:#F1E7D8;--ink:#2B211C;--muted:#6B5A4F;--hair:#D9CDBB;
+  --oase:#1E5B4D;--aarde:#B8502F;--goud:#F2B544;--roos:#F2D2C8;
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --ease-io:cubic-bezier(.77,0,.175,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--surface);color:var(--ink)}
+body{font-family:"DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;-webkit-tap-highlight-color:transparent}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+.wrap{max-width:440px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 22px max(28px,env(safe-area-inset-bottom));min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;justify-content:space-between;align-items:center;height:40px}
+.wm{font-family:"Instrument Serif",serif;font-size:26px;color:var(--oase);display:flex;align-items:baseline;gap:2px}
+.wm i{width:.2em;height:.2em;border-radius:50%;background:var(--goud);display:inline-block}
+.pill{display:inline-block;font-style:italic;border-radius:999px;padding:0 .26em .06em;line-height:1.05}
+.screen{flex:1;display:flex;flex-direction:column}
+.screen[hidden]{display:none}
+.enter{animation:enter .32s var(--ease-out) both}
+@keyframes enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Landing (layout 2) */
+.land{text-align:center;padding-top:18px}
+.callout{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--aarde);margin-bottom:16px}
+.land h1{font-size:48px;line-height:1;letter-spacing:-.01em;text-wrap:balance}
+.land .sub{font-size:17px;line-height:1.45;color:var(--muted);margin:14px auto 0;max-width:340px;text-wrap:pretty}
+.gift{display:flex;gap:16px;align-items:center;text-align:left;margin:26px 0;background:#fff;border:1px solid var(--hair);border-radius:20px;padding:14px;box-shadow:0 12px 30px -18px rgba(43,33,28,.25)}
+.cover{position:relative;flex:none;width:112px;height:150px;border-radius:12px;background:var(--oase);color:var(--surface);padding:12px 10px;display:flex;flex-direction:column;overflow:hidden;transform:rotate(-3deg);box-shadow:0 10px 20px -10px rgba(30,91,77,.6)}
+.cover .sun{position:absolute;width:64px;height:64px;border-radius:50%;background:var(--goud);right:-20px;bottom:-20px}
+.cover .ck{position:relative;font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--goud)}
+.cover .ct{position:relative;margin-top:auto;font-family:"Instrument Serif",serif;font-size:18px;line-height:1}
+.cover .ct em{font-style:italic;background:var(--goud);color:var(--ink);border-radius:99px;padding:0 .2em}
+.cover .cb{position:relative;margin-top:8px;font-family:"Instrument Serif",serif;font-size:13px}
+.gets{list-style:none;display:flex;flex-direction:column;gap:9px}
+.gets li{font-size:14.5px;line-height:1.35;padding-left:22px;position:relative}
+.gets li:before{content:"";position:absolute;left:0;top:4px;width:14px;height:14px;border-radius:50%;background:var(--roos)}
+.gets li:after{content:"";position:absolute;left:4px;top:7px;width:5px;height:3px;border-left:1.6px solid var(--aarde);border-bottom:1.6px solid var(--aarde);transform:rotate(-45deg)}
+.teaser{margin:26px auto 26px;width:100%;max-width:300px;background:#fff;border:1px solid var(--hair);border-radius:20px;padding:16px 16px 14px;text-align:left;box-shadow:0 1px 0 rgba(43,33,28,.04),0 12px 30px -18px rgba(43,33,28,.25)}
+.teaser .t{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.tbar{display:flex;align-items:center;gap:10px;margin:7px 0}
+.tbar span{font-size:13px;font-weight:500;width:104px;flex:none}
+.tbar b{display:block;height:8px;border-radius:99px;background:var(--sand);flex:1;overflow:hidden;position:relative}
+.tbar b i{position:absolute;inset:0;border-radius:99px;transform-origin:left;transform:scaleX(var(--w));transition:transform .9s var(--ease-out)}
+form{display:flex;flex-direction:column;gap:10px;text-align:left}
+label{font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:5px}
+input{width:100%;font:inherit;font-size:17px;padding:15px 16px;border-radius:14px;border:1.5px solid var(--hair);background:#fff;color:var(--ink);outline:none;transition:border-color .16s var(--ease-out),box-shadow .16s var(--ease-out)}
+input:focus{border-color:var(--oase);box-shadow:0 0 0 4px rgba(30,91,77,.12)}
+input.bad{border-color:var(--aarde)}
+.err{font-size:13px;color:var(--aarde);min-height:0;margin-top:4px}
+.btn{appearance:none;border:0;font:inherit;font-size:17px;font-weight:600;width:100%;padding:17px 18px;border-radius:14px;background:var(--oase);color:var(--surface);cursor:pointer;transition:transform .16s var(--ease-out),background-color .16s var(--ease-out);touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn.goud{background:var(--goud);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--oase);border:1.5px solid var(--oase)}
+@media (hover:hover) and (pointer:fine){.btn:hover{background:#174a3e}.btn.goud:hover{background:#eaa92f}.btn.ghost:hover{background:rgba(30,91,77,.06)}}
+.send .lbl{display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:filter .14s ease,opacity .14s ease}
+.send .lbl.blur{filter:blur(2px);opacity:.5}
+.btn.send.done,.btn.send.done:hover{background:var(--oase);color:var(--surface)}
+.send[aria-busy]{cursor:progress}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;color:var(--muted);font-weight:500;margin:2px 0 4px;cursor:pointer}
+.chk input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--oase);padding:0}
+.fine{font-size:12.5px;line-height:1.45;color:var(--muted);text-align:center;margin-top:12px;text-wrap:pretty}
+
+/* Quiz */
+.qhead{display:flex;align-items:center;gap:12px;margin:6px 0 26px}
+.back{appearance:none;border:0;background:var(--sand);width:38px;height:38px;border-radius:50%;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;transition:transform .16s var(--ease-out),opacity .16s}
+.back:active{transform:scale(.92)}
+.back[disabled]{opacity:0;pointer-events:none}
+.prog{flex:1;height:6px;background:var(--sand);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--oase);border-radius:99px;transform-origin:left;transform:scaleX(0);transition:transform .35s var(--ease-out)}
+.count{font-size:13px;font-weight:600;color:var(--muted);flex:none;width:44px;text-align:right}
+.qlab{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--aarde);margin-bottom:10px}
+.q{font-size:30px;line-height:1.12;letter-spacing:-.005em;text-wrap:pretty;margin-bottom:24px;min-height:2.3em}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:auto;margin-bottom:8px}
+.opt{appearance:none;font:inherit;text-align:left;font-size:17px;font-weight:500;padding:16px 18px;border-radius:14px;border:1.5px solid var(--hair);background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:12px;transition:transform .14s var(--ease-out),border-color .14s var(--ease-out),background-color .14s var(--ease-out);touch-action:manipulation}
+.opt:active{transform:scale(.98)}
+.opt .dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--hair);flex:none;display:flex;align-items:center;justify-content:center;transition:border-color .14s,background-color .14s}
+.opt .dot:after{content:"";width:8px;height:8px;border-radius:50%;background:var(--surface);transform:scale(0.4);opacity:0;transition:transform .18s var(--ease-out),opacity .18s}
+.opt.on{border-color:var(--oase);background:#F3F7F5}
+.opt.on .dot{border-color:var(--oase);background:var(--oase)}
+.opt.on .dot:after{transform:scale(1);opacity:1}
+@media (hover:hover) and (pointer:fine){.opt:hover{border-color:#b9ad9a}}
+.swap{animation:swap .26s var(--ease-out) both}
+@keyframes swap{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+.swapb{animation:swapb .26s var(--ease-out) both}
+@keyframes swapb{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+
+/* Loading */
+.load{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px}
+.breath{width:76px;height:76px;border-radius:50%;background:var(--goud);animation:breath 2.4s var(--ease-io) infinite}
+@keyframes breath{0%,100%{transform:scale(.82);opacity:.75}50%{transform:scale(1);opacity:1}}
+.load p{font-size:22px}
+
+/* Results */
+.res .kicker{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:10px 0 8px}
+.res h2{font-size:46px;line-height:1;letter-spacing:-.01em}
+.res .one{font-size:19px;color:var(--muted);margin-top:8px}
+.card{border-radius:20px;padding:18px 18px;margin-top:16px}
+.card h3{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.card p{font-size:16px;line-height:1.55}
+.bars .tbar span{width:128px;font-size:14px}
+.bars .tbar em{font-style:normal;font-size:12px;font-weight:600;color:var(--muted);width:46px;text-align:right;flex:none}
+ol.help{list-style:none;counter-reset:h;display:flex;flex-direction:column;gap:12px}
+ol.help li{counter-increment:h;position:relative;padding-left:38px;font-size:16px;line-height:1.5}
+ol.help li:before{content:counter(h);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--oase);color:var(--surface);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+ol.help li b{font-weight:600}
+.tonight{background:var(--goud);color:var(--ink)}
+.cta{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.helpline{font-size:13px;line-height:1.5;color:var(--muted);margin-top:22px;padding-top:16px;border-top:1px solid var(--hair)}
+.helpline b{color:var(--ink)}
+.stagger>*{animation:enter .45s var(--ease-out) both}
+.stagger>*:nth-child(2){animation-delay:.05s}.stagger>*:nth-child(3){animation-delay:.1s}.stagger>*:nth-child(4){animation-delay:.15s}.stagger>*:nth-child(5){animation-delay:.2s}.stagger>*:nth-child(6){animation-delay:.25s}.stagger>*:nth-child(n+7){animation-delay:.3s}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+:focus-visible{outline:3px solid var(--goud);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition-duration:.01ms!important}}
+/* Kontrole */
+.land h1{font-size:46px}
+.opt.multi .dot{border-radius:7px}
+.opt.multi .dot:after{border-radius:3px}
+.opts.chips{flex-direction:row;flex-wrap:wrap;margin-top:0}
+.opts.chips .opt{padding:12px 16px;font-size:16px;border-radius:999px;gap:8px}
+.opts.chips .opt .dot{display:none}
+.opts.chips .opt.on{background:var(--oase);color:var(--surface);border-color:var(--oase)}
+.nextwrap{margin-top:auto;padding-top:18px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.res h2{font-size:42px}
+.chk-card{background:#fff;border:1px solid var(--hair);border-radius:20px;padding:16px 16px 14px;margin-top:12px}
+.chk-card .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.chk-card h3{font-family:"DM Sans",sans-serif;font-size:17px;font-weight:600;letter-spacing:0;text-transform:none;margin:0}
+.badge{font-size:11.5px;font-weight:600;letter-spacing:.04em;border-radius:99px;padding:5px 10px;white-space:nowrap;flex:none}
+.badge.due{background:var(--goud);color:var(--ink)}
+.badge.ok{background:#E3EEE9;color:var(--oase)}
+.badge.ask{background:var(--roos);color:#7A3320}
+.chk-card p{font-size:14.5px;line-height:1.5;color:var(--muted);margin-top:8px}
+.chk-card .qs{margin-top:10px;padding-top:10px;border-top:1px dashed var(--hair)}
+.chk-card .qs b{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--aarde);margin-bottom:6px}
+.chk-card .qs li{font-size:14.5px;line-height:1.45;margin:0 0 6px 18px}
+.chk-card.small{padding:12px 16px}
+.chk-card.small p{margin-top:4px}
+.help-card{background:var(--sand);border-radius:20px;padding:18px;margin-top:18px}
+.help-card h3{font-family:"Instrument Serif",serif;font-weight:400;font-size:28px;line-height:1.05;letter-spacing:0;text-transform:none;margin-bottom:6px}
+.help-card .lead{font-size:15px;line-height:1.5;color:var(--muted);margin-bottom:12px}
+.pick{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+.pick label{display:flex;gap:10px;align-items:center;margin:0;font-size:15.5px;font-weight:500;color:var(--ink);background:#fff;border:1.5px solid var(--hair);border-radius:12px;padding:12px 14px;cursor:pointer}
+.pick input{width:20px;height:20px;accent-color:var(--oase);padding:0;flex:none}
+.noodlyn{font-size:13px;line-height:1.5;color:var(--muted);margin-top:18px;padding-top:14px;border-top:1px solid var(--hair)}
+.noodlyn b{color:var(--ink)}
+.pick small{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:1px}
+a.wm{text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><a class="wm" href="/" aria-label="Oase, terug na die tuisblad">Oase<i></i></a></header>
+
+  <!-- LANDING -->
+  <main class="screen land" id="s-land">
+    <div class="callout">Gratis &middot; 2 minute &middot; Vir vroue</div>
+    <h1 class="serif">Wanneer was jou laaste <span class="pill" style="background:var(--goud)">kontrole</span>?</h1>
+    <p class="sub">Beantwoord 7 vinnige vrae. Ons wys jou watter kontroles dalk tyd is, en gee jou die vrae om by jou afspraak te vra.</p>
+    <div class="gift" aria-hidden="true">
+      <div class="cover"><i class="sun"></i><span class="ck">Gratis gids</span><span class="ct">Jou Afspraak <em>Gids</em></span><span class="cb">Oase</span></div>
+      <ul class="gets"><li><b>Jou kontroles</b> in een lys</li><li><b>Vrae</b> om by jou dokter te vra</li><li><b>Hulp</b> met 'n afspraak, as jy dit wil</li></ul>
+    </div>
+    <form id="f" novalidate>
+      <div><label for="naam">Jou naam</label><input id="naam" autocomplete="given-name" placeholder="bv. Marlene"><div class="err" id="e-naam"></div></div>
+      <div><label for="nr">Jou WhatsApp-nommer</label><input id="nr" type="tel" inputmode="tel" autocomplete="tel" placeholder="bv. 082 123 4567"><div class="err" id="e-nr"></div></div>
+      <label class="chk"><input type="checkbox" id="ok1"><span>Ek gee toestemming dat Oase my antwoorde gebruik om my gids op te stel. Dis privaat en gaan nêrens heen sonder my toestemming nie.</span></label>
+      <div class="err" id="e-ok1"></div>
+      <label class="chk"><input type="checkbox" id="ok2"><span>Ja, Oase mag my af en toe wenke stuur. Ek kan enige tyd "stop" sê. (Opsioneel)</span></label>
+      <button class="btn" type="submit">Begin my gratis kontrole</button>
+      <p class="fine">Algemene inligting, nie mediese advies of 'n diagnose nie. Jy betaal niks. Oase is gratis vir jou.</p>
+    </form>
+  </main>
+
+  <!-- KONTROLE -->
+  <section class="screen" id="s-quiz" hidden>
+    <div class="qhead"><button class="back" id="back" aria-label="Terug" disabled><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B211C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="prog"><i id="bar"></i></div><div class="count" id="cnt">1/7</div></div>
+    <div id="qwrap" class="swap"></div>
+  </section>
+
+  <!-- LAAI -->
+  <section class="screen" id="s-load" hidden><div class="load"><div class="breath"></div><p class="serif">Ons stel jou gids op&hellip;</p></div></section>
+
+  <!-- UITSLAG -->
+  <section class="screen res" id="s-res" hidden></section>
+</div>
+
+<script is:inline define:vars={{ OASE_WHATSAPP_NR: WHATSAPP }}>window.OASE_WHATSAPP = OASE_WHATSAPP_NR;</script>
+<script is:inline>
+/* ============ STEL HIER IN ============ */
+const CONFIG = {
+  WHATSAPP: window.OASE_WHATSAPP || "27697635055",          // Oase WhatsApp (uit src/config.ts)
+  FORM_ENDPOINT: "https://formsubmit.co/ajax/[JOU-EPOS]",   // stil e-pos rugsteun (FormSubmit). Los so om af te skakel.
+  VRA_GPS: false
+};
+/* ====================================== */
+
+const AGE=["Onder 30","30 tot 39","40 tot 49","50 tot 59","60 of ouer"];
+const TOPICS=["Slaap","Energie","Gewig en kos","Middeljare-veranderinge","Stres","Net my kontroles"];
+const CHECKS={
+  gp:{name:"Algemene dokter",who:"dokter",
+    q:"Wanneer het jy laas 'n gesondheidskontrole by 'n dokter gehad? (bloeddruk, bloedsuiker, cholesterol)",
+    opts:["Binne die laaste jaar","1 tot 2 jaar gelede","Meer as 2 jaar gelede","Nog nooit, of ek onthou nie"],
+    status:i=>i===0?"ok":"due",
+    why:"'n Jaarlikse kontrole kyk na dinge soos bloeddruk, bloedsuiker en cholesterol. Hierdie dinge wys dikwels geen tekens nie.",
+    ask:["Watter toetse moet ek hierdie jaar doen?","Wat is my bloeddruk en cholesterol, en wat beteken dit?"],
+    okmsg:"Jy het dit binne die laaste jaar gedoen. Boekmerk dit vir volgende jaar."},
+  pap:{name:"Pap-uitstryk",who:"dokter of ginekoloog",
+    q:"Wanneer het jy laas 'n Pap-uitstryk gehad?",
+    opts:["Binne die laaste 3 jaar","Meer as 3 jaar gelede","Nog nooit, of ek onthou nie","Nie vir my van toepassing nie"],
+    status:i=>i===0?"ok":(i===3?"skip":"due"),
+    why:"'n Pap-uitstryk soek vroeë selveranderinge by die baarmoedermond. CANSA raai 'n toets ten minste elke 3 jaar, vanaf 25.",
+    ask:["Moet ek 'n Pap-uitstryk, 'n HPV-toets, of albei hê?","Hoe gereeld moet ek getoets word?"],
+    okmsg:"Jy is binne die 3-jaar-riglyn."},
+  mammo:{name:"Mammogram",who:"dokter of radioloog",
+    q:"Wanneer het jy laas 'n mammogram gehad?",
+    opts:["Binne die laaste jaar","1 tot 2 jaar gelede","Meer as 2 jaar gelede","Nog nooit"],
+    status:i=>i===0?"ok":(i===1?"ask":"due"),
+    why:"CANSA raai 'n mammogram elke jaar vanaf 40. Baie mediese skemas dek een elke 2 jaar. Jou dokter weet wat vir jou pas.",
+    ask:["Hoe gereeld moet ek 'n mammogram hê?","Moet ek ook my borste laat ondersoek?"],
+    okmsg:"Jy het een binne die laaste jaar gehad."},
+  tand:{name:"Tandarts",who:"tandarts",
+    q:"Wanneer was jy laas by die tandarts?",
+    opts:["Binne 6 maande","6 tot 12 maande gelede","Meer as 'n jaar gelede","Meer as 2 jaar gelede, of nooit"],
+    status:i=>i<=1?"ok":"due",
+    why:"Baie tandartse raai 'n kontrole elke 6 tot 12 maande. Klein probleme is makliker en goedkoper om vroeg reg te maak.",
+    ask:["Moet ek 'n skoonmaak en X-strale hê?","Hoe lyk my tandvleis?"],
+    okmsg:"Jy is op datum."},
+  oog:{name:"Oogtoets",who:"optometris",
+    q:"Wanneer het jy laas jou oë laat toets?",
+    opts:["Binne 2 jaar","2 tot 4 jaar gelede","Meer as 4 jaar gelede, of nooit"],
+    status:i=>i===0?"ok":"due",
+    why:"'n Oogtoets kyk na jou sig en die gesondheid van jou oë. Rondom 40 verander baie mense se sig.",
+    ask:["Het my sig verander?","Moet my oë ook vir oogdruk getoets word?"],
+    okmsg:"Jy is op datum."}
+};
+
+const st={name:"",phone:"",ok1:false,ok2:false,age:null,ans:{},topics:[],i:0,share:false,pick:[],due:[]};
+const $=s=>document.querySelector(s);
+const show=id=>{["s-land","s-quiz","s-load","s-res"].forEach(x=>$("#"+x).hidden=x!==id);const el=$("#"+id);el.classList.remove("enter");void el.offsetWidth;el.classList.add("enter");window.scrollTo(0,0)};
+const configured=v=>v&&!/\[/.test(v);
+function send(p){if(!configured(CONFIG.FORM_ENDPOINT))return;try{fetch(CONFIG.FORM_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(p),keepalive:true}).catch(()=>{})}catch(e){}}
+
+const params=new URLSearchParams(location.search);
+const BRON=params.get("bron")||params.get("utm_source")||(document.referrer?(()=>{try{return new URL(document.referrer).hostname}catch(e){return"direk"}})():"direk");
+let GEO={dorp:"",provinsie:"",land:"",bron:"onbekend"};
+async function getJSON(url,ms=4000){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);try{const r=await fetch(url,{signal:c.signal});clearTimeout(t);return r.ok?await r.json():null}catch(e){clearTimeout(t);return null}}
+const BDC="https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en";
+function fromBDC(j,bron){if(!j||!(j.city||j.locality))return null;return{dorp:j.city||j.locality,provinsie:j.principalSubdivision||"",land:j.countryName||"",bron}}
+async function ipGeo(){
+  const a=fromBDC(await getJSON(BDC),"IP-skatting");if(a)return a;
+  const j=await getJSON("https://ipwho.is/?fields=success,city,region,country");
+  if(j&&j.success!==false&&j.city)return{dorp:j.city,provinsie:j.region||"",land:j.country||"",bron:"IP-skatting"};
+  return null;
+}
+function gpsGeo(){return new Promise(res=>{if(!navigator.geolocation)return res(null);navigator.geolocation.getCurrentPosition(async p=>{const{latitude:la,longitude:lo,accuracy:ac}=p.coords;const g=fromBDC(await getJSON(BDC+"&latitude="+la+"&longitude="+lo),"GPS");if(g){g.koord=la.toFixed(5)+","+lo.toFixed(5);g.akkuraatheid=Math.round(ac)+"m";res(g)}else res(null)},()=>res(null),{enableHighAccuracy:true,timeout:7000,maximumAge:60000})})}
+/* Die dorp word eers opgesoek nadat sy toestemming gegee het (sien die vorm hieronder). */
+
+function normPhone(v){const d=v.replace(/[^\d+]/g,"");if(/^\+27\d{9}$/.test(d))return d;if(/^27\d{9}$/.test(d))return"+"+d;if(/^0\d{9}$/.test(d))return"+27"+d.slice(1);return null}
+function lead(){return{naam:st.name,whatsapp:st.phone,dorp:GEO.dorp||"onbekend",provinsie:GEO.provinsie||"",ligging_bron:GEO.bron,...(GEO.koord?{koordinate:GEO.koord}:{}),toestemming_antwoorde:st.ok1?"Ja":"Nee",bemarking_toestemming:st.ok2?"Ja":"Nee",bron:BRON,tyd:new Date().toISOString()}}
+
+/* Landing */
+$("#f").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const name=$("#naam").value.trim(),ph=normPhone($("#nr").value.trim());
+  $("#naam").classList.toggle("bad",!name);$("#nr").classList.toggle("bad",!ph);
+  $("#e-naam").textContent=name?"":"Wat is jou naam?";
+  $("#e-nr").textContent=ph?"":"Gebruik 'n SA-nommer, bv. 082 123 4567";
+  const ok=$("#ok1").checked;$("#e-ok1").textContent=ok?"":"Ons het jou toestemming nodig om jou gids op te stel.";
+  if(!name||!ph||!ok)return;
+  st.name=name;st.phone=ph;st.ok1=true;st.ok2=$("#ok2").checked;
+  ipGeo().then(g=>{if(g&&GEO.bron!=="GPS")GEO=g});
+  if(CONFIG.VRA_GPS){const g=await gpsGeo();if(g)GEO=g}
+  send({_subject:"Oase kontrole: nuwe lead ("+name+", "+(GEO.dorp||"dorp onbekend")+")",_template:"table",stap:"1. Besonderhede",...lead()});
+  st.i=0;render(1);show("s-quiz");
+});
+
+/* Vrae */
+function steps(){const s=["age","gp","pap"];if(st.age!==null&&st.age>=2)s.push("mammo");s.push("tand","oog","topics");return s}
+function render(dir){
+  const S=steps(),key=S[st.i],total=S.length;
+  $("#cnt").textContent=(st.i+1)+"/"+total;$("#bar").style.transform="scaleX("+((st.i+1)/total)+")";$("#back").disabled=st.i===0;
+  let h="";
+  if(key==="age"){
+    h=`<div class="qlab">Eers, oor jou</div><h2 class="q serif">Hoe oud is jy?</h2><div class="opts">`+AGE.map((o,i)=>`<button class="opt ${st.age===i?"on":""}" data-i="${i}"><span class="dot"></span>${o}</button>`).join("")+`</div>`;
+  }else if(key==="topics"){
+    h=`<div class="qlab">Nog een ding</div><h2 class="q serif">Waaroor sal jy graag meer wil weet?</h2><p class="sub" style="margin:-8px 0 18px;text-align:left;font-size:15px">Kies so veel as wat jy wil.</p><div class="opts chips">`+TOPICS.map((o,i)=>`<button class="opt multi ${st.topics.includes(o)?"on":""}" data-t="${i}">${o}</button>`).join("")+`</div><div class="nextwrap"><button class="btn goud" id="done">Wys my gids</button></div>`;
+  }else{
+    const c=CHECKS[key];
+    h=`<div class="qlab">${c.name}</div><h2 class="q serif">${c.q}</h2><div class="opts">`+c.opts.map((o,i)=>`<button class="opt ${st.ans[key]===i?"on":""}" data-i="${i}"><span class="dot"></span>${o}</button>`).join("")+`</div>`;
+  }
+  const w=$("#qwrap");w.className=dir<0?"swapb":"swap";w.innerHTML=h;void w.offsetWidth;
+  w.querySelectorAll(".opt[data-i]").forEach(b=>b.onclick=()=>pickOne(key,+b.dataset.i,b));
+  w.querySelectorAll(".opt[data-t]").forEach(b=>b.onclick=()=>{const t=TOPICS[+b.dataset.t];const k=st.topics.indexOf(t);if(k>-1)st.topics.splice(k,1);else st.topics.push(t);b.classList.toggle("on")});
+  const d=$("#done");if(d)d.onclick=finish;
+}
+function pickOne(key,i,btn){
+  if(key==="age")st.age=i;else st.ans[key]=i;
+  btn.parentElement.querySelectorAll(".opt").forEach(x=>x.classList.remove("on"));btn.classList.add("on");
+  setTimeout(()=>{st.i++;render(1)},220);
+}
+$("#back").onclick=()=>{if(st.i>0){st.i--;render(-1)}};
+
+/* Evalueer */
+function evaluate(){
+  const out=[];
+  Object.keys(CHECKS).forEach(k=>{
+    if(k==="mammo"&&!(st.age>=2))return;
+    const i=st.ans[k];if(i===undefined)return;
+    const s=CHECKS[k].status(i);if(s==="skip")return;
+    out.push({k,s});
+  });
+  const rank={due:0,ask:1,ok:2};out.sort((a,b)=>rank[a.s]-rank[b.s]);
+  return out;
+}
+function finish(){
+  show("s-load");
+  const list=evaluate();st.due=list.filter(x=>x.s==="due").map(x=>x.k);st.list=list;
+  send({_subject:"Oase kontrole: uitslag ("+st.name+", "+(GEO.dorp||"dorp onbekend")+", "+st.due.length+" tyd)",_template:"table",stap:"2. Uitslag",...lead(),ouderdom:AGE[st.age],tyd_vir:st.due.map(k=>CHECKS[k].name).join(", ")||"geen",belangstelling:st.topics.join(", ")||"geen"});
+  setTimeout(()=>{results();show("s-res")},1400);
+}
+const badge={due:["due","Tyd vir 'n kontrole"],ask:["ask","Vra jou dokter"],ok:["ok","Op datum"]};
+function results(){
+  const n=st.due.length,L=st.list;
+  const head=n===0?`Jy is goed <span class="pill" style="background:var(--goud)">op pad</span>.`:`${n} ${n===1?"kontrole is":"kontroles is"} dalk <span class="pill" style="background:var(--goud)">tyd</span>.`;
+  const cards=L.map(x=>{const c=CHECKS[x.k],b=badge[x.s];
+    if(x.s==="ok")return`<div class="chk-card small"><div class="row"><h3>${c.name}</h3><span class="badge ok">${b[1]}</span></div><p>${c.okmsg}</p></div>`;
+    return`<div class="chk-card"><div class="row"><h3>${c.name}</h3><span class="badge ${b[0]}">${b[1]}</span></div><p>${c.why}</p><div class="qs"><b>Vrae vir jou afspraak</b><ul>${c.ask.map(q=>`<li>${q}</li>`).join("")}</ul></div></div>`}).join("");
+  const pickable=st.due.concat(L.filter(x=>x.s==="ask").map(x=>x.k));
+  const picks=pickable.map(k=>`<label><input type="checkbox" value="${k}" checked><span>${CHECKS[k].name}<small>${CHECKS[k].who}</small></span></label>`).join("");
+  const helpCard=pickable.length?`
+    <div class="help-card">
+      <h3>Wil jy hulp met 'n afspraak?</h3>
+      <p class="lead">Ons help jou om 'n praktisyn naby jou te vind. Kies waarvoor jy hulp wil hê.</p>
+      <div class="pick" id="pick">${picks}</div>
+      <label class="chk"><input type="checkbox" id="share"><span>Ja, Oase mag my naam, nommer en die kontroles wat ek gekies het, met een praktisyn naby my deel sodat hulle my kan kontak om 'n afspraak te maak. Net dit. My ander antwoorde bly privaat. Ek kan enige tyd "stop" sê.</span></label>
+      <div class="cta"><a class="btn goud send" id="wa-help" href="#" target="_blank" rel="noopener" style="text-align:center;text-decoration:none" aria-disabled="true"><span class="lbl">Help my met 'n afspraak</span></a>
+      <a class="btn ghost" id="wa-copy" href="#" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">Stuur net my gids op WhatsApp</a></div>
+      <p class="fine">Oase is gratis vir jou. Praktisyns betaal 'n vaste bedrag om hier bekend te wees. Hulle betaal nie per pasiënt nie.</p>
+    </div>`:`<div class="help-card"><h3>Hou dit so</h3><p class="lead">Wil jy hê ons moet jou herinner wanneer jou volgende kontroles tyd is? Stuur ons 'n boodskap.</p><div class="cta"><a class="btn goud" id="wa-copy" href="#" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">Stuur my gids op WhatsApp</a></div></div>`;
+  $("#s-res").innerHTML=`<div class="stagger">
+    <div class="kicker">Jou Afspraak-Gids &middot; ${st.name}</div>
+    <h2 class="serif">${head}</h2>
+    <p class="one">Dis 'n gids, nie 'n diagnose nie.</p>
+    ${cards}
+    ${helpCard}
+    <p class="noodlyn"><b>Voel jy nou baie siek, of is dit 'n noodgeval?</b> Bel 10177 of 112, of gaan na die naaste hospitaal. Hierdie gids is algemene inligting en vervang nie jou dokter se raad nie.</p>
+  </div>`;
+  wire();
+}
+function names(keys){return keys.map(k=>CHECKS[k].name.toLowerCase()).join(", ")}
+function wa(text){return"https://wa.me/"+CONFIG.WHATSAPP+"?text="+encodeURIComponent(text)}
+function intro(){return"Hallo Oase! Ek is "+st.name+(GEO.dorp?" in "+GEO.dorp:"")+". Ek het die Gesondheidskontrole gedoen."}
+function wire(){
+  const copy=$("#wa-copy"),help=$("#wa-help");
+  const base=intro()+(st.due.length?" Kontroles wat dalk tyd is: "+names(st.due)+".":" Ek is op datum met my kontroles.")+" Stuur asseblief my gids.";
+  copy.href=wa(base);
+  copy.addEventListener("click",()=>send({_subject:"Oase kontrole: vra net gids ("+st.name+")",_template:"table",stap:"3. WhatsApp oop (net gids)",...lead(),tyd_vir:names(st.due)}));
+  if(!help)return;
+  const upd=()=>{
+    const picks=[...document.querySelectorAll("#pick input:checked")].map(i=>i.value);
+    const ok=$("#share").checked&&picks.length>0;
+    st.pick=picks;st.share=$("#share").checked;
+    help.setAttribute("aria-disabled",ok?"false":"true");help.style.opacity=ok?1:.45;help.style.pointerEvents=ok?"auto":"none";
+    help.href=ok?wa(intro()+" Ek wil graag hulp kry met 'n afspraak vir: "+names(picks)+". Ek gee toestemming dat Oase my naam en nommer met een praktisyn naby my deel sodat hulle my kan kontak."):"#";
+  };
+  document.querySelectorAll("#pick input,#share").forEach(i=>i.addEventListener("change",upd));upd();
+  help.addEventListener("click",()=>{send({_subject:"Oase kontrole: WIL AFSPRAAK HE ("+st.name+", "+(GEO.dorp||"dorp onbekend")+")",_template:"table",stap:"3. Vra hulp met afspraak",...lead(),toestemming_deel_met_praktisyn:"Ja",kies:names(st.pick)})});
+}
+</script>
+</body>
+</html>
