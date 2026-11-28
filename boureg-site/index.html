@@ -319,6 +319,80 @@
   .field-err:empty { display: none; }
   .input[aria-invalid="true"] { border-color: var(--rust-deep); }
   .done__again { margin-top: 24px; }
+
+  /* Suburb picker */
+  .picker { margin-top: 24px; }
+  .picker__search { position: relative; }
+  .picker__search svg { position: absolute; left: 16px; top: 14px; width: 20px; height: 20px; color: var(--muted); pointer-events: none; }
+  .picker__search .picker__input { padding-left: 48px; }
+  .picker__input::-webkit-search-cancel-button { cursor: pointer; }
+  .picker__list {
+    margin-top: 12px;
+    max-height: 320px; overflow-y: auto; overscroll-behavior: contain;
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+  }
+  .picker__group {
+    position: sticky; top: 0; z-index: 1;
+    padding: 8px 16px;
+    background: var(--bone);
+    font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    box-shadow: inset 0 -1px 0 var(--line);
+  }
+  .pick {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; min-height: 48px;
+    padding: 12px 16px;
+    background: transparent; border: 0;
+    text-align: left; cursor: pointer;
+    transition: background-color 150ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pick + .pick { box-shadow: inset 0 1px 0 var(--line); }
+  .pick:active { background: var(--sand); }
+  .pick__town { font-size: 14px; line-height: 20px; color: var(--muted); }
+  .pick__tick { width: 20px; height: 20px; color: var(--olive); opacity: 0; transition: opacity 150ms ease; flex: none; }
+  .pick[aria-pressed="true"] { background: #EEF0E6; font-weight: 600; }
+  .pick[aria-pressed="true"] .pick__tick { opacity: 1; }
+  .pick__own { color: var(--rust-deep); font-weight: 600; }
+
+  /* Budget slider */
+  .budget { margin-top: 24px; padding: 24px 16px 16px; background: #FFFFFF; border: 1px solid var(--line); border-radius: var(--r-sm); text-align: center; }
+  .budget__about { font-size: 14px; line-height: 20px; color: var(--muted); }
+  .budget__value { font-family: var(--font-head); font-stretch: 112.5%; font-weight: 800; font-size: 36px; line-height: 40px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .slider { position: relative; height: 44px; margin-top: 16px; }
+  .slider__track { position: absolute; left: 14px; right: 14px; top: 18px; height: 8px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
+  .slider__fill { display: block; height: 100%; background: var(--rust); transform-origin: left center; transform: scaleX(0.3846); }
+  .slider__input {
+    position: relative; z-index: 1;
+    width: 100%; height: 44px; margin: 0;
+    background: transparent;
+    -webkit-appearance: none; appearance: none;
+    cursor: pointer;
+    touch-action: pan-y;
+  }
+  .slider__input:focus-visible { outline: none; }
+  .slider__input::-webkit-slider-runnable-track { height: 44px; background: transparent; }
+  .slider__input::-moz-range-track { height: 44px; background: transparent; }
+  .slider__input::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 28px; height: 28px; margin-top: 8px;
+    border-radius: var(--r-pill);
+    background: var(--rust); border: 4px solid #FFFFFF;
+    box-shadow: 0 0 0 1px var(--rust-deep);
+    transition: transform 160ms var(--ease-out);
+  }
+  .slider__input::-moz-range-thumb {
+    width: 28px; height: 28px; box-sizing: border-box;
+    border-radius: var(--r-pill);
+    background: var(--rust); border: 4px solid #FFFFFF;
+    box-shadow: 0 0 0 1px var(--rust-deep);
+  }
+  .slider__input:active::-webkit-slider-thumb { transform: scale(1.1); }
+  .slider__input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 1px var(--rust-deep), 0 0 0 4px var(--sun); }
+  .slider__input:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 1px var(--rust-deep), 0 0 0 4px var(--sun); }
+  .budget__ends { display: flex; justify-content: space-between; margin-top: 4px; font-size: 14px; line-height: 20px; color: var(--muted); }
   .opt { font-family: var(--font-body); font-weight: 400; font-size: 14px; color: var(--muted); }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   /* Chips keep the same width when chosen: the ring is always there and fills in. */
@@ -518,6 +592,7 @@
   @media (prefers-reduced-motion: reduce) {
     .js [data-reveal] { transform: none; transition: opacity 300ms ease; transition-delay: 0s; }
     .btn:active:not([disabled]), .chip:active, .card:active, .flow__back:active, .lang__btn:active { transform: none; }
+    .slider__input:active::-webkit-slider-thumb { transform: none; }
     .card__arrow, .chip__dot svg { transform: none !important; }
     .faq summary svg { transition: none; }
     .mbar { transition: opacity 200ms ease, visibility 0s; }
@@ -648,12 +723,6 @@
                 <p class="hint" id="phone-hint">Our pro calls you on this number.</p>
                 <p class="field-err" id="phone-err"></p>
               </div>
-              <div>
-                <label class="label" for="suburb">Suburb</label>
-                <input class="input" id="suburb" name="suburb" type="text" autocomplete="address-level3" required aria-required="true" maxlength="60" aria-describedby="suburb-hint suburb-err">
-                <p class="hint" id="suburb-hint">So our pro knows where the job is.</p>
-                <p class="field-err" id="suburb-err"></p>
-              </div>
             </div>
             <div class="step__foot">
               <button type="button" class="btn btn--primary btn--block" id="next-0">
@@ -679,32 +748,35 @@
           </div>
 
           <div class="step" data-step="2" hidden>
-            <h2 class="step__q" id="q-town" tabindex="-1">Which town?</h2>
-            <div class="chips" data-field="town" role="group" aria-labelledby="q-town">
-              <button type="button" class="chip" aria-pressed="false" data-value="Upington"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Upington</button>
-              <button type="button" class="chip" aria-pressed="false" data-value="Kimberley"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Kimberley</button>
-              <button type="button" class="chip" aria-pressed="false" data-value="Bloemfontein"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Bloemfontein</button>
+            <h2 class="step__q" id="q-place" tabindex="-1">Which suburb do you stay in?</h2>
+            <p class="step__hint">Search, or pick it from the list.</p>
+            <div class="picker">
+              <div class="picker__search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+                <input class="input picker__input" id="place-search" type="search" autocomplete="off" enterkeyhint="search" placeholder="Search your suburb" aria-label="Search your suburb" aria-controls="place-list">
+              </div>
+              <div class="picker__list" id="place-list" role="group" aria-labelledby="q-place"></div>
             </div>
             <div class="step__foot">
-              <button type="button" class="btn btn--ghost js-step-next" data-field="town" data-next="3" hidden>Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+              <button type="button" class="btn btn--ghost js-step-next" data-field="place" data-next="3" hidden>Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
             </div>
           </div>
-
           <div class="step" data-step="3" hidden>
             <h2 class="step__q" id="q-budget" tabindex="-1">Rough budget?</h2>
-            <p class="step__hint">A rough idea helps our pro plan the visit.</p>
-            <div class="chips" data-field="budget" role="group" aria-labelledby="q-budget">
-              <button type="button" class="chip" aria-pressed="false" data-value="Under R10k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Under R10k</button>
-              <button type="button" class="chip" aria-pressed="false" data-value="R10k to R30k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R10k to R30k</button>
-              <button type="button" class="chip" aria-pressed="false" data-value="R30k to R60k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R30k to R60k</button>
-              <button type="button" class="chip" aria-pressed="false" data-value="R60k to R100k"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R60k to R100k</button>
-              <button type="button" class="chip" aria-pressed="false" data-value="R100k+"><span class="chip__dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>R100k+</button>
+            <p class="step__hint">Slide to roughly what you want to spend. A rough idea helps our pro plan the visit.</p>
+            <div class="budget">
+              <p class="budget__about" aria-hidden="true">About</p>
+              <p class="budget__value" id="budget-value" aria-hidden="true">R30 000</p>
+              <div class="slider">
+                <div class="slider__track" aria-hidden="true"><span class="slider__fill" id="budget-fill"></span></div>
+                <input class="slider__input" id="budget" type="range" min="0" max="13" step="1" value="5" aria-labelledby="q-budget">
+              </div>
+              <div class="budget__ends" aria-hidden="true"><span>R5k</span><span>R250k+</span></div>
             </div>
             <div class="step__foot">
-              <button type="button" class="btn btn--ghost js-step-next" data-field="budget" data-next="4" hidden>Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+              <button type="button" class="btn btn--primary" data-next="4">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
             </div>
           </div>
-
           <div class="step" data-step="4" hidden>
             <h2 class="step__q" id="q-timing" tabindex="-1">When do you want it done?</h2>
             <p class="step__hint">Optional. Skip if you are not sure yet.</p>
@@ -993,8 +1065,6 @@
       "Your name": "Jou naam",
       "Cell number": "Selnommer",
       "Our pro calls you on this number.": "Ons vakman bel jou op hierdie nommer.",
-      "Suburb": "Voorstad",
-      "So our pro knows where the job is.": "Sodat ons vakman weet waar die werk is.",
       "Next: about the job": "Volgende: oor die werk",
       "What do you want built?": "Wat wil jy laat bou?",
       "Cupboards and built-ins": "Ingeboude kaste",
@@ -1004,13 +1074,18 @@
       "Bathroom": "Badkamer",
       "Something else": "Iets anders",
       "Next": "Volgende",
-      "Which town?": "Watter dorp?",
       "Rough budget?": "Rowwe begroting?",
-      "A rough idea helps our pro plan the visit.": "'n Rowwe idee help ons vakman om die besoek te beplan.",
-      "Under R10k": "Onder R10k",
-      "R10k to R30k": "R10k tot R30k",
-      "R30k to R60k": "R30k tot R60k",
-      "R60k to R100k": "R60k tot R100k",
+      "Which suburb do you stay in?": "In watter voorstad bly jy?",
+      "Search, or pick it from the list.": "Soek, of kies dit uit die lys.",
+      "Search your suburb": "Soek jou voorstad",
+      "Slide to roughly what you want to spend. A rough idea helps our pro plan the visit.": "Skuif na omtrent wat jy wil spandeer. 'n Rowwe idee help ons vakman om die besoek te beplan.",
+      "About": "Omtrent",
+      "about": "omtrent",
+      "or more": "of meer",
+      "Use": "Gebruik",
+      "Any suburb": "Enige voorstad",
+      "Other towns": "Ander dorpe",
+      "Not on the list?": "Nie op die lys nie?",
       "When do you want it done?": "Wanneer wil jy dit klaar hê?",
       "Optional. Skip if you are not sure yet.": "Opsioneel. Slaan oor as jy nog nie seker is nie.",
       "This month": "Hierdie maand",
@@ -1097,7 +1172,6 @@
       "Done": "Klaar",
       "Add your name so our pro knows who to ask for.": "Gee jou naam sodat ons vakman weet na wie om te vra.",
       "Add a 10 digit cell number, like 082 123 4567.": "Gee 'n selnommer met 10 syfers, soos 082 123 4567.",
-      "Add your suburb so our pro knows where the job is.": "Gee jou voorstad sodat ons vakman weet waar die werk is.",
       "All set. Tap the button to open WhatsApp.": "Alles reg. Tik die knoppie om WhatsApp oop te maak.",
       "Some answers are missing. Tap Back to check them.": "Party antwoorde ontbreek. Tik Terug om hulle na te gaan.",
       "Tick the box so we can send your job.": "Merk die blokkie sodat ons jou werk kan stuur.",
@@ -1155,7 +1229,7 @@
     var TOTAL = 6;          // screens 0 to 5 are questions, 6 is "nearly done"
     var DONE = 6;
 
-    var state = { job: "", town: "", budget: "", timing: "" };
+    var state = { job: "", place: null, budget: 0, timing: "" };
     var current = 0;
     var animations = [];
     var advanceTimer = null;
@@ -1169,7 +1243,6 @@
     var barEl = document.getElementById("flow-bar");
     var nameInput = document.getElementById("name");
     var phoneInput = document.getElementById("phone");
-    var suburbInput = document.getElementById("suburb");
     var detailsInput = document.getElementById("details");
     var consentInput = document.getElementById("consent");
     var sendBtn = document.getElementById("send");
@@ -1200,8 +1273,7 @@
 
     var checks = [
       { input: nameInput, test: function (v) { return v.trim().length > 1; }, msg: "Add your name so our pro knows who to ask for." },
-      { input: phoneInput, test: function (v) { return !!cleanPhone(v); }, msg: "Add a 10 digit cell number, like 082 123 4567." },
-      { input: suburbInput, test: function (v) { return v.trim().length > 1; }, msg: "Add your suburb so our pro knows where the job is." }
+      { input: phoneInput, test: function (v) { return !!cleanPhone(v); }, msg: "Add a 10 digit cell number, like 082 123 4567." }
     ];
     var touched = {};
 
@@ -1344,7 +1416,7 @@
       pickedEl.hidden = !state.job;
       pickedJob.textContent = t(state.job);
 
-      var ready = consentInput.checked && state.job && state.town && state.budget && !detailsValid(false);
+      var ready = consentInput.checked && state.job && state.place && !detailsValid(false);
       sendBtn.disabled = !ready;
       if (ready) {
         statusEl.textContent = t("All set. Tap the button to open WhatsApp.");
@@ -1356,6 +1428,112 @@
     }
     consentInput.addEventListener("change", update);
 
+    /* ---------- Suburb picker ---------- */
+
+    // Upington suburbs from postcode and property listings. Kimberley and Bloemfontein can be picked as a town for now.
+    var PLACES = [
+      { suburb: "Bellvue", town: "Upington", also: "bellevue" },
+      { suburb: "Blikkies", town: "Upington" },
+      { suburb: "Blydeville", town: "Upington" },
+      { suburb: "Die Rand", town: "Upington", also: "rand" },
+      { suburb: "Flora Park", town: "Upington", also: "florapark" },
+      { suburb: "Hillside", town: "Upington" },
+      { suburb: "Keidebees", town: "Upington" },
+      { suburb: "Lemoendraai", town: "Upington" },
+      { suburb: "Louisvale", town: "Upington" },
+      { suburb: "Louisvaleweg", town: "Upington", also: "louisvale road" },
+      { suburb: "Morning Glory", town: "Upington" },
+      { suburb: "Oosterville", town: "Upington" },
+      { suburb: "Paballelo", town: "Upington" },
+      { suburb: "Progress", town: "Upington" },
+      { suburb: "Rainbow", town: "Upington" },
+      { suburb: "Riverside", town: "Upington" },
+      { suburb: "Rosedale", town: "Upington" },
+      { suburb: "Straussburg", town: "Upington", also: "strausburg" },
+      { suburb: "Upington Central", town: "Upington", also: "sentraal middedorp cbd town" },
+      { suburb: "", town: "Kimberley" },
+      { suburb: "", town: "Bloemfontein", also: "bloem" }
+    ];
+    var placeSearch = document.getElementById("place-search");
+    var placeList = document.getElementById("place-list");
+    var TICK = '<svg class="pick__tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+    function fold(s) { return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim(); }
+    function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+    function samePlace(a, b) { return a && b && a.suburb === b.suburb && a.town === b.town; }
+    function placeLabel(p) { return p.suburb ? p.suburb + ", " + p.town : p.town; }
+
+    function renderPlaces() {
+      var q = fold(placeSearch.value);
+      var hits = PLACES.filter(function (p) {
+        return !q || fold(p.suburb + " " + p.town + " " + (p.also || "")).indexOf(q) !== -1;
+      });
+      var html = "";
+      var upington = hits.filter(function (p) { return p.suburb; });
+      var towns = hits.filter(function (p) { return !p.suburb; });
+      function row(p, own) {
+        var on = samePlace(p, state.place);
+        var name = own ? '<span class="pick__own">' + esc(t("Use") + " “" + p.suburb + "”") + "</span>" : "<span>" + esc(p.suburb || p.town) + "</span>";
+        var town = p.suburb ? '<span class="pick__town">' + esc(p.town) + "</span>" : '<span class="pick__town">' + esc(t("Any suburb")) + "</span>";
+        return '<button type="button" class="pick" aria-pressed="' + on + '" data-suburb="' + esc(p.suburb) + '" data-town="' + esc(p.town) + '">' +
+          name + '<span style="display:flex;align-items:center;gap:8px">' + town + TICK + "</span></button>";
+      }
+      if (upington.length) html += '<p class="picker__group">Upington</p>' + upington.map(function (p) { return row(p); }).join("");
+      if (towns.length) html += '<p class="picker__group">' + esc(t("Other towns")) + "</p>" + towns.map(function (p) { return row(p); }).join("");
+      // Not on the list: let them use what they typed, in whichever town
+      var typed = placeSearch.value.trim().replace(/\s+/g, " ");
+      if (typed.length > 1 && !hits.length) {
+        html += '<p class="picker__group">' + esc(t("Not on the list?")) + "</p>" +
+          ["Upington", "Kimberley", "Bloemfontein"].map(function (town) { return row({ suburb: typed, town: town }, true); }).join("");
+      }
+      placeList.innerHTML = html;
+    }
+
+    placeSearch.addEventListener("input", renderPlaces);
+    placeSearch.addEventListener("keydown", function (e) {
+      // Enter picks the first match instead of submitting the form
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      var first = placeList.querySelector(".pick");
+      if (first) first.click();
+    });
+    placeList.addEventListener("click", function (e) {
+      var btn = e.target.closest(".pick");
+      if (!btn) return;
+      state.place = { suburb: btn.getAttribute("data-suburb"), town: btn.getAttribute("data-town") };
+      placeList.querySelectorAll(".pick").forEach(function (b) { b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      update();
+      clearTimeout(advanceTimer);
+      advanceTimer = setTimeout(function () { if (current === 2) go(3); }, reduceMotion ? 150 : 320);
+    });
+
+    /* ---------- Budget slider ---------- */
+
+    var BUDGETS = [5000, 10000, 15000, 20000, 25000, 30000, 40000, 50000, 60000, 75000, 100000, 150000, 200000, 250000];
+    var budgetInput = document.getElementById("budget");
+    var budgetValue = document.getElementById("budget-value");
+    var budgetFill = document.getElementById("budget-fill");
+    state.budget = Number(budgetInput.value);
+
+    function rands(n, space) { return "R" + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, space); }
+    function budgetText(i, forMessage) {
+      var last = i === BUDGETS.length - 1;
+      var amount = rands(BUDGETS[i], forMessage ? " " : " ");
+      if (forMessage) return last ? amount + " " + t("or more") : t("about") + " " + amount;
+      return last ? amount + "+" : amount;
+    }
+    function paintBudget() {
+      var i = state.budget;
+      budgetValue.textContent = budgetText(i, false);
+      budgetFill.style.transform = "scaleX(" + i / (BUDGETS.length - 1) + ")";
+      budgetInput.setAttribute("aria-valuetext", budgetText(i, true));
+    }
+    budgetInput.addEventListener("input", function () {
+      state.budget = Number(budgetInput.value);
+      paintBudget();
+    });
+    budgetInput.max = String(BUDGETS.length - 1);
+
     // The message goes out in the language the person is reading
     function buildMessage() {
       var details = detailsInput.value.trim().replace(/\s+/g, " ");
@@ -1364,10 +1542,9 @@
         : { hi: "Hi BouReg, I'm ", num: "Number", sub: "Suburb", want: "I want", town: "Town", budget: "Budget", timing: "Timing", more: "More", notSure: "Not sure yet", nothing: "Nothing extra" };
       return L.hi + nameInput.value.trim().replace(/\s+/g, " ") +
         ". " + L.num + ": " + (cleanPhone(phoneInput.value) || phoneInput.value.trim()) +
-        ". " + L.sub + ": " + suburbInput.value.trim().replace(/\s+/g, " ") +
         ". " + L.want + ": " + t(state.job) +
-        ". " + L.town + ": " + state.town +
-        ". " + L.budget + ": " + t(state.budget) +
+        ". " + L.sub + ": " + (state.place ? placeLabel(state.place) : "") +
+        ". " + L.budget + ": " + budgetText(state.budget, true) +
         ". " + L.timing + ": " + (state.timing ? t(state.timing) : L.notSure) +
         ". " + L.more + ": " + (details || L.nothing);
     }
@@ -1442,6 +1619,8 @@
       lang = next;
       paintLanguage();
       setHeaderLink();
+      renderPlaces();
+      paintBudget();
       updateChrome();
       update();
       checks.forEach(function (check) {
